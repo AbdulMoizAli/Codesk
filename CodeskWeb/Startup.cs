@@ -45,6 +45,10 @@ namespace CodeskWeb
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                name: "areas",
+                pattern: "{area}/{controller}/{action}/{id?}");
+
+                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
