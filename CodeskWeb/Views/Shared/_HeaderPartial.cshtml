@@ -1,7 +1,16 @@
 ﻿<header>
     <nav class="indigo lighten-1">
         <div class="nav-wrapper">
-            <a asp-area="" asp-controller="Home" asp-action="Index" class="brand-logo">Codesk</a>
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="brand-logo">
+                <ul>
+                    <li><img class="logo" src="~/favicon.ico" height="50" width="50" /></li>
+                    <li><div class="logo-text">CODESK</div></li>
+                </ul>
+            </a>
+            <ul class="right hide-on-med-and-down">
+                <li><a asp-area="Users" asp-controller="Account" asp-action="SignIn"><i class="fas fa-sign-in-alt fa-lg left"></i> Sign in</a></li>
+                <li><a asp-area="Users" asp-controller="Account" asp-action="SignUp" class="btn waves-effect waves-light blue-grey darken-1"><i class="fas fa-user-plus fa-on-button left"></i> Sign up</a></li>
+            </ul>
         </div>
     </nav>
 </header>
