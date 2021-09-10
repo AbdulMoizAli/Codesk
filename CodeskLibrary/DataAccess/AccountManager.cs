@@ -1,8 +1,8 @@
 ﻿using CodeskLibrary.Connections;
 using CodeskLibrary.Models;
+using Dapper;
 using System.Data;
 using System.Threading.Tasks;
-using Dapper;
 
 namespace CodeskLibrary.DataAccess
 {

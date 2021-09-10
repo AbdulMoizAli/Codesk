@@ -34,9 +34,9 @@ main {
     box-shadow: 0 1px 0 0 #546e7a !important;
 }
 
-.input-field input[type=text]:focus + label, input[type=password]:focus + label, input[type=email]:focus + label {
-    color: #546e7a !important;
-}
+    .input-field input[type=text]:focus + label, input[type=password]:focus + label, input[type=email]:focus + label {
+        color: #546e7a !important;
+    }
 
 .row {
     margin-bottom: 0 !important;
