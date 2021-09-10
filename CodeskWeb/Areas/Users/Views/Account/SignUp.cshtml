@@ -8,68 +8,70 @@
     <form asp-area="Users" asp-controller="Account" asp-action="SignUp" method="post" class="col l6 m8 s12 offset-l3 offset-m2">
         <div class="row">
             <div class="col l6 m8 s12 offset-l4">
-                <img src="/images/create-account.svg" height="200" width="200" />
+                <img class="animate__animated animate__fadeIn" src="/images/create-account.svg" height="200" width="200" />
             </div>
         </div>
 
-        <div class="row">
-            <div class="input-field col l6 m12 s12 ">
-                <i class="fas fa-signature prefix"></i>
-                <input asp-for="FirstName" class="validate" autocomplete="off" spellcheck="false" />
-                <label for="FirstName">First Name</label>
-                <span asp-validation-for="FirstName" class="red-text"></span>
+        <div class="animate__animated animate__fadeIn">
+            <div class="row">
+                <div class="input-field col l6 m12 s12 ">
+                    <i class="fas fa-signature prefix"></i>
+                    <input asp-for="FirstName" class="validate" autocomplete="off" spellcheck="false" />
+                    <label for="FirstName">First Name</label>
+                    <span asp-validation-for="FirstName" class="red-text"></span>
+                </div>
+
+                <div class="input-field col l6 m12 s12">
+                    <i class="fas fa-signature prefix"></i>
+                    <input asp-for="LastName" class="validate" autocomplete="off" spellcheck="false" />
+                    <label for="LastName">Last Name</label>
+                    <span asp-validation-for="LastName" class="red-text"></span>
+                </div>
             </div>
 
-            <div class="input-field col l6 m12 s12">
-                <i class="fas fa-signature prefix"></i>
-                <input asp-for="LastName" class="validate" autocomplete="off" spellcheck="false" />
-                <label for="LastName">Last Name</label>
-                <span asp-validation-for="LastName" class="red-text"></span>
-            </div>
-        </div>
+            <div class="row">
+                <div class="input-field col l6 m12 s12">
+                    <i class="fas fa-envelope-square prefix"></i>
+                    <input asp-for="EmailAddress" class="validate" autocomplete="off" spellcheck="false" />
+                    <label for="EmailAddress">Email Address</label>
+                    <span asp-validation-for="EmailAddress" class="red-text"></span>
+                </div>
 
-        <div class="row">
-            <div class="input-field col l6 m12 s12">
-                <i class="fas fa-envelope-square prefix"></i>
-                <input asp-for="EmailAddress" class="validate" autocomplete="off" spellcheck="false" />
-                <label for="EmailAddress">Email Address</label>
-                <span asp-validation-for="EmailAddress" class="red-text"></span>
-            </div>
-
-            <div class="input-field col l6 m12 s12">
-                <i class="fas fa-envelope-square prefix"></i>
-                <input asp-for="ConfirmEmailAddress" class="validate" autocomplete="off" spellcheck="false" />
-                <label for="ConfirmEmailAddress">Confirm Email Address</label>
-                <span asp-validation-for="ConfirmEmailAddress" class="red-text"></span>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="input-field col l6 m12 s12">
-                <i class="fas fa-key prefix"></i>
-                <input asp-for="Password" class="validate" autocomplete="off" spellcheck="false" />
-                <label for="Password">Password</label>
-                <span asp-validation-for="Password" class="red-text"></span>
+                <div class="input-field col l6 m12 s12">
+                    <i class="fas fa-envelope-square prefix"></i>
+                    <input asp-for="ConfirmEmailAddress" class="validate" autocomplete="off" spellcheck="false" />
+                    <label for="ConfirmEmailAddress">Confirm Email Address</label>
+                    <span asp-validation-for="ConfirmEmailAddress" class="red-text"></span>
+                </div>
             </div>
 
-            <div class="input-field col l6 m12 s12">
-                <i class="fas fa-key prefix"></i>
-                <input asp-for="ConfirmPassword" class="validate" autocomplete="off" spellcheck="false" />
-                <label for="ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="ConfirmPassword" class="red-text"></span>
-            </div>
-        </div>
+            <div class="row">
+                <div class="input-field col l6 m12 s12">
+                    <i class="fas fa-key prefix"></i>
+                    <input asp-for="Password" class="validate" autocomplete="off" spellcheck="false" />
+                    <label for="Password">Password</label>
+                    <span asp-validation-for="Password" class="red-text"></span>
+                </div>
 
-        <div class="row">
-            <div class="input-field col l6 m12 s12">
-                <i class="fas fa-user-circle prefix"></i>
-                <input asp-for="UserName" class="validate" autocomplete="off" spellcheck="false" />
-                <label for="UserName">User Name</label>
-                <span asp-validation-for="UserName" class="red-text"></span>
+                <div class="input-field col l6 m12 s12">
+                    <i class="fas fa-key prefix"></i>
+                    <input asp-for="ConfirmPassword" class="validate" autocomplete="off" spellcheck="false" />
+                    <label for="ConfirmPassword">Confirm Password</label>
+                    <span asp-validation-for="ConfirmPassword" class="red-text"></span>
+                </div>
             </div>
 
-            <div class="input-field col l6 m12 s12">
-                <button type="submit" class="btn-floating btn-large waves-effect waves-light right green darken-1"><i class="fas fa-plus"></i></button>
+            <div class="row">
+                <div class="input-field col l6 m12 s12">
+                    <i class="fas fa-user-circle prefix"></i>
+                    <input asp-for="UserName" class="validate" autocomplete="off" spellcheck="false" />
+                    <label for="UserName">User Name</label>
+                    <span asp-validation-for="UserName" class="red-text"></span>
+                </div>
+
+                <div class="input-field col l6 m12 s12">
+                    <button type="submit" class="btn-floating btn-large waves-effect waves-light right green darken-1 tooltipped" data-position="bottom" data-tooltip="Create Account"><i class="fas fa-plus"></i></button>
+                </div>
             </div>
         </div>
     </form>

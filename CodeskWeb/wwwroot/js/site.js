@@ -1,1 +1,3 @@
-﻿
+﻿$(document).ready(() => {
+    $('.tooltipped').tooltip();
+});
