@@ -16,6 +16,14 @@ namespace CodeskLibrary.DataAccess
                 .ConfigureAwait(false);
         }
 
+        public static async Task<User> UserSignIn(string emailAddress, string passwordText)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            return await db.QuerySingleOrDefaultAsync<User>("spUserSignIn", new { emailAddress, passwordText }, commandType: CommandType.StoredProcedure)
+                .ConfigureAwait(false);
+        }
+
         public static async Task<bool> IsUniqueEmailAddress(string emailAddress)
         {
             using IDbConnection db = DbConnection.GetConnection();
