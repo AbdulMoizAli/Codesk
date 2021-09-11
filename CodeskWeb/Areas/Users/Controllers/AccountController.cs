@@ -53,6 +53,25 @@ namespace CodeskWeb.Areas.Users.Controllers
             return RedirectToAction("Index", "Home", new { Area = "" });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignIn(SignInViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var userModel = await AccountManager.UserSignIn(model.EmailAddress, model.Password)
+                .ConfigureAwait(false);
+
+            if (userModel is null)
+            {
+                ModelState.AddModelError("SignInFailed", string.Empty);
+                return View(model);
+            }
+
+            return RedirectToAction("Index", "Home", new { Area = "" });
+        }
+
         public async Task<IActionResult> ValidateEmailAddress(string emailAddress)
         {
             var result = await AccountManager.IsUniqueEmailAddress(emailAddress)
