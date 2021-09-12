@@ -10,9 +10,18 @@ namespace CodeskLibrary.DataAccess
     {
         public static async Task<int> UserSignUp(User user)
         {
+            var parameters = new
+            {
+                user.FirstName,
+                user.LastName,
+                user.UserName,
+                user.EmailAddress,
+                user.PasswordText
+            };
+
             using IDbConnection db = DbConnection.GetConnection();
 
-            return await db.ExecuteScalarAsync<int>("spUserSignUp", user, commandType: CommandType.StoredProcedure)
+            return await db.ExecuteScalarAsync<int>("spUserSignUp", parameters, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false);
         }
 
