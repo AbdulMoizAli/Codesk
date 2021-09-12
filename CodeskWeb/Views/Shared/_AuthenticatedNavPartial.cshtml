@@ -1,0 +1,21 @@
+﻿<ul class="right hide-on-med-and-down">
+    <li>
+        <a asp-area="Users" asp-controller="Session" asp-action="Dashboard"><i class="material-icons left">dashboard</i>Dashboard</a>
+    </li>
+    <li>
+        <a asp-area="Users" asp-controller="Session" asp-action="NewSession"><i class="material-icons left">add_box</i>New Session</a>
+    </li>
+    <li>
+        <a asp-area="Users" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
+    </li>
+    <li><a class="dropdown-trigger" data-target="user-actions"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">arrow_drop_down</i></a></li>
+</ul>
+
+<ul id="user-actions" class="dropdown-content">
+    <li><a>Profile</a></li>
+    <li><a>Settings</a></li>
+    <li class="divider" tabindex="-1"></li>
+    <li><a onclick="$('#logout').submit()">Sign out</a></li>
+</ul>
+
+<form hidden id="logout" asp-area="Users" asp-controller="Account" asp-action="Logout" method="post"></form>
