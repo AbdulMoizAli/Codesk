@@ -13,5 +13,7 @@
         public string EmailAddress { get; set; }
 
         public string PasswordText { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
     }
 }
