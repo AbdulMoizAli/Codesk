@@ -16,11 +16,6 @@ main {
     flex: 1 0 auto;
 }
 
-.fa-on-button {
-    margin-top: -15% !important;
-    font-size: 16px !important;
-}
-
 .logo {
     margin-top: 14%;
     margin-left: 10%;
@@ -50,4 +45,8 @@ main {
 
 .valign-wrapper {
     min-height: calc(100vh - 155px);
+}
+
+.dropdown-content li > a, .dropdown-content li > span {
+    color: black !important;
 }
