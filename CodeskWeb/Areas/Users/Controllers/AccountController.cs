@@ -5,8 +5,10 @@ using CodeskWeb.Areas.Users.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -66,7 +68,7 @@ namespace CodeskWeb.Areas.Users.Controllers
                 .ConfigureAwait(false);
 
             if (!string.IsNullOrWhiteSpace(url))
-                return Redirect(url);
+                return LocalRedirect(url);
 
             return RedirectToAction("Dashboard", "Session", new { Area = "Users" });
         }
@@ -83,11 +85,35 @@ namespace CodeskWeb.Areas.Users.Controllers
 
             if (userModel is null)
             {
-                ModelState.AddModelError("SignInFailed", string.Empty);
+                ModelState.AddModelError("SignInFailed", "Incorrect email address or password");
                 return View(model);
             }
 
             return await AuthorizeUser(userModel, returnUrl).ConfigureAwait(false);
+        }
+
+        public async Task SignInExternal(string returnUrl, string providerName)
+        {
+            string url = Url.Action("SignInExternalCallback", "Account", new { Area = "Users", ReturnUrl = returnUrl });
+
+            await HttpContext.ChallengeAsync(providerName, new AuthenticationProperties { RedirectUri = url })
+                .ConfigureAwait(false);
+        }
+
+        public IActionResult SignInExternalCallback(string returnUrl, string remoteError)
+        {
+            string url = string.IsNullOrWhiteSpace(returnUrl) ? Url.Action("Dashboard", "Session", new { Area = "Users" })
+                : returnUrl;
+
+            if (remoteError != null)
+            {
+                ModelState.AddModelError("SignInFailed", remoteError);
+                return View("SignIn");
+            }
+
+            // TODO: save user in the database
+  
+            return LocalRedirect(url);
         }
 
         [HttpPost]
