@@ -8,13 +8,56 @@
     var returnUrl = Context.Request.Query["ReturnUrl"];
 }
 
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    
+    <style>
+        .facebook {
+            background-color: #3b5998;
+            width: 100%
+        }
+
+        .facebook:hover {
+            background-color: #4c70ba;
+        }
+
+        .google {
+            background-color: #dd4b39;
+            width: 100%
+        }
+
+        .google:hover {
+            background-color: #e47365;
+        }
+
+        .github {
+            background-color: #444444;
+            width: 100%
+        }
+
+        .github:hover {
+            background-color: #5e5e5e;
+        }
+
+        .microsoft {
+            background-color: #2672ec;
+            width: 100%
+        }
+
+        .microsoft:hover {
+            background-color: #5590f0;
+        }
+    </style>
+}
+
 @if (isSignInFailed)
-{
-    <a hidden id="signin-failed"></a>
+{   string errorMessage = ViewData.ModelState.Values.FirstOrDefault().Errors.FirstOrDefault().ErrorMessage;
+
+    <a hidden id="signin-failed" data-errorMessage="@errorMessage"></a>
 }
 
 <div class="row valign-wrapper">
-    <form asp-area="Users" asp-controller="Account" asp-action="SignIn" asp-route-returnurl="@returnUrl" method="post" class="col l6 m8 s12 offset-l3 offset-m2">
+    <form asp-area="Users" asp-controller="Account" asp-action="SignIn" asp-route-returnUrl="@returnUrl" method="post" class="col l6 m8 s12 offset-l3 offset-m2">
         <div class="row">
             <div class="col l6 m8 s12 offset-l4">
                 <img class="animate__animated animate__fadeIn" src="/images/login.svg" height="200" width="200" />
@@ -41,8 +84,36 @@
             </div>
 
             <div class="row">
-                <div class="col l6 m12 s12 offset-l3">
-                    <button type="submit" class="btn waves-effect waves-light right green darken-1"><i class="material-icons left">send</i>Log in</button>
+                <div class="col l4 m12 s12 offset-l4">
+                    <button type="submit" class="btn waves-effect waves-light right green darken-1" style="width: 100%"><i class="material-icons left">send</i><span class="left">log in with password</span></button>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 1%;">
+                <div class="col l6 offset-l3">
+                    <div class="progress" style="height: 1px;">
+                        <div class="determinate blue-grey darken-1" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l4 offset-l4">
+                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Facebook" class="btn waves-effect waves-light facebook"><i class="fab fa-facebook left"></i> <span class="left">sign in with facebook</span></a>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 1%;">
+                <div class="col l4 offset-l4">
+                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Google" class="btn waves-effect waves-light google"><i class="fab fa-google left"></i> <span class="left">sign in with google</span></a>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 1%;">
+                <div class="col l4 offset-l4">
+                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="GitHub" class="btn waves-effect waves-light github"><i class="fab fa-github left"></i> <span class="left">sign in with github</span></a>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 1%;">
+                <div class="col l4 offset-l4">
+                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Microsoft" class="btn waves-effect waves-light microsoft"><i class="fab fa-microsoft left"></i> <span class="left">sign in with microsoft</span></a>
                 </div>
             </div>
         </div>
@@ -52,8 +123,8 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        $('#signin-failed').click(() => {
-            showAlert('Sign in failed', 'Incorrect email address or password', false, 'OK');
+        $('#signin-failed').click(function () {
+            showAlert('Sign in failed', $(this).attr('data-errorMessage'), false, 'OK');
         });
 
         $('#signin-failed').trigger('click');
