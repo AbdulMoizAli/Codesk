@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -70,7 +69,7 @@ namespace CodeskWeb.Areas.Users.Controllers
             if (!string.IsNullOrWhiteSpace(url))
                 return LocalRedirect(url);
 
-            return RedirectToAction("Dashboard", "Session", new { Area = "Users" });
+            return RedirectToAction("Dashboard", "Session", new { Area = "WorkSpace" });
         }
 
         [HttpPost]
@@ -100,19 +99,28 @@ namespace CodeskWeb.Areas.Users.Controllers
                 .ConfigureAwait(false);
         }
 
-        public IActionResult SignInExternalCallback(string returnUrl, string remoteError)
+        public async Task<IActionResult> SignInExternalCallback(string returnUrl, string remoteError)
         {
-            string url = string.IsNullOrWhiteSpace(returnUrl) ? Url.Action("Dashboard", "Session", new { Area = "Users" })
-                : returnUrl;
-
             if (remoteError != null)
             {
                 ModelState.AddModelError("SignInFailed", remoteError);
                 return View("SignIn");
             }
 
-            // TODO: save user in the database
-  
+            string url = string.IsNullOrWhiteSpace(returnUrl) ? Url.Action("Dashboard", "Session", new { Area = "WorkSpace" })
+                : returnUrl;
+
+            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+
+            var result = await AccountManager.IsUniqueEmailAddress(email).ConfigureAwait(false);
+
+            if (!result)
+            {
+                return LocalRedirect(url);
+            }
+
+            await AccountManager.UserExternalSignUp(email).ConfigureAwait(false);
+
             return LocalRedirect(url);
         }
 
