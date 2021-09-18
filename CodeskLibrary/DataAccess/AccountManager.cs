@@ -25,6 +25,14 @@ namespace CodeskLibrary.DataAccess
                 .ConfigureAwait(false);
         }
 
+        public static async Task UserExternalSignUp(string emailAddress)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            await db.ExecuteAsync("spUserExternalSignUp", new { emailAddress }, commandType: CommandType.StoredProcedure)
+                .ConfigureAwait(false);
+        }
+
         public static async Task<User> UserSignIn(string emailAddress, string passwordText)
         {
             using IDbConnection db = DbConnection.GetConnection();
