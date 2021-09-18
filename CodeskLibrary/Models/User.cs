@@ -1,4 +1,6 @@
-﻿namespace CodeskLibrary.Models
+﻿using System;
+
+namespace CodeskLibrary.Models
 {
     public class User
     {
@@ -13,6 +15,10 @@
         public string EmailAddress { get; set; }
 
         public string PasswordText { get; set; }
+
+        public Guid ConfirmationToken { get; set; }
+
+        public bool EmailConfirmed { get; set; }
 
         public string FullName => $"{FirstName} {LastName}";
     }
