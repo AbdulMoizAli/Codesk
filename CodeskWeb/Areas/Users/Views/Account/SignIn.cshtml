@@ -51,7 +51,7 @@
 }
 
 @if (isSignInFailed)
-{   string errorMessage = ViewData.ModelState.Values.FirstOrDefault().Errors.FirstOrDefault().ErrorMessage;
+{   string errorMessage = ViewData.ModelState["SignInFailed"].Errors.FirstOrDefault().ErrorMessage;
 
     <a hidden id="signin-failed" data-errorMessage="@errorMessage"></a>
 }
@@ -65,7 +65,7 @@
         </div>
 
         <div class="animate__animated animate__fadeIn">
-            <div class="row">
+            <div class="row" style="margin-top: 1%;">
                 <div class="input-field col l6 m12 s12 offset-l3">
                     <i class="material-icons prefix">email</i>
                     <input asp-for="EmailAddress" class="validate" autofocus autocomplete="off" spellcheck="false" />
@@ -80,39 +80,38 @@
                     <input asp-for="Password" class="validate" autocomplete="off" spellcheck="false" />
                     <label for="Password">Password</label>
                     <span asp-validation-for="Password" class="red-text right"></span>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col l4 m12 s12 offset-l4">
-                    <button type="submit" class="btn waves-effect waves-light right green darken-1" style="width: 100%"><i class="material-icons left">send</i><span class="left">log in with password</span></button>
-                </div>
-            </div>
-
-            <div class="row" style="margin-top: 1%;">
-                <div class="col l6 offset-l3">
-                    <div class="progress" style="height: 1px;">
-                        <div class="determinate blue-grey darken-1" style="width: 100%;"></div>
+                    <div class="col l6 offset-l1">
+                        <label>
+                            <input id="show-password" type="checkbox" />
+                            <span>Show password</span>
+                        </label>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col l4 offset-l4">
-                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Facebook" class="btn waves-effect waves-light facebook"><i class="fab fa-facebook left"></i> <span class="left">sign in with facebook</span></a>
+
+            <div class="row" style="margin-top: 3%;">
+                <div class="col l6 m12 s12 offset-l3">
+                    <a href="#">Forgot password?</a>
+                    <button type="submit" class="btn waves-effect waves-light right green darken-1"><i class="material-icons left">send</i><span class="left">log in</span></button>
                 </div>
             </div>
-            <div class="row" style="margin-top: 1%;">
-                <div class="col l4 offset-l4">
+
+            <div class="row" style="margin-top: 10%;">
+                <div class="col l4 offset-l2">
+                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Facebook" class="btn waves-effect waves-light facebook"><i class="fab fa-facebook left"></i> <span class="left">sign in with facebook</span></a>
+                </div>
+
+                <div class="col l4">
                     <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Google" class="btn waves-effect waves-light google"><i class="fab fa-google left"></i> <span class="left">sign in with google</span></a>
                 </div>
             </div>
+
             <div class="row" style="margin-top: 1%;">
-                <div class="col l4 offset-l4">
+                <div class="col l4 offset-l2">
                     <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="GitHub" class="btn waves-effect waves-light github"><i class="fab fa-github left"></i> <span class="left">sign in with github</span></a>
                 </div>
-            </div>
-            <div class="row" style="margin-top: 1%;">
-                <div class="col l4 offset-l4">
+
+                <div class="col l4">
                     <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Microsoft" class="btn waves-effect waves-light microsoft"><i class="fab fa-microsoft left"></i> <span class="left">sign in with microsoft</span></a>
                 </div>
             </div>
@@ -122,11 +121,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        $('#signin-failed').click(function () {
-            showAlert('Sign in failed', $(this).attr('data-errorMessage'), false, 'OK');
-        });
-
-        $('#signin-failed').trigger('click');
-    </script>
+    <script src="/js/Account/signIn.js"></script>
 }
