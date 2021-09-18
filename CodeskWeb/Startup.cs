@@ -60,6 +60,7 @@ namespace CodeskWeb
                     options.UserInformationEndpoint = "https://api.github.com/user";
                     options.SaveTokens = true;
                     options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
                     options.Events = new OAuthEvents
                     {
                         OnCreatingTicket = async context =>
@@ -81,6 +82,16 @@ namespace CodeskWeb
                 });
 
             services.AddAutoMapper(typeof(Startup));
+
+            services
+                .AddFluentEmail(Configuration["EmailSettings:Sender"])
+                .AddRazorRenderer()
+                .AddSmtpSender(
+                    Configuration["EmailSettings:Host"],
+                    int.Parse(Configuration["EmailSettings:Port"]),
+                    Configuration["EmailSettings:Username"],
+                    Configuration["EmailSettings:Password"]
+                );
 
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
         }
