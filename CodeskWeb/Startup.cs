@@ -38,7 +38,7 @@ namespace CodeskWeb
                     options.Cookie.IsEssential = true;
                     options.Cookie.Name = "Codesk.AuthCookieAspNetCore";
                     options.LoginPath = "/Users/Account/SignIn";
-                    options.LogoutPath = "/Users/Account/SignOut";
+                    options.LogoutPath = "/Users/Account/Logout";
                 })
                 .AddFacebook(FacebookDefaults.AuthenticationScheme, options =>
                 {
