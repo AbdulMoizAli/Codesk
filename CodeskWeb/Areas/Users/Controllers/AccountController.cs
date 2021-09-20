@@ -2,9 +2,11 @@
 using CodeskLibrary.DataAccess;
 using CodeskLibrary.Models;
 using CodeskWeb.Areas.Users.Models;
+using FluentEmail.Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -18,9 +20,15 @@ namespace CodeskWeb.Areas.Users.Controllers
     {
         private readonly IMapper _mapper;
 
-        public AccountController(IMapper mapper)
+        private readonly IFluentEmail _email;
+
+        private readonly IWebHostEnvironment _env;
+
+        public AccountController(IMapper mapper, IFluentEmail email, IWebHostEnvironment env)
         {
             _mapper = mapper;
+            _email = email;
+            _env = env;
         }
 
         public IActionResult SignIn()
@@ -160,6 +168,57 @@ namespace CodeskWeb.Areas.Users.Controllers
                 .ConfigureAwait(false);
 
             return RedirectToAction("Index", "Home", new { Area = "" });
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var token = await AccountManager.GetForgotPasswordToken(model.EmailAddress)
+                .ConfigureAwait(false);
+
+            if (token != null)
+            {
+                var passwordResetLink = Url.Action("ResetPassword", "Account", new { Area = "Users", token }, Request.Scheme);
+
+                var templateFilePath = $"{_env.ContentRootPath}\\EmailTemplates\\PasswordReset.cshtml";
+
+                await _email
+                    .To(model.EmailAddress)
+                    .Subject("Password Reset - Codesk")
+                    .UsingTemplateFromFile(templateFilePath, new { Link = passwordResetLink }, true)
+                    .SendAsync()
+                    .ConfigureAwait(false);
+            }
+
+            return View("ForgotPasswordResponse");
+        }
+
+        public IActionResult ResetPassword(string token)
+        {
+            var model = new ResetPasswordViewModel { Token = token };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            await AccountManager.ResetPassword(model.Password, model.Token).ConfigureAwait(false);
+
+            return RedirectToAction("SignIn", "Account", new { Area = "Users" });
         }
     }
 }
