@@ -20,6 +20,8 @@ namespace CodeskLibrary.Models
 
         public bool EmailConfirmed { get; set; }
 
+        public Guid ForgotPasswordToken { get; set; }
+
         public string FullName => $"{FirstName} {LastName}";
     }
 }
