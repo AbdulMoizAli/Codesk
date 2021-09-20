@@ -1,6 +1,7 @@
 ﻿using CodeskLibrary.Connections;
 using CodeskLibrary.Models;
 using Dapper;
+using System;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -54,6 +55,22 @@ namespace CodeskLibrary.DataAccess
             using IDbConnection db = DbConnection.GetConnection();
 
             return await db.ExecuteScalarAsync<bool>("spValidateUserName", new { userName }, commandType: CommandType.StoredProcedure)
+                .ConfigureAwait(false);
+        }
+
+        public static async Task<Guid?> GetForgotPasswordToken(string emailAddress)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            return await db.ExecuteScalarAsync<Guid?>("spGetForgotPasswordToken", new { emailAddress }, commandType: CommandType.StoredProcedure)
+                .ConfigureAwait(false);
+        }
+
+        public static async Task ResetPassword(string passwordText, string token)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            await db.ExecuteAsync("spResetPassword", new { passwordText, token }, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false);
         }
     }
