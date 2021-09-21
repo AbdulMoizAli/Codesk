@@ -3,6 +3,7 @@ using CodeskLibrary.DataAccess;
 using CodeskLibrary.Models;
 using CodeskWeb.Areas.Users.Models;
 using FluentEmail.Core;
+using GoogleReCaptcha.V3.Interface;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -24,11 +25,14 @@ namespace CodeskWeb.Areas.Users.Controllers
 
         private readonly IWebHostEnvironment _env;
 
-        public AccountController(IMapper mapper, IFluentEmail email, IWebHostEnvironment env)
+        private readonly ICaptchaValidator _captchaValidator;
+
+        public AccountController(IMapper mapper, IFluentEmail email, IWebHostEnvironment env, ICaptchaValidator captchaValidator)
         {
             _mapper = mapper;
             _email = email;
             _env = env;
+            _captchaValidator = captchaValidator;
         }
 
         public IActionResult SignIn()
@@ -134,8 +138,14 @@ namespace CodeskWeb.Areas.Users.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp(SignUpViewModel model)
+        public async Task<IActionResult> SignUp(SignUpViewModel model, string captcha)
         {
+            if (!await _captchaValidator.IsCaptchaPassedAsync(captcha).ConfigureAwait(false))
+            {
+                ModelState.AddModelError("captcha", "Captcha validation failed");
+                return View(model);
+            }
+
             if (!ModelState.IsValid)
                 return View(model);
 
