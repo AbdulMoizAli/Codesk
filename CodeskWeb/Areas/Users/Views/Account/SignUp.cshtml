@@ -1,4 +1,6 @@
-﻿@model SignUpViewModel
+﻿@inject IConfiguration Configuration
+
+@model SignUpViewModel
 
 @{
     ViewData["Title"] = "Sign up";
@@ -6,6 +8,9 @@
 
 <div class="row valign-wrapper">
     <form asp-area="Users" asp-controller="Account" asp-action="SignUp" method="post" class="col l6 m8 s12 offset-l3 offset-m2">
+
+        <input type="hidden" name="captcha" id="captchaInput" />
+
         <div class="row">
             <div class="col l6 m8 s12 offset-l4">
                 <img class="animate__animated animate__fadeIn" src="/images/create-account.svg" height="200" width="200" />
@@ -79,4 +84,12 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://www.google.com/recaptcha/api.js?render=@Configuration["GoogleReCaptcha:SiteKey"]"></script>
+    <script>
+        grecaptcha.ready(function() {
+            window.grecaptcha.execute('@Configuration["GoogleReCaptcha:SiteKey"]', { action: 'home' }).then(function (token) {
+                $("#captchaInput").val(token);
+            });
+        });
+    </script>
 }
