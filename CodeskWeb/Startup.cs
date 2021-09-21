@@ -1,3 +1,5 @@
+using GoogleReCaptcha.V3;
+using GoogleReCaptcha.V3.Interface;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Facebook;
@@ -92,6 +94,8 @@ namespace CodeskWeb
                     Configuration["EmailSettings:Username"],
                     Configuration["EmailSettings:Password"]
                 );
+
+            services.AddHttpClient<ICaptchaValidator, GoogleReCaptchaValidator>();
 
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
         }
