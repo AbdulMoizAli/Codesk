@@ -59,7 +59,7 @@
 <div class="row valign-wrapper">
     <form asp-area="Users" asp-controller="Account" asp-action="SignIn" asp-route-returnUrl="@returnUrl" method="post" class="col l6 m8 s12 offset-l3 offset-m2">
         <div class="row">
-            <div class="col l6 m8 s12 offset-l4">
+            <div class="col l6 m8 s12 offset-l4 offset-s2">
                 <img class="animate__animated animate__fadeIn" src="/images/login.svg" height="200" width="200" />
             </div>
         </div>
@@ -97,21 +97,23 @@
             </div>
 
             <div class="row" style="margin-top: 10%;">
-                <div class="col l4 offset-l2">
+                <div class="col l4 offset-l2 offset-s1 s10">
                     <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Facebook" class="btn waves-effect waves-light facebook"><i class="fab fa-facebook left"></i> <span class="left">sign in with facebook</span></a>
                 </div>
 
-                <div class="col l4">
+                <div class="col l4 offset-s1 s10">
+                    <div class="hide-on-med-and-up" style="margin-top: 1%;"></div>
                     <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Google" class="btn waves-effect waves-light google"><i class="fab fa-google left"></i> <span class="left">sign in with google</span></a>
                 </div>
             </div>
 
             <div class="row" style="margin-top: 1%;">
-                <div class="col l4 offset-l2">
+                <div class="col l4 offset-l2 offset-s1 s10">
                     <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="GitHub" class="btn waves-effect waves-light github"><i class="fab fa-github left"></i> <span class="left">sign in with github</span></a>
                 </div>
 
-                <div class="col l4">
+                <div class="col l4 offset-s1 s10">
+                    <div class="hide-on-med-and-up" style="margin-top: 1%;"></div>
                     <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Microsoft" class="btn waves-effect waves-light microsoft"><i class="fab fa-microsoft left"></i> <span class="left">sign in with microsoft</span></a>
                 </div>
             </div>

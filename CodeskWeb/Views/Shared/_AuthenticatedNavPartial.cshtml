@@ -20,6 +20,34 @@
     <li><a class="dropdown-trigger" data-target="user-actions"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">arrow_drop_down</i></a></li>
 </ul>
 
+<ul class="sidenav" id="mobile-nav">
+    <li style="margin-top: 5%;">
+        <center>
+            <a asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/favicon.ico" height="50" width="50" />
+            </a>
+        </center>
+    </li>
+    <li>
+        <div class="progress" style="height: 2px;">
+            <div class="determinate grey lighten-4" style="width: 100%;"></div>
+        </div>
+    </li>
+    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "Dashboard" ? "active" : "")">
+        <a asp-area="WorkSpace" asp-controller="Session" asp-action="Dashboard"><i class="material-icons left">dashboard</i>Dashboard</a>
+    </li>
+    @if (isConfirmed)
+    {
+        <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "NewSession" ? "active" : "")">
+            <a asp-area="WorkSpace" asp-controller="Session" asp-action="NewSession"><i class="material-icons left">add_box</i>New Session</a>
+        </li>
+    }
+    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "JoinSession" ? "active" : "")">
+        <a asp-area="WorkSpace" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
+    </li>
+    <li><a class="dropdown-trigger" data-target="user-actions"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">arrow_drop_down</i></a></li>
+</ul>
+
 <ul id="user-actions" class="dropdown-content">
     <li><a>Profile</a></li>
     <li><a>Settings</a></li>
