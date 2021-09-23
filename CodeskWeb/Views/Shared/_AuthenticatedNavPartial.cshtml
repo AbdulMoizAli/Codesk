@@ -17,7 +17,7 @@
     <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "JoinSession" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
     </li>
-    <li><a class="dropdown-trigger" data-target="user-actions"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">arrow_drop_down</i></a></li>
+    <li><a class="dropdown-trigger" data-target="user-actions-lg"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">arrow_drop_down</i></a></li>
 </ul>
 
 <ul class="sidenav" id="mobile-nav">
@@ -45,10 +45,17 @@
     <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "JoinSession" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
     </li>
-    <li><a class="dropdown-trigger" data-target="user-actions"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">arrow_drop_down</i></a></li>
+    <li><a class="dropdown-trigger" data-target="user-actions-sm"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">arrow_drop_down</i></a></li>
 </ul>
 
-<ul id="user-actions" class="dropdown-content">
+<ul id="user-actions-sm" class="dropdown-content">
+    <li><a>Profile</a></li>
+    <li><a>Settings</a></li>
+    <li class="divider" tabindex="-1"></li>
+    <li><a onclick="$('#logout').submit()">Sign out</a></li>
+</ul>
+
+<ul id="user-actions-lg" class="dropdown-content">
     <li><a>Profile</a></li>
     <li><a>Settings</a></li>
     <li class="divider" tabindex="-1"></li>
