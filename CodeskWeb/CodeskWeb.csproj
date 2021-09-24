@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\lib\jquery-validation\**" />
+    <Content Remove="wwwroot\lib\jquery-validation\**" />
+    <EmbeddedResource Remove="wwwroot\lib\jquery-validation\**" />
+    <None Remove="wwwroot\lib\jquery-validation\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="FluentEmail.Core" Version="3.0.0" />
     <PackageReference Include="FluentEmail.Razor" Version="3.0.0" />
@@ -24,6 +31,10 @@
 
   <ItemGroup>
     <Folder Include="Areas\WorkSpace\Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\lib\materialize\js\materialize.min.js" />
   </ItemGroup>
 
 </Project>
