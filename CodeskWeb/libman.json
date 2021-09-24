@@ -30,6 +30,15 @@
         "css/materialize.min.css",
         "js/materialize.min.js"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@dmuy/dialog@1.1.3",
+      "destination": "wwwroot/lib/du-dialog",
+      "files": [
+        "dist/duDialog.min.css",
+        "dist/duDialog.min.js"
+      ]
     }
   ]
 }
