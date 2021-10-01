@@ -1,8 +1,182 @@
-﻿
+﻿@model SessionViewModel
+
 @{
     ViewData["Title"] = "Session";
 }
 
-<center>
-    <h1>New Session</h1>
-</center>
+@section Styles {
+    <link rel="stylesheet" href="/css/session/session.css" />
+}
+
+<!--========================== Participants list and Actions panel ==============================================-->
+<ul id="actions-panel" class="sidenav sidenav-fixed animate__animated animate__fadeIn">
+    <li><a class="subheader"><i class="material-icons grey-text">people</i>Participants</a></li>
+
+    <li class="search-participant">
+        <div class="input-field">
+            <input id="participant-search" placeholder="Search" type="search" spellcheck="false" autocomplete="off">
+        </div>
+    </li>
+
+    <li>
+        <div class="participant-list">
+            <ul>
+                <li class="participant"><a class="blue-text">Tahoor Ali</a></li>
+                <li class="participant"><a class="blue-text">Mohammad Yousuf</a></li>
+                <li class="participant"><a class="blue-text">Mirza Asad</a></li>
+                <li class="participant"><a class="blue-text">Aqeel Yousuf</a></li>
+                <li class="participant"><a class="blue-text">Syed Shahroz</a></li>
+            </ul>
+        </div>
+    </li>
+
+    <li><div class="divider"></div></li>
+    
+    <li><a class="subheader">Actions</a></li>
+
+    <li>
+        <div class="actions-list">
+            <ul>
+                <li><a class="waves-effect"><i class="material-icons">play_circle_filled</i>Run</a></li>
+                <li><a class="waves-effect"><i class="material-icons">share</i>Share</a></li>
+                <li><a class="waves-effect"><i class="material-icons">chat</i>Chat</a></li>
+                <li><a class="waves-effect"><i class="material-icons">file_download</i>Download</a></li>
+                <li><a class="waves-effect modal-trigger" href="#settings-modal"><i class="material-icons">settings</i>Settings</a></li>
+            </ul>
+        </div>
+    </li>
+</ul>
+<!--=============================================================================================================-->
+
+<!--======================= Code Editor ===============================-->
+<div class="animate__animated animate__fadeIn" id="code-editor"></div>
+<!--===================================================================-->
+
+<!--================================= Video call panel =====================================================-->
+<ul id="video-panel" class="sidenav sidenav-fixed animate__animated animate__fadeIn">
+    <li><a class="subheader"><i class="material-icons grey-text">video_call</i>Video Call</a></li>
+
+    <li>
+        <div class="video-list">
+            <ul>
+                <li class="video-item">
+                    <div class="video-box"></div>
+                </li>
+
+                <li class="video-item">
+                    <div class="video-box"></div>
+                </li>
+
+                <li class="video-item">
+                    <div class="video-box"></div>
+                </li>
+
+                <li class="video-item">
+                    <div class="video-box"></div>
+                </li>
+            </ul>
+        </div>
+    </li>
+</ul>
+<!--========================================================================================================-->
+
+<!--============================ Settings Modal =========================================-->
+<div id="settings-modal" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <h4 class="grey-text">Editor Settings</h4>
+
+        <br />
+
+        <div class="row">
+            <div class="col l6">
+                <div class="input-field">
+                    <input type="text" id="language-input" class="autocomplete" autocomplete="off" spellcheck="false" value="plaintext">
+                    <label for="language-input">Language</label>
+                </div>
+            </div>
+
+            <div class="col l6">
+                <div class="input-field">
+                    <select id="theme-select" asp-items="@(new SelectList(Model.Themes, "OptionValue", "OptionText"))">
+                    </select>
+                    <label>Theme</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col l6">
+                <div class="input-field">
+                    <select id="cursor-select" asp-items="@(new SelectList(Model.GetCursorStyles(), "OptionValue", "OptionText"))">
+                    </select>
+                    <label>Cursor Style</label>
+                </div>
+            </div>
+            <div class="col l6">
+                <div class="input-field">
+                    <select id="blinking-select" asp-items="@(new SelectList(Model.GetCursorBlinking(), "OptionValue", "OptionText"))">
+                    </select>
+                    <label>Cursor Blinking</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col l6">
+                <div class="input-field">
+                    <select id="font-weight-select" asp-items="@(new SelectList(Model.GetFontWeight(), "OptionValue", "OptionText"))">
+                    </select>
+                    <label>Font Weight</label>
+                </div>
+            </div>
+
+            <div class="col l6">
+                <div class="input-field">
+                    <input id="font-size-input" type="number" />
+                    <label for="font-size-input">Font Size</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col l6">
+                <div class="input-field">
+                    <input id="tab-size-input" type="number" />
+                    <label for="tab-size-input">Tab Size</label>
+                </div>
+            </div>
+
+            <div class="col l6">
+                <div class="row">
+                    <div class="col l6">
+                        <div class="switch input-field">
+                            <label>
+                                Line Numbers
+                                <input id="line-numbers-switch" type="checkbox" checked>
+                                <span class="lever"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col l6">
+                        <div class="switch input-field">
+                            <label>
+                                Word Wrap
+                                <input id="word-wrap-switch" type="checkbox">
+                                <span class="lever"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="modal-close waves-effect waves-light btn-flat">Close</a>
+    </div>
+</div>
+<!--====================================================================================-->
+
+@section Scripts {
+    <partial name="_SessionScriptsPartial" />
+}
