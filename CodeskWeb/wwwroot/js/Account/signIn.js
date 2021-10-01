@@ -6,12 +6,11 @@
     $('#signin-failed').trigger('click');
 
     $('#show-password').change(function () {
-        const current = $(this);
-        const password = $('#Password');
+        const $password = $('#Password');
 
-        if (current.is(':checked'))
-            password.attr('type', 'text');
+        if ($(this).is(':checked'))
+            $password.attr('type', 'text');
         else
-            password.attr('type', 'password');
+            $password.attr('type', 'password');
     })
 });
