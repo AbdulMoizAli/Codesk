@@ -1,4 +1,5 @@
 ﻿using CodeskLibrary.DataAccess;
+using CodeskWeb.Areas.WorkSpace.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -19,10 +20,12 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
 
             var result = await EmailManager.IsEmailConfirmed(email).ConfigureAwait(false);
 
-            if (result)
-                return View();
+            if (!result)
+                return RedirectToAction("Dashboard", "Session", new { Area = "WorkSpace" });
 
-            return RedirectToAction("Dashboard", "Session", new { Area = "WorkSpace" });
+            var data = await SessionManager.GetEditorSettings().ConfigureAwait(false);
+
+            return View(new SessionViewModel { Settings = data.Item1, Themes = data.Item2 });
         }
 
         [AllowAnonymous]
