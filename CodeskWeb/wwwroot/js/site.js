@@ -2,6 +2,8 @@
     $('.tooltipped').tooltip();
     $('.dropdown-trigger').dropdown();
     $('.sidenav').sidenav();
+    $('.modal').modal();
+    $('select').formSelect();
 });
 
 function showAlert(title = null, message, dark, okText) {
