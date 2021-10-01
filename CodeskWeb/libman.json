@@ -39,6 +39,10 @@
         "dist/duDialog.min.css",
         "dist/duDialog.min.js"
       ]
+    },
+    {
+      "library": "monaco-editor@0.28.1",
+      "destination": "wwwroot/lib/monaco-editor/"
     }
   ]
 }

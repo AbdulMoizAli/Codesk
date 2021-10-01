@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\WorkSpace\Models\" />
+    <Folder Include="wwwroot\assets\session\languages\logos\" />
   </ItemGroup>
 
   <ItemGroup>
