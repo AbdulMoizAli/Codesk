@@ -5,7 +5,7 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="/css/session/session.css" />
+    <link rel="stylesheet" href="~/css/session/session.css" />
 }
 
 <!--========================== Participants list and Actions panel ==============================================-->
@@ -31,7 +31,7 @@
     </li>
 
     <li><div class="divider"></div></li>
-    
+
     <li><a class="subheader">Actions</a></li>
 
     <li>
@@ -47,11 +47,9 @@
     </li>
 </ul>
 <!--=============================================================================================================-->
-
 <!--======================= Code Editor ===============================-->
 <div class="animate__animated animate__fadeIn" id="code-editor"></div>
 <!--===================================================================-->
-
 <!--================================= Video call panel =====================================================-->
 <ul id="video-panel" class="sidenav sidenav-fixed animate__animated animate__fadeIn">
     <li><a class="subheader"><i class="material-icons grey-text">video_call</i>Video Call</a></li>
@@ -79,7 +77,6 @@
     </li>
 </ul>
 <!--========================================================================================================-->
-
 <!--============================ Settings Modal =========================================-->
 <div id="settings-modal" class="modal modal-fixed-footer">
     <div class="modal-content">
@@ -97,7 +94,18 @@
 
             <div class="col l6">
                 <div class="input-field">
-                    <select id="theme-select" asp-items="@(new SelectList(Model.Themes, "OptionValue", "OptionText"))">
+                    <select id="theme-select" data-setting-id="2">
+                        @foreach (var item in Model.Themes)
+                        {
+                            if (Model.IsSelected(2, item.OptionValue))
+                            {
+                                <option data-stylesheet-path="@item.StyleSheetPath" value="@item.OptionValue" selected>@item.OptionText</option>
+                            }
+                            else
+                            {
+                                <option data-stylesheet-path="@item.StyleSheetPath" value="@item.OptionValue">@item.OptionText</option>
+                            }
+                        }
                     </select>
                     <label>Theme</label>
                 </div>
@@ -107,14 +115,14 @@
         <div class="row">
             <div class="col l6">
                 <div class="input-field">
-                    <select id="cursor-select" asp-items="@(new SelectList(Model.GetCursorStyles(), "OptionValue", "OptionText"))">
+                    <select id="cursor-select" data-setting-id="3" asp-items="@(Model.GetCursorStyles().Select(x => new SelectListItem(x.OptionText, x.OptionValue, Model.IsSelected(3, x.OptionValue))))">
                     </select>
                     <label>Cursor Style</label>
                 </div>
             </div>
             <div class="col l6">
                 <div class="input-field">
-                    <select id="blinking-select" asp-items="@(new SelectList(Model.GetCursorBlinking(), "OptionValue", "OptionText"))">
+                    <select id="blinking-select" data-setting-id="4" asp-items="@(Model.GetCursorBlinking().Select(x => new SelectListItem(x.OptionText, x.OptionValue, Model.IsSelected(4, x.OptionValue))))">
                     </select>
                     <label>Cursor Blinking</label>
                 </div>
@@ -124,7 +132,7 @@
         <div class="row">
             <div class="col l6">
                 <div class="input-field">
-                    <select id="font-weight-select" asp-items="@(new SelectList(Model.GetFontWeight(), "OptionValue", "OptionText"))">
+                    <select id="font-weight-select" data-setting-id="5" asp-items="@(Model.GetFontWeight().Select(x => new SelectListItem(x.OptionText, x.OptionValue, Model.IsSelected(5, x.OptionValue))))">
                     </select>
                     <label>Font Weight</label>
                 </div>
@@ -132,7 +140,7 @@
 
             <div class="col l6">
                 <div class="input-field">
-                    <input id="font-size-input" type="number" />
+                    <input data-setting-id="6" id="font-size-input" type="number" value="@Model.GetSettingValue(6)" />
                     <label for="font-size-input">Font Size</label>
                 </div>
             </div>
@@ -141,7 +149,7 @@
         <div class="row">
             <div class="col l6">
                 <div class="input-field">
-                    <input id="tab-size-input" type="number" />
+                    <input data-setting-id="7" id="tab-size-input" type="number" value="@Model.GetSettingValue(7)" />
                     <label for="tab-size-input">Tab Size</label>
                 </div>
             </div>
@@ -152,7 +160,16 @@
                         <div class="switch input-field">
                             <label>
                                 Line Numbers
-                                <input id="line-numbers-switch" type="checkbox" checked>
+
+                                @if (Model.IsChecked(8))
+                                {
+                                    <input data-setting-id="8" id="line-numbers-switch" type="checkbox" checked>
+                                }
+                                else
+                                {
+                                    <input data-setting-id="8" id="line-numbers-switch" type="checkbox">
+                                }
+
                                 <span class="lever"></span>
                             </label>
                         </div>
@@ -162,7 +179,16 @@
                         <div class="switch input-field">
                             <label>
                                 Word Wrap
-                                <input id="word-wrap-switch" type="checkbox">
+
+                                @if (Model.IsChecked(9))
+                                {
+                                    <input data-setting-id="9" id="word-wrap-switch" type="checkbox" checked>
+                                }
+                                else
+                                {
+                                    <input data-setting-id="9" id="word-wrap-switch" type="checkbox">
+                                }
+
                                 <span class="lever"></span>
                             </label>
                         </div>
