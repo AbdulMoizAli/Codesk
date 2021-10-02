@@ -9,11 +9,11 @@ namespace CodeskLibrary.DataAccess
 {
     public static class SessionManager
     {
-        public static async Task<(IEnumerable<EditorSettingValues>, IEnumerable<EditorTheme>)> GetEditorSettings()
+        public static async Task<(IEnumerable<EditorSettingValues>, IEnumerable<EditorTheme>, IEnumerable<EditorSetting>)> GetEditorSettings(string emailAddress)
         {
             using IDbConnection db = DbConnection.GetConnection();
 
-            using var reader = await db.QueryMultipleAsync("spGetEditorSettings", commandType: CommandType.StoredProcedure)
+            using var reader = await db.QueryMultipleAsync("spGetEditorSettings", new { emailAddress }, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false);
 
             var editorSettings = reader.Read<EditorSettingValues, EditorSetting, EditorSettingValues>(
@@ -25,7 +25,17 @@ namespace CodeskLibrary.DataAccess
 
             var editorThemes = reader.Read<EditorTheme>();
 
-            return (editorSettings, editorThemes);
+            var userSettings = reader.Read<EditorSetting>();
+
+            return (editorSettings, editorThemes, userSettings);
+        }
+
+        public static async Task SaveUserEditorSetting(string emailAddress, int settingId, string settingValue)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            await db.ExecuteAsync("spSaveUserEditorSetting", new { emailAddress, settingId, settingValue }, commandType: CommandType.StoredProcedure)
+                .ConfigureAwait(false);
         }
     }
 }
