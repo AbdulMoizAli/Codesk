@@ -2,7 +2,12 @@
     $('.tooltipped').tooltip();
     $('.dropdown-trigger').dropdown();
     $('.sidenav').sidenav();
-    $('.modal').modal();
+    $('.modal').modal({
+        dismissible: false,
+        onOpenEnd: () => {
+            $('#language-input').focus();
+        }
+    });
     $('select').formSelect();
 });
 
