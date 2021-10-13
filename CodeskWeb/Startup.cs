@@ -16,6 +16,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using CodeskWeb.Hubs;
 
 namespace CodeskWeb
 {
@@ -97,6 +98,8 @@ namespace CodeskWeb
 
             services.AddHttpClient<ICaptchaValidator, GoogleReCaptchaValidator>();
 
+            services.AddSignalR();
+
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
         }
 
@@ -132,6 +135,8 @@ namespace CodeskWeb
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapHub<SessionHub>("/sessionHub");
             });
         }
     }
