@@ -15,12 +15,6 @@ namespace CodeskWeb.Areas.Users.Models
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Minimum 2 letters, Maximum 50 letters")]
         public string LastName { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Please enter a user name")]
-        [RegularExpression("^[a-zA-Z0-9_.-]+$", ErrorMessage = "User name can only have letters, digits, '_', '.' and '-'")]
-        [StringLength(50, MinimumLength = 5, ErrorMessage = "Minimum 5 characters, Maximum 50 characters")]
-        [Remote("ValidateUserName", "Account", "Users", ErrorMessage = "Username is already taken")]
-        public string UserName { get; set; }
-
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please enter an email address")]
         [EmailAddress(ErrorMessage = "Email address is not valid")]
         [MaxLength(256, ErrorMessage = "Email address is too long, minimum 256 characters")]

@@ -53,20 +53,11 @@ namespace CodeskWeb.Areas.Users.Controllers
             return Json(result);
         }
 
-        public async Task<IActionResult> ValidateUserName(string userName)
-        {
-            var result = await AccountManager.IsUniqueUserName(userName)
-                .ConfigureAwait(false);
-
-            return Json(result);
-        }
-
         private async Task<ActionResult> AuthorizeUser(User user, string url)
         {
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Name, user.FullName),
-                new(ClaimTypes.GivenName, user.UserName),
                 new(ClaimTypes.Email, user.EmailAddress)
             };
 
@@ -155,12 +146,6 @@ namespace CodeskWeb.Areas.Users.Controllers
                 .ConfigureAwait(false);
 
             if (response == -1)
-            {
-                ModelState.AddModelError("UserName", "User name is already taken");
-                return View(model);
-            }
-
-            if (response == -2)
             {
                 ModelState.AddModelError("EmailAddress", "Email address is already taken");
                 return View(model);
