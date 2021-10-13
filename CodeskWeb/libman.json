@@ -43,6 +43,15 @@
     {
       "library": "monaco-editor@0.28.1",
       "destination": "wwwroot/lib/monaco-editor/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/lib/signalr/",
+      "files": [
+        "dist/browser/signalr.js",
+        "dist/browser/signalr.min.js"
+      ]
     }
   ]
 }
