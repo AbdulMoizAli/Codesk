@@ -13,6 +13,8 @@ namespace CodeskWeb.Areas.WorkSpace.Models
 
         public IEnumerable<EditorSetting> UserSettings { get; set; }
 
+        public JoinSessionViewModel JoinSession { get; set; }
+
         public IEnumerable<EditorSettingValues> GetCursorStyles()
         {
             return Settings
