@@ -15,7 +15,6 @@ namespace CodeskLibrary.DataAccess
             {
                 user.FirstName,
                 user.LastName,
-                user.UserName,
                 user.EmailAddress,
                 user.PasswordText
             };
@@ -47,14 +46,6 @@ namespace CodeskLibrary.DataAccess
             using IDbConnection db = DbConnection.GetConnection();
 
             return await db.ExecuteScalarAsync<bool>("spValidateEmailAddress", new { emailAddress }, commandType: CommandType.StoredProcedure)
-                .ConfigureAwait(false);
-        }
-
-        public static async Task<bool> IsUniqueUserName(string userName)
-        {
-            using IDbConnection db = DbConnection.GetConnection();
-
-            return await db.ExecuteScalarAsync<bool>("spValidateUserName", new { userName }, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false);
         }
 
