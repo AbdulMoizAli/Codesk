@@ -1,45 +1,80 @@
 ﻿$(document).ready(() => {
-    $('#video-panel').sidenav({ edge: 'right' });
+    (async () => {
+        $('#video-panel').sidenav({ edge: 'right' });
 
-    $('#settings-modal').modal({
-        dismissible: false,
-        onOpenEnd: () => $('#language-input').focus()
-    });
+        const sessionUsers = [];
+        let sessionKey = '';
 
-    const users = [];
+        $('#participant-search').keyup(function () {
+            const query = $(this).val().trim().toLowerCase();
 
-    $('.participant').each(function () {
-        const name = $(this).find('a').text();
-        users.push(name);
-    });
+            if (!query) {
+                showUsers(sessionUsers);
+                return;
+            }
 
-    $('#participant-search').keyup(function () {
-        const query = $(this).val().trim().toLowerCase();
+            const filteredUsers = sessionUsers.filter(name => name.toLowerCase().includes(query));
 
-        if (!query) {
-            showUsers(users);
-            return;
+            showUsers(filteredUsers);
+        });
+
+        function showUsers(users) {
+            const $list = $('.participant-list ul');
+
+            if (users.length === 0) {
+                $list.html('<li class="participant center"><a class="blue-grey-text">No Participant</a></li>');
+                return;
+            }
+
+            let markup = '';
+
+            for (const user of users) {
+                markup += `<li class="participant"><a class="blue-text">${user}</a></li>`;
+            }
+
+            $list.html(markup);
         }
 
-        const filteredUsers = users.filter(name => name.toLowerCase().includes(query));
-
-        showUsers(filteredUsers);
-    });
-
-    function showUsers(users) {
-        const $list = $('.participant-list ul');
-
-        if (users.length === 0) {
-            $list.html('<li class="participant center"><a class="blue-grey-text">No Participant</a></li>');
-            return;
+        function addUser(userName) {
+            sessionUsers.push(userName);
+            $('.participant-list ul').append(`<li class="participant"><a class="blue-text">${userName}</a></li>`);
         }
 
-        let markup = '';
+        const connection = new signalR.HubConnectionBuilder().withUrl('/sessionHub').build();
 
-        for (const user of users) {
-            markup += `<li class="participant"><a class="blue-text">${user}</a></li>`;
+        connection.on('ReceiveNewSessionInfo', (userName, _sessionKey) => {
+            sessionKey = _sessionKey;
+            addUser(userName);
+
+            $('#session-key-chip').text(_sessionKey);
+        });
+
+        connection.on('ReceiveJoinSessionInfo', userNames => {
+            sessionUsers = userNames;
+            showUsers(userNames);
+        });
+
+        connection.on('AddNewUserName', userName => {
+            addUser(userName);
+        });
+
+        connection.on('NotifyUser', notification => {
+            M.toast({ html: notification })
+        });
+
+        await connection.start();
+
+        if ($('#session-type').attr('data-type') === 'new') {
+            await connection.invoke('CreateSession');
         }
+        else if ($('#session-type').attr('data-type') === 'join') {
+            const userName = $('#session-username').val();
+            const _sessionKey = $('#session-key').val();
 
-        $list.html(markup);
-    }
+            sessionKey = _sessionKey;
+            $('#session-key-chip').text(_sessionKey);
+
+            await connection.invoke('JoinSession', userName, _sessionKey);
+        }
+    })();
 });
