@@ -1,0 +1,21 @@
+﻿@model SessionViewModel
+
+@{
+    ViewData["Title"] = "Session";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/session/session.css" />
+}
+
+<a hidden id="session-type" data-type="join"></a>
+
+<input hidden id="session-username" type="text" value="@Model.JoinSession.UserName" />
+
+<input hidden id="session-key" type="text" value="@Model.JoinSession.SessionKey" />
+
+<partial name="_SessionMarkupPartial" model="Model" />
+
+@section Scripts {
+    <partial name="_SessionScriptsPartial" />
+}
