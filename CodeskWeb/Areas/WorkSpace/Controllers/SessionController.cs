@@ -1,5 +1,6 @@
 ﻿using CodeskLibrary.DataAccess;
 using CodeskWeb.Areas.WorkSpace.Models;
+using CodeskWeb.HubModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -28,6 +29,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             return View(new SessionViewModel { Settings = data.Item1, Themes = data.Item2, UserSettings = data.Item3 });
         }
 
+        [HttpPost]
         public async Task<IActionResult> SaveUserEditorSetting(int settingId, string settingValue)
         {
             var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
@@ -40,7 +42,44 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
         [AllowAnonymous]
         public IActionResult JoinSession()
         {
-            return View();
+            var model = new JoinSessionViewModel();
+
+            if (User.Identity.IsAuthenticated)
+                model.UserName = User.Identity.Name;
+
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> JoinSession(JoinSessionViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            if (!SessionInformation.SessionInfo.ContainsKey(model.SessionKey))
+            {
+                ModelState.AddModelError("SessionKey", "Invalid session key");
+                return View(model);
+            }
+
+            string email = null;
+
+            if (User.Identity.IsAuthenticated)
+                email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+
+            var data = await SessionManager.GetEditorSettings(email).ConfigureAwait(false);
+
+            var viewModel = new SessionViewModel
+            {
+                Settings = data.Item1,
+                Themes = data.Item2,
+                UserSettings = data.Item3,
+                JoinSession = model
+            };
+
+            return View("_JoinSession", viewModel);
         }
     }
 }
