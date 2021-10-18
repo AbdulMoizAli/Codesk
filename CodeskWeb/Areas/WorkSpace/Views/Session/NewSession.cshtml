@@ -2,13 +2,16 @@
 
 @{
     ViewData["Title"] = "Session";
+    var flag = User.Identity.IsAuthenticated ? "yes" : "no";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/session/session.css" />
 }
 
-<a hidden id="session-type" data-type="new"></a>
+<input hidden id="session-type" value="new" />
+
+<input hidden id="user-authenticated" value="@flag" />
 
 <partial name="_SessionMarkupPartial" model="Model" />
 
