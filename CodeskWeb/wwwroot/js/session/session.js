@@ -2,8 +2,15 @@
     (async () => {
         $('#video-panel').sidenav({ edge: 'right' });
 
-        const sessionUsers = [];
-        let sessionKey = '';
+        window.addEventListener('beforeunload', e => {
+            e.preventDefault();
+            e.returnValue = '';
+        });
+
+        $('#copy-session-key').click(() => {
+            navigator.clipboard.writeText($('#session-key-chip').text());
+            M.toast({ html: 'Copied to clipboard' });
+        });
 
         $('#participant-search').keyup(function () {
             const query = $(this).val().trim().toLowerCase();
@@ -13,7 +20,7 @@
                 return;
             }
 
-            const filteredUsers = sessionUsers.filter(name => name.toLowerCase().includes(query));
+            const filteredUsers = sessionUsers.filter(user => user.userName.toLowerCase().includes(query));
 
             showUsers(filteredUsers);
         });
@@ -29,52 +36,59 @@
             let markup = '';
 
             for (const user of users) {
-                markup += `<li class="participant"><a class="blue-text">${user}</a></li>`;
+                markup += `<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.userId}">${user.userName}</a></li>`;
             }
 
             $list.html(markup);
         }
 
-        function addUser(userName) {
-            sessionUsers.push(userName);
-            $('.participant-list ul').append(`<li class="participant"><a class="blue-text">${userName}</a></li>`);
+        function addUser(user) {
+            sessionUsers.push(user);
+            $('.participant-list ul').append(`<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.userId}">${user.userName}</a></li>`);
         }
 
-        const connection = new signalR.HubConnectionBuilder().withUrl('/sessionHub').build();
+        function removeUser(user) {
+            sessionUsers = sessionUsers.filter(x => x.userId !== user.userId);
+            $('.participant-list ul').find(`li a[data-userid="${user.userId}"]`).parent().remove();
+        }
 
-        connection.on('ReceiveNewSessionInfo', (userName, _sessionKey) => {
+        hubConnection.on('ReceiveNewSessionInfo', (user, _sessionKey) => {
             sessionKey = _sessionKey;
-            addUser(userName);
+            addUser(user);
 
             $('#session-key-chip').text(_sessionKey);
         });
 
-        connection.on('ReceiveJoinSessionInfo', userNames => {
-            sessionUsers = userNames;
-            showUsers(userNames);
+        hubConnection.on('ReceiveJoinSessionInfo', users => {
+            sessionUsers = users;
+            showUsers(users);
         });
 
-        connection.on('AddNewUserName', userName => {
-            addUser(userName);
+        hubConnection.on('AddUser', user => {
+            addUser(user);
         });
 
-        connection.on('NotifyUser', notification => {
-            M.toast({ html: notification })
+        hubConnection.on('RemoveUser', user => {
+            removeUser(user);
         });
 
-        await connection.start();
+        hubConnection.on('NotifyUser', notification => {
+            M.toast({ html: notification });
+        });
 
-        if ($('#session-type').attr('data-type') === 'new') {
-            await connection.invoke('CreateSession');
+        await hubConnection.start();
+
+        if ($('#session-type').val() === 'new') {
+            await hubConnection.invoke('CreateSession');
         }
-        else if ($('#session-type').attr('data-type') === 'join') {
+        else if ($('#session-type').val() === 'join') {
             const userName = $('#session-username').val();
             const _sessionKey = $('#session-key').val();
 
             sessionKey = _sessionKey;
             $('#session-key-chip').text(_sessionKey);
 
-            await connection.invoke('JoinSession', userName, _sessionKey);
+            await hubConnection.invoke('JoinSession', userName, _sessionKey);
         }
     })();
 });
