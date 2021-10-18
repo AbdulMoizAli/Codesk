@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using CodeskWeb.HubModels;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CodeskWeb.Hubs
 {
     public interface ISessionClient
     {
-        Task ReceiveNewSessionInfo(string userName, string sessionKey);
+        Task ReceiveNewSessionInfo(ConnectedUser user, string sessionKey);
 
-        Task ReceiveJoinSessionInfo(List<string> userNames);
+        Task ReceiveJoinSessionInfo(List<ConnectedUser> users);
 
-        Task AddNewUserName(string userName);
+        Task AddUser(ConnectedUser user);
+
+        Task RemoveUser(ConnectedUser user);
 
         Task NotifyUser(string notification);
     }
