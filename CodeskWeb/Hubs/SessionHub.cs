@@ -15,37 +15,70 @@ namespace CodeskWeb.Hubs
             var sessionKey = Guid.NewGuid().ToString();
             var userName = Context.User.Identity.Name;
 
-            SessionInformation.SessionInfo.Add(sessionKey, new List<string> { userName });
+            var user = new ConnectedUser { UserId = Context.ConnectionId, UserName = userName };
+
+            SessionInformation.SessionInfo.Add(sessionKey, new List<ConnectedUser> { user });
 
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionKey)
                 .ConfigureAwait(false);
 
-            await Clients.Caller.ReceiveNewSessionInfo(userName, sessionKey)
+            await Clients.Caller.ReceiveNewSessionInfo(user, sessionKey)
                 .ConfigureAwait(false);
 
-            await Clients.Caller.NotifyUser(NotificationMessages.GetWelcomeMessage(userName))
+            await Clients.Caller.NotifyUser(NotificationMessage.GetWelcomeMessage(userName))
                 .ConfigureAwait(false);
         }
 
         public async Task JoinSession(string userName, string sessionKey)
         {
-            SessionInformation.SessionInfo[sessionKey].Add(userName);
+            var user = new ConnectedUser { UserId = Context.ConnectionId, UserName = userName };
+
+            SessionInformation.SessionInfo[sessionKey].Add(user);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionKey)
                 .ConfigureAwait(false);
 
-            var userNames = SessionInformation.SessionInfo[sessionKey];
+            var users = SessionInformation.SessionInfo[sessionKey];
 
-            await Clients.Caller.ReceiveJoinSessionInfo(userNames)
+            await Clients.Caller.ReceiveJoinSessionInfo(users)
                 .ConfigureAwait(false);
 
-            await Clients.OthersInGroup(sessionKey).AddNewUserName(userName)
+            await Clients.OthersInGroup(sessionKey).AddUser(user)
                 .ConfigureAwait(false);
 
-            await Clients.Caller.NotifyUser(NotificationMessages.GetWelcomeMessage(userName))
+            await Clients.Caller.NotifyUser(NotificationMessage.GetWelcomeMessage(userName))
                 .ConfigureAwait(false);
 
-            await Clients.OthersInGroup(sessionKey).NotifyUser(NotificationMessages.GetUserJoinMessage(userName))
+            await Clients.OthersInGroup(sessionKey).NotifyUser(NotificationMessage.GetUserJoinMessage(userName))
+                .ConfigureAwait(false);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            foreach (var item in SessionInformation.SessionInfo)
+            {
+                int index = item.Value.FindIndex(x => x.UserId == Context.ConnectionId);
+
+                if (index != -1)
+                {
+                    var user = item.Value[index];
+
+                    item.Value.RemoveAt(index);
+
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, item.Key)
+                        .ConfigureAwait(false);
+
+                    await Clients.OthersInGroup(item.Key).RemoveUser(user)
+                        .ConfigureAwait(false);
+
+                    await Clients.OthersInGroup(item.Key).NotifyUser(NotificationMessage.GetUserLeaveMessage(user.UserName))
+                        .ConfigureAwait(false);
+
+                    break;
+                }
+            }
+
+            await base.OnDisconnectedAsync(exception)
                 .ConfigureAwait(false);
         }
     }
