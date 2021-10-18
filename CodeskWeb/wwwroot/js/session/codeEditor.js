@@ -24,7 +24,7 @@
     function getEditorOptions() {
         return {
             language: 'plaintext',
-            value: 'select language of your choice from settings and start coding... 🙂',
+            value: 'select a language of your choice from settings and start coding... 🙂',
             scrollBeyondLastLine: false,
             theme: $('#theme-select').val(),
             cursorStyle: $('#cursor-select').val(),
@@ -49,6 +49,9 @@
     }
 
     async function saveUserEditorSetting(settingId, settingValue) {
+        if ($('#user-authenticated').val() === 'no')
+            return;
+
         const url = `/WorkSpace/Session/SaveUserEditorSetting?settingId=${settingId}&settingValue=${settingValue}`;
         const response = await fetch(url, { method: 'POST' });
 
