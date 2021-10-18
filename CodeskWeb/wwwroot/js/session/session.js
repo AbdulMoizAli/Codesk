@@ -29,14 +29,14 @@
             const $list = $('.participant-list ul');
 
             if (users.length === 0) {
-                $list.html('<li class="participant center"><a class="blue-grey-text">No Participant</a></li>');
+                $list.html('<li class="participant center"><a class="blue-grey-text">NO PARTICIPANT</a></li>');
                 return;
             }
 
             let markup = '';
 
             for (const user of users) {
-                markup += `<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.userId}">${user.userName}</a></li>`;
+                markup += `<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.userId}">${user.userName.toUpperCase()}</a></li>`;
             }
 
             $list.html(markup);
@@ -44,7 +44,7 @@
 
         function addUser(user) {
             sessionUsers.push(user);
-            $('.participant-list ul').append(`<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.userId}">${user.userName}</a></li>`);
+            $('.participant-list ul').append(`<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.userId}">${user.userName.toUpperCase()}</a></li>`);
         }
 
         function removeUser(user) {
