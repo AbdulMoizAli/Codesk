@@ -16,5 +16,10 @@
         {
             return $"<span><span class=\"yellow-text\"> {userName}</span> has left the session</span>";
         }
+
+        public static string GetChatMessageNotification(string userName)
+        {
+            return $"<span>New message from <span class=\"yellow-text\"> {userName}</span></span>";
+        }
     }
 }
