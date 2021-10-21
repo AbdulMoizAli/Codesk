@@ -1,11 +1,11 @@
 ﻿@model SessionViewModel
 <!--========================== Participants list and Actions panel ==============================================-->
 <ul id="actions-panel" class="sidenav sidenav-fixed animate__animated animate__fadeIn">
-    <li><a class="subheader"><i class="material-icons grey-text">people</i>Participants</a></li>
+    <li><a class="subheader"><i class="material-icons grey-text">people</i>Participants (<span id="no-of-participants"></span>)</a></li>
 
     <li class="search-participant">
         <div class="input-field">
-            <input id="participant-search" placeholder="Search" type="search" spellcheck="false" autocomplete="off">
+            <input id="participant-search" placeholder="Search" type="text" spellcheck="false" autocomplete="off">
         </div>
     </li>
 
@@ -24,19 +24,17 @@
             <ul>
                 @*<li><a class="waves-effect"><i class="material-icons">play_circle_filled</i>Run</a></li>*@
                 <li><a class="waves-effect modal-trigger" href="#share-modal"><i class="material-icons">share</i>Share</a></li>
-                @*<li><a class="waves-effect"><i class="material-icons">chat</i>Chat</a></li>*@
                 @*<li><a class="waves-effect"><i class="material-icons">file_download</i>Download</a></li>*@
                 <li><a class="waves-effect modal-trigger" href="#settings-modal"><i class="material-icons">settings</i>Settings</a></li>
+                <li><a id="chat-box" class="waves-effect"><i class="material-icons">chat</i>Chat</a></li>
             </ul>
         </div>
     </li>
 </ul>
 <!--=============================================================================================================-->
-
 <!--======================= Code Editor ===============================-->
 <div class="animate__animated animate__fadeIn" id="code-editor"></div>
 <!--===================================================================-->
-
 <!--================================= Video call panel =====================================================-->
 <ul id="video-panel" class="sidenav sidenav-fixed animate__animated animate__fadeIn">
     <li><a class="subheader"><i class="material-icons grey-text">voice_chat</i>Video Call</a></li>
@@ -64,7 +62,6 @@
     </li>
 </ul>
 <!--========================================================================================================-->
-
 <!--============================ Share Modal =========================================-->
 <div id="share-modal" class="modal">
     <div class="modal-content">
@@ -84,7 +81,6 @@
     </div>
 </div>
 <!--==================================================================================-->
-
 <!--============================ Settings Modal =========================================-->
 <div id="settings-modal" class="modal modal-fixed-footer">
     <div class="modal-content">
@@ -207,6 +203,29 @@
     </div>
     <div class="modal-footer">
         <a class="modal-close waves-effect waves-light btn red lighten-1"><i class="material-icons left">close</i> Close</a>
+    </div>
+</div>
+<!--====================================================================================-->
+<!--===================================== Chat Box ===============================================-->
+<div id="chat-box-markup" style="display: none;">
+    <div class="row clearfix">
+        <div class="col l12">
+            <div class="card chat-app">
+                <div class="chat">
+                    <div class="chat-history">
+                        <ul></ul>
+                    </div>
+                    <div class="chat-message clearfix">
+                        <form>
+                            <div class="input-field">
+                                <input id="chat-message-input" type="text" placeholder="Message" autocomplete="off">
+                                <button class="btn waves-effect waves-light blue-grey darken-1 right"><i class="material-icons">send</i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <!--====================================================================================-->
