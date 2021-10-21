@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace CodeskWeb.Hubs
 {
@@ -50,6 +51,17 @@ namespace CodeskWeb.Hubs
                 .ConfigureAwait(false);
 
             await Clients.OthersInGroup(sessionKey).NotifyUser(NotificationMessage.GetUserJoinMessage(userName))
+                .ConfigureAwait(false);
+        }
+
+        public async Task SendMessage(string message, string sessionKey)
+        {
+            string userName = SessionInformation.SessionInfo[sessionKey].Find(user => user.UserId == Context.ConnectionId).UserName;
+
+            await Clients.OthersInGroup(sessionKey).ReceiveMessage(message, userName)
+                .ConfigureAwait(false);
+
+            await Clients.OthersInGroup(sessionKey).NotifyUser(NotificationMessage.GetChatMessageNotification(userName))
                 .ConfigureAwait(false);
         }
 
