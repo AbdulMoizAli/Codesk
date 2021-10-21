@@ -52,6 +52,15 @@
         "dist/browser/signalr.js",
         "dist/browser/signalr.min.js"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "winbox@0.2.0",
+      "destination": "wwwroot/lib/winbox/",
+      "files": [
+        "dist/winbox.bundle.js",
+        "dist/winbox.bundle.min.js"
+      ]
     }
   ]
 }
