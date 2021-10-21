@@ -15,5 +15,7 @@ namespace CodeskWeb.Hubs
         Task RemoveUser(ConnectedUser user);
 
         Task NotifyUser(string notification);
+
+        Task ReceiveMessage(string message, string userName);
     }
 }
