@@ -74,55 +74,55 @@
     async function configureEditorSettings(monacoEditor, codeEditor) {
         await configureEditorLanguages(monacoEditor, codeEditor);
 
-        $('#theme-select').change(function () {
+        $('#theme-select').change(async function () {
             addThemeStylesheet();
             codeEditor.updateOptions({ theme: $(this).val() });
 
-            saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
+            await saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
         });
 
-        $('#cursor-select').change(function () {
+        $('#cursor-select').change(async function () {
             codeEditor.updateOptions({ cursorStyle: $(this).val() });
 
-            saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
+            await saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
         });
 
-        $('#blinking-select').change(function () {
+        $('#blinking-select').change(async function () {
             codeEditor.updateOptions({ cursorBlinking: $(this).val() });
 
-            saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
+            await saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
         });
 
-        $('#font-weight-select').change(function () {
+        $('#font-weight-select').change(async function () {
             codeEditor.updateOptions({ fontWeight: $(this).val() });
 
-            saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
+            await saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
         });
 
-        $('#font-size-input').change(function () {
+        $('#font-size-input').change(async function () {
             codeEditor.updateOptions({ fontSize: $(this).val() });
 
-            saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
+            await saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
         });
 
-        $('#tab-size-input').change(function () {
+        $('#tab-size-input').change(async function () {
             codeEditor.updateOptions({ tabSize: $(this).val() });
 
-            saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
+            await saveUserEditorSetting($(this).attr('data-setting-id'), $(this).val());
         });
 
-        $('#line-numbers-switch').change(function () {
+        $('#line-numbers-switch').change(async function () {
             const value = $(this).is(':checked') ? 'on' : 'off';
             codeEditor.updateOptions({ lineNumbers: value });
 
-            saveUserEditorSetting($(this).attr('data-setting-id'), value);
+            await saveUserEditorSetting($(this).attr('data-setting-id'), value);
         });
 
-        $('#word-wrap-switch').change(function () {
+        $('#word-wrap-switch').change(async function () {
             const value = $(this).is(':checked') ? 'on' : 'off';
             codeEditor.updateOptions({ wordWrap: value });
 
-            saveUserEditorSetting($(this).attr('data-setting-id'), value);
+            await saveUserEditorSetting($(this).attr('data-setting-id'), value);
         });
     }
 });
