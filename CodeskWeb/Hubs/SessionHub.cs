@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace CodeskWeb.Hubs
 {
@@ -62,6 +61,12 @@ namespace CodeskWeb.Hubs
                 .ConfigureAwait(false);
 
             await Clients.OthersInGroup(sessionKey).NotifyUser(NotificationMessage.GetChatMessageNotification(userName))
+                .ConfigureAwait(false);
+        }
+
+        public async Task SendEditorContent(string editorContent, string sessionKey)
+        {
+            await Clients.OthersInGroup(sessionKey).ReceiveEditorContent(editorContent)
                 .ConfigureAwait(false);
         }
 
