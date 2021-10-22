@@ -1,1 +1,15 @@
-﻿
+﻿#actions-panel {
+    background: #212121;
+}
+
+#actions-panel * {
+    color: #bdbdbd !important;
+}
+
+#video-panel {
+    background: #212121;
+}
+
+#video-panel * {
+    color: #bdbdbd !important;
+}

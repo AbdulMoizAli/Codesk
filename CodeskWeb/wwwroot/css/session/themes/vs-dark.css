@@ -1,1 +1,19 @@
-﻿
+﻿#actions-panel {
+    background: #424242;
+}
+
+#actions-panel * {
+    color: #e0e0e0 !important;
+}
+
+#video-panel {
+    background: #424242;
+}
+
+#video-panel * {
+    color: #e0e0e0 !important;
+}
+
+.video-box {
+    border: 1px solid #e0e0e0;
+}
