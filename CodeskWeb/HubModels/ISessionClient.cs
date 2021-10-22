@@ -17,5 +17,7 @@ namespace CodeskWeb.Hubs
         Task NotifyUser(string notification);
 
         Task ReceiveMessage(string message, string userName);
+
+        Task ReceiveEditorContent(string editorContent);
     }
 }
