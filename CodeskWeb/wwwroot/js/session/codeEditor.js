@@ -19,6 +19,8 @@
         codeEditor.focus();
 
         await configureEditorSettings(monacoEditor, codeEditor);
+
+        bindEditorContentChangeEvent(codeEditor);
     }
 
     function getEditorOptions() {
@@ -124,5 +126,14 @@
 
             await saveUserEditorSetting($(this).attr('data-setting-id'), value);
         });
+    }
+
+    function bindEditorContentChangeEvent(codeEditor) {
+        codeEditor.onKeyUp(async () => {
+            const editorContent = codeEditor.getValue();
+            await hubConnection.invoke('SendEditorContent', editorContent, sessionKey);
+        });
+
+        hubConnection.on('ReceiveEditorContent', editorContent => codeEditor.setValue(editorContent));
     }
 });
