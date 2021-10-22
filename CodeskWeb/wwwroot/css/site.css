@@ -2,7 +2,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap');
 
-html *:not(i, .logo-text) {
+html *:not(i, .logo-text, #code-editor *) {
     font-family: 'Roboto', sans-serif !important;
 }
 
