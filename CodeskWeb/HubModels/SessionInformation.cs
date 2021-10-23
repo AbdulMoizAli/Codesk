@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace CodeskWeb.HubModels
 {
     public static class SessionInformation
     {
-        public static Dictionary<string, List<ConnectedUser>> SessionInfo { get; set; } = new Dictionary<string, List<ConnectedUser>>();
+        public static Dictionary<string, (StringBuilder code, List<ConnectedUser> connectedUsers)> SessionInfo { get; set; } = new();
     }
 }
