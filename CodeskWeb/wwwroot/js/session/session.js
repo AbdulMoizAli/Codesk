@@ -83,7 +83,8 @@
         M.toast({ html: notification });
     });
 
-    await hubConnection.start();
+    if (!hubConnection.connectionStarted)
+        await hubConnection.start();
 
     if ($('#session-type').val() === 'new') {
         await hubConnection.invoke('CreateSession');
