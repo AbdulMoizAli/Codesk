@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CodeskWeb.Hubs
@@ -17,7 +18,7 @@ namespace CodeskWeb.Hubs
 
             var user = new ConnectedUser { UserId = Context.ConnectionId, UserName = userName };
 
-            SessionInformation.SessionInfo.Add(sessionKey, new List<ConnectedUser> { user });
+            SessionInformation.SessionInfo.Add(sessionKey, (new StringBuilder(), new List<ConnectedUser> { user }));
 
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionKey)
                 .ConfigureAwait(false);
@@ -33,12 +34,12 @@ namespace CodeskWeb.Hubs
         {
             var user = new ConnectedUser { UserId = Context.ConnectionId, UserName = userName };
 
-            SessionInformation.SessionInfo[sessionKey].Add(user);
+            SessionInformation.SessionInfo[sessionKey].connectedUsers.Insert(0, user);
+
+            var users = SessionInformation.SessionInfo[sessionKey].connectedUsers;
 
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionKey)
                 .ConfigureAwait(false);
-
-            var users = SessionInformation.SessionInfo[sessionKey];
 
             await Clients.Caller.ReceiveJoinSessionInfo(users)
                 .ConfigureAwait(false);
@@ -55,7 +56,7 @@ namespace CodeskWeb.Hubs
 
         public async Task SendMessage(string message, string sessionKey)
         {
-            string userName = SessionInformation.SessionInfo[sessionKey].Find(user => user.UserId == Context.ConnectionId).UserName;
+            string userName = SessionInformation.SessionInfo[sessionKey].connectedUsers.Find(user => user.UserId == Context.ConnectionId).UserName;
 
             await Clients.OthersInGroup(sessionKey).ReceiveMessage(message, userName)
                 .ConfigureAwait(false);
@@ -64,23 +65,31 @@ namespace CodeskWeb.Hubs
                 .ConfigureAwait(false);
         }
 
+        public string GetEditorContent(string sessionKey)
+        {
+            return SessionInformation.SessionInfo[sessionKey].code.ToString();
+        }
+
         public async Task SendEditorContent(string editorContent, string sessionKey)
         {
             await Clients.OthersInGroup(sessionKey).ReceiveEditorContent(editorContent)
                 .ConfigureAwait(false);
+
+            SessionInformation.SessionInfo[sessionKey].code.Clear();
+            SessionInformation.SessionInfo[sessionKey].code.Append(editorContent);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             foreach (var item in SessionInformation.SessionInfo)
             {
-                int index = item.Value.FindIndex(x => x.UserId == Context.ConnectionId);
+                int index = item.Value.connectedUsers.FindIndex(x => x.UserId == Context.ConnectionId);
 
                 if (index != -1)
                 {
-                    var user = item.Value[index];
+                    var user = item.Value.connectedUsers[index];
 
-                    item.Value.RemoveAt(index);
+                    item.Value.connectedUsers.RemoveAt(index);
 
                     await Groups.RemoveFromGroupAsync(Context.ConnectionId, item.Key)
                         .ConfigureAwait(false);
