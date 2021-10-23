@@ -15,7 +15,16 @@
         const monacoEditor = monaco.editor;
         //const monacoLanguages = monaco.languages;
 
-        const codeEditor = monacoEditor.create(editorDiv, getEditorOptions());
+        let editorContent = '';
+
+        if ($('#session-type').val() === 'join') {
+            if (!hubConnection.connectionStarted)
+                await hubConnection.start();
+
+            editorContent = await hubConnection.invoke('GetEditorContent', sessionKey);
+        }
+
+        const codeEditor = monacoEditor.create(editorDiv, getEditorOptions(editorContent));
         codeEditor.focus();
 
         await configureEditorSettings(monacoEditor, codeEditor);
@@ -23,10 +32,10 @@
         bindEditorContentChangeEvent(codeEditor);
     }
 
-    function getEditorOptions() {
+    function getEditorOptions(editorContent) {
         return {
             language: 'plaintext',
-            value: 'select a language of your choice from settings and start coding... 🙂',
+            value: editorContent ? editorContent : 'select a language of your choice from settings and start coding... 🙂',
             scrollBeyondLastLine: false,
             theme: $('#theme-select').val(),
             cursorStyle: $('#cursor-select').val(),
