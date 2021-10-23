@@ -26,6 +26,10 @@ main {
     font-family: 'Roboto Mono', monospace;
 }
 
+.user-name {
+    font-weight: 500;
+}
+
 .input-field .prefix.active {
     color: #546e7a !important;
 }
