@@ -8,7 +8,7 @@
     var returnUrl = Context.Request.Query["ReturnUrl"];
 }
 
-@section Styles {
+@*@section Styles {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     
     <style>
@@ -48,7 +48,7 @@
             background-color: #5590f0;
         }
     </style>
-}
+}*@
 
 @if (isSignInFailed)
 {   string errorMessage = ViewData.ModelState["SignInFailed"].Errors.FirstOrDefault().ErrorMessage;
@@ -96,7 +96,7 @@
                 </div>
             </div>
 
-            <div class="row" style="margin-top: 10%;">
+            @*<div class="row" style="margin-top: 10%;">
                 <div class="col l4 offset-l2 offset-s1 s10">
                     <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Facebook" class="btn waves-effect waves-light facebook"><i class="fab fa-facebook left"></i> <span class="left">sign in with facebook</span></a>
                 </div>
@@ -116,7 +116,7 @@
                     <div class="hide-on-med-and-up" style="margin-top: 1%;"></div>
                     <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Microsoft" class="btn waves-effect waves-light microsoft"><i class="fab fa-microsoft left"></i> <span class="left">sign in with microsoft</span></a>
                 </div>
-            </div>
+            </div>*@
         </div>
     </form>
 </div>
