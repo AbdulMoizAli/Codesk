@@ -15,7 +15,7 @@ namespace CodeskLibrary.Connections
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.Development.json").Build();
+                .AddJsonFile("appsettings.json").Build();
 
             return config.GetConnectionString("Codeskdb");
         }
