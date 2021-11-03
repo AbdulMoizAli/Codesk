@@ -91,14 +91,21 @@ namespace CodeskWeb.Hubs
 
                     item.Value.connectedUsers.RemoveAt(index);
 
-                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, item.Key)
+                    if (item.Value.connectedUsers.Count == 0)
+                    {
+                        SessionInformation.SessionInfo.Remove(item.Key);
+                    }
+                    else
+                    {
+                        await Groups.RemoveFromGroupAsync(Context.ConnectionId, item.Key)
                         .ConfigureAwait(false);
 
-                    await Clients.OthersInGroup(item.Key).RemoveUser(user)
-                        .ConfigureAwait(false);
+                        await Clients.OthersInGroup(item.Key).RemoveUser(user)
+                            .ConfigureAwait(false);
 
-                    await Clients.OthersInGroup(item.Key).NotifyUser(NotificationMessage.GetUserLeaveMessage(user.UserName))
-                        .ConfigureAwait(false);
+                        await Clients.OthersInGroup(item.Key).NotifyUser(NotificationMessage.GetUserLeaveMessage(user.UserName))
+                            .ConfigureAwait(false);
+                    }
 
                     break;
                 }
