@@ -65,11 +65,6 @@ namespace CodeskWeb.Hubs
                 .ConfigureAwait(false);
         }
 
-        public string GetEditorContent(string sessionKey)
-        {
-            return SessionInformation.SessionInfo[sessionKey].code.ToString();
-        }
-
         public async Task SendEditorContent(string editorContent, string sessionKey)
         {
             await Clients.OthersInGroup(sessionKey).ReceiveEditorContent(editorContent)
