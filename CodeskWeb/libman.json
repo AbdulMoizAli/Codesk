@@ -49,9 +49,7 @@
       "library": "@microsoft/signalr@latest",
       "destination": "wwwroot/lib/signalr/",
       "files": [
-        "dist/browser/signalr.js",
-        "dist/browser/signalr.min.js",
-        "dist/browser/signalr.min.js.map"
+        "dist/browser/signalr.min.js"
       ]
     },
     {
@@ -59,8 +57,14 @@
       "library": "winbox@0.2.0",
       "destination": "wwwroot/lib/winbox/",
       "files": [
-        "dist/winbox.bundle.js",
         "dist/winbox.bundle.min.js"
+      ]
+    },
+    {
+      "library": "peerjs@1.3.2",
+      "destination": "wwwroot/lib/peerjs/",
+      "files": [
+        "peerjs.min.js"
       ]
     }
   ]
