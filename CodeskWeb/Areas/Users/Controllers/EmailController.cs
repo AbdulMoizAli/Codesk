@@ -35,7 +35,7 @@ namespace CodeskWeb.Areas.Users.Controllers
 
             var confirmationLink = Url.Action("VerifyEmail", "Email", new { Area = "Users", token }, Request.Scheme);
 
-            var templateFilePath = $"{_env.ContentRootPath}\\EmailTemplates\\EmailConfirmation.cshtml";
+            var templateFilePath = $"{_env.WebRootPath}\\EmailTemplates\\EmailConfirmation.html";
 
             await _email
                 .To(email, User.Identity.Name)
