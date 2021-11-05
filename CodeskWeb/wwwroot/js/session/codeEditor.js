@@ -15,14 +15,7 @@
         const monacoEditor = monaco.editor;
         //const monacoLanguages = monaco.languages;
 
-        let editorContent = '';
-
-        if ($('#session-type').val() === 'join') {
-            if (!hubConnection.connectionStarted)
-                await hubConnection.start();
-
-            editorContent = await hubConnection.invoke('GetEditorContent', sessionKey);
-        }
+        const editorContent = $('#editor-content').text();
 
         const codeEditor = monacoEditor.create(editorDiv, getEditorOptions(editorContent));
         codeEditor.focus();
