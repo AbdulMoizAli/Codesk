@@ -1,4 +1,6 @@
-﻿$(document).ready(() => {
+﻿import getPythonProposals from '../../js/session/pythonAutoComplete.js';
+
+$(document).ready(() => {
     addThemeStylesheet();
 
     require.config({
@@ -8,22 +10,6 @@
     const requirePaths = ['vs/editor/editor.main'];
 
     require(requirePaths, createEditor);
-
-    async function createEditor() {
-        const editorDiv = document.querySelector('#code-editor');
-
-        const monacoEditor = monaco.editor;
-        //const monacoLanguages = monaco.languages;
-
-        const editorContent = $('#editor-content').text();
-
-        const codeEditor = monacoEditor.create(editorDiv, getEditorOptions(editorContent));
-        codeEditor.focus();
-
-        await configureEditorSettings(monacoEditor, codeEditor);
-
-        bindEditorContentChangeEvent(codeEditor);
-    }
 
     function getEditorOptions(editorContent) {
         return {
@@ -39,6 +25,24 @@
             lineNumbers: $('#line-numbers-switch').is(':checked') ? 'on' : 'off',
             wordWrap: $('#word-wrap-switch').is(':checked') ? 'on' : 'off'
         };
+    }
+
+    async function createEditor() {
+        const editorDiv = document.querySelector('#code-editor');
+
+        const monacoEditor = monaco.editor;
+        const monacoLanguages = monaco.languages;
+
+        const editorContent = $('#editor-content').text();
+
+        const codeEditor = monacoEditor.create(editorDiv, getEditorOptions(editorContent));
+        codeEditor.focus();
+
+        await configureEditorSettings(monacoEditor, codeEditor);
+
+        configureLanguageAutoComplete(monacoLanguages, 'python', getPythonProposals);
+
+        bindEditorContentChangeEvent(codeEditor);
     }
 
     async function configureEditorLanguages(monacoEditor, codeEditor) {
@@ -127,6 +131,16 @@
             codeEditor.updateOptions({ wordWrap: value });
 
             await saveUserEditorSetting($(this).attr('data-setting-id'), value);
+        });
+    }
+
+    function configureLanguageAutoComplete(monacoLanguages, language, getProposals) {
+        monacoLanguages.registerCompletionItemProvider(language, {
+            provideCompletionItems: () => {
+                return {
+                    suggestions: getProposals(monacoLanguages)
+                };
+            }
         });
     }
 
