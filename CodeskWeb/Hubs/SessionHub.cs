@@ -74,6 +74,12 @@ namespace CodeskWeb.Hubs
             SessionInformation.SessionInfo[sessionKey].code.Append(editorContent);
         }
 
+        public async Task SendPeerId(string peerId, string sessionKey)
+        {
+            await Clients.OthersInGroup(sessionKey).ReceivePeerId(peerId, Context.ConnectionId)
+                .ConfigureAwait(false);
+        }
+
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             foreach (var item in SessionInformation.SessionInfo)
@@ -96,6 +102,9 @@ namespace CodeskWeb.Hubs
                         .ConfigureAwait(false);
 
                         await Clients.OthersInGroup(item.Key).RemoveUser(user)
+                            .ConfigureAwait(false);
+
+                        await Clients.OthersInGroup(item.Key).CloseVideoCall(Context.ConnectionId)
                             .ConfigureAwait(false);
 
                         await Clients.OthersInGroup(item.Key).NotifyUser(NotificationMessage.GetUserLeaveMessage(user.UserName))
