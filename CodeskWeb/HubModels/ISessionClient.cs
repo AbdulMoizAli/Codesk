@@ -19,5 +19,9 @@ namespace CodeskWeb.Hubs
         Task ReceiveMessage(string message, string userName);
 
         Task ReceiveEditorContent(string editorContent);
+
+        Task ReceivePeerId(string peerId, string userId);
+
+        Task CloseVideoCall(string userId);
     }
 }
