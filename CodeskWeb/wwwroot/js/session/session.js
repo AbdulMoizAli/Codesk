@@ -1,4 +1,6 @@
 ﻿$(document).ready(async () => {
+    await hubConnection.start();
+
     $('#video-panel').sidenav({ edge: 'right' });
 
     window.addEventListener('beforeunload', e => {
@@ -82,9 +84,6 @@
     hubConnection.on('NotifyUser', notification => {
         M.toast({ html: notification });
     });
-
-    if (!hubConnection.connectionStarted)
-        await hubConnection.start();
 
     if ($('#session-type').val() === 'new') {
         await hubConnection.invoke('CreateSession');
