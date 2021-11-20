@@ -1,7 +1,7 @@
 ﻿$(document).ready(async () => {
-    await hubConnection.start();
-
     $('#video-panel').sidenav({ edge: 'right' });
+
+    await hubConnection.start();
 
     window.addEventListener('beforeunload', e => {
         e.preventDefault();
