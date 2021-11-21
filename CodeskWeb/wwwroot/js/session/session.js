@@ -1,4 +1,6 @@
-﻿$(document).ready(async () => {
+﻿import initializeVideoChat from '../../js/session/videoChat.js';
+
+$(document).ready(async () => {
     $('#video-panel').sidenav({ edge: 'right' });
 
     await hubConnection.start();
@@ -97,4 +99,6 @@
 
         await hubConnection.invoke('JoinSession', userName, _sessionKey);
     }
+
+    initializeVideoChat();
 });
