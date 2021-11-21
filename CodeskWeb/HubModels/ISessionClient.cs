@@ -1,8 +1,7 @@
-﻿using CodeskWeb.HubModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CodeskWeb.Hubs
+namespace CodeskWeb.HubModels
 {
     public interface ISessionClient
     {
