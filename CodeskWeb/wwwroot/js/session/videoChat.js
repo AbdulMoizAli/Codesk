@@ -1,4 +1,4 @@
-﻿$(document).ready(() => {
+﻿export default function initializeVideoChat() {
     const videoList = document.querySelector('.video-list ul');
     const peers = {};
     const peer = new Peer();
@@ -22,7 +22,7 @@
                 peerConnection.on('data', userId => peers[userId] = call);
             });
         });
-        
+
         hubConnection.on('ReceivePeerId', (peerId, userId) => connectToNewPeer(peerId, stream, userId));
     });
 
@@ -71,4 +71,4 @@
         li.append(div);
         videoList.append(li);
     }
-});
+}
