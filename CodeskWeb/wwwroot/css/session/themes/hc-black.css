@@ -13,3 +13,12 @@
 #video-panel * {
     color: #bdbdbd !important;
 }
+
+.video-box {
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+}
+
+.video {
+    border-radius: 0px !important;
+}
