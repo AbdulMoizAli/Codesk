@@ -66,6 +66,8 @@
 
         li.className = 'video-item';
         div.className = 'video-box';
+        video.className = 'z-depth-2';
+        video.setAttribute('oncontextmenu', 'return false;');
 
         div.append(video);
         li.append(div);
