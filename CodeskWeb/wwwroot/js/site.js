@@ -9,6 +9,7 @@
         }
     });
     $('select').formSelect();
+    $('#video-panel').sidenav({ edge: 'right' });
 });
 
 function showAlert(title = null, message, dark, okText) {
