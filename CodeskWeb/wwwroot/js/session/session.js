@@ -1,8 +1,6 @@
 ﻿import initializeVideoChat from '../../js/session/videoChat.js';
 
 $(document).ready(async () => {
-    $('#video-panel').sidenav({ edge: 'right' });
-
     await hubConnection.start();
 
     window.addEventListener('beforeunload', e => {
@@ -12,7 +10,7 @@ $(document).ready(async () => {
 
     $('#copy-session-key').click(() => {
         navigator.clipboard.writeText($('#session-key-chip').text());
-        M.toast({ html: 'Copied to clipboard' });
+        M.toast({ html: '<i class="material-icons left">check</i> Copied to clipboard' });
     });
 
     $('#participant-search').keyup(function () {
