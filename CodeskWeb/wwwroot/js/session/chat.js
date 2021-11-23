@@ -1,8 +1,10 @@
 ﻿$(document).ready(() => {
+    const $chatLink = $('#chat-box');
+
     let isChatBox = false;
     let chatBox = null;
 
-    $('#chat-box').click(() => {
+    $chatLink.click(() => {
         if (!isChatBox) {
             chatBox = new WinBox('Chat', {
                 index: 999,
@@ -18,8 +20,17 @@
                 onclose: () => {
                     isChatBox = false
                     chatBox = null;
+                },
+                onresize: () => {
+                    scrollBottom();
+
+                    $chatLink.find('span.badge').fadeOut(function () {
+                        $(this).remove();
+                    });
                 }
             });
+
+            chatBox.maximize = () => { };
 
             isChatBox = true;
             scrollBottom();
@@ -84,5 +95,17 @@
 
     hubConnection.on('ReceiveMessage', (message, userName) => {
         displayMessage(userName, message);
+
+        scrollBottom();
+
+        if (!(!chatBox || chatBox.min))
+            return;
+
+        const $badge = $chatLink.find('span.badge');
+
+        if ($badge.length)
+            $badge.text(parseInt($badge.text()) + 1);
+        else
+            $('<span class="new badge indigo lighten-1 pulse">1</span>').hide().prependTo($chatLink).fadeIn();
     });
 });
