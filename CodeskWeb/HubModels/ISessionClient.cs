@@ -19,6 +19,10 @@ namespace CodeskWeb.HubModels
 
         Task ReceiveEditorContent(string editorContent);
 
+        Task StartTypingIndication(string userId);
+
+        Task StopTypingIndication(string userId);
+
         Task ReceivePeerId(string peerId, string userId);
 
         Task CloseVideoCall(string userId);

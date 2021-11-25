@@ -41,3 +41,9 @@ function showActionAlert(title = null, message, dark, cancelText, okText, callba
         }
     );
 }
+
+$.fn.exchangePositionWith = function (selector) {
+    var other = $(selector);
+    this.after(other.clone());
+    other.after(this).remove();
+};

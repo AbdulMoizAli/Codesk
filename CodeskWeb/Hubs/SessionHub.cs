@@ -74,6 +74,18 @@ namespace CodeskWeb.Hubs
             SessionInformation.SessionInfo[sessionKey].code.Append(editorContent);
         }
 
+        public async Task StartedTyping(string sessionKey)
+        {
+            await Clients.OthersInGroup(sessionKey).StartTypingIndication(Context.ConnectionId)
+                .ConfigureAwait(false);
+        }
+
+        public async Task StoppedTyping(string sessionKey)
+        {
+            await Clients.OthersInGroup(sessionKey).StopTypingIndication(Context.ConnectionId)
+                .ConfigureAwait(false);
+        }
+
         public async Task SendPeerId(string peerId, string sessionKey)
         {
             await Clients.OthersInGroup(sessionKey).ReceivePeerId(peerId, Context.ConnectionId)

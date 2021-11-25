@@ -144,12 +144,48 @@ $(document).ready(() => {
         });
     }
 
+    let typing = false;
+    let timeout = undefined;
+
+    async function timeoutFunction() {
+        typing = false;
+        await hubConnection.invoke('StoppedTyping', sessionKey);
+    }
+
     function bindEditorContentChangeEvent(codeEditor) {
-        codeEditor.onKeyUp(async () => {
+        const ignoreKeys = [
+            15, 16, 17, 18, 9, 2, 8, 4, 5, 6, 11, 12, 59, 60, 61, 62, 63, 64,
+            65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 14, 13, 19
+        ];
+
+        codeEditor.onKeyUp(async e => {
+            if (ignoreKeys.includes(e.keyCode))
+                return;
+
             const editorContent = codeEditor.getValue();
             await hubConnection.invoke('SendEditorContent', editorContent, sessionKey);
+
+            if (typing == false) {
+                typing = true
+                await hubConnection.invoke('StartedTyping', sessionKey);
+                timeout = setTimeout(timeoutFunction, 1500);
+            } else {
+                clearTimeout(timeout);
+                timeout = setTimeout(timeoutFunction, 1500);
+            }
         });
 
         hubConnection.on('ReceiveEditorContent', editorContent => codeEditor.setValue(editorContent));
+
+        hubConnection.on('StartTypingIndication', userId => {
+            $('.participant-list ul').find(`li a[data-userid="${userId}"]`)
+                .prepend('<span class="new badge green lighten-1 pulse" data-badge-caption="Typing..."></span>')
+                .parent().exchangePositionWith('.participant-list ul li:eq(1)');
+      
+        });
+
+        hubConnection.on('StopTypingIndication', userId => {
+            $('.participant-list ul').find(`li a[data-userid="${userId}"]`).find('span.badge').remove();
+        });
     }
 });
