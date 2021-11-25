@@ -65,6 +65,18 @@ namespace CodeskWeb.Hubs
                 .ConfigureAwait(false);
         }
 
+        public async Task StartedMessageTyping(string sessionKey, string userName)
+        {
+            await Clients.OthersInGroup(sessionKey).StartMessageTypingIndication(userName)
+                .ConfigureAwait(false);
+        }
+
+        public async Task StoppedMessageTyping(string sessionKey)
+        {
+            await Clients.OthersInGroup(sessionKey).StopMessageTypingIndication()
+                .ConfigureAwait(false);
+        }
+
         public async Task SendEditorContent(string editorContent, string sessionKey)
         {
             await Clients.OthersInGroup(sessionKey).ReceiveEditorContent(editorContent)

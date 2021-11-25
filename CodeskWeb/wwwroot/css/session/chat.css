@@ -153,3 +153,7 @@
         overflow-x: auto
     }
 }
+
+.chat-typing-indication {
+    margin-left: 15%;
+}

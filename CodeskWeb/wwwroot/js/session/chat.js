@@ -42,6 +42,28 @@
         $('#chat-message-input').focus();
     });
 
+    let typing = false;
+    let timeout = undefined;
+
+    async function timeoutFunction() {
+        typing = false;
+        await hubConnection.invoke('StoppedMessageTyping', sessionKey);
+    }
+
+    $('#chat-message-input').keyup(async e => {
+        if (e.keyCode === 13)
+            return;
+
+        if (typing == false) {
+            typing = true
+            await hubConnection.invoke('StartedMessageTyping', sessionKey, $('.participant-list ul li:eq(0) a').text());
+            timeout = setTimeout(timeoutFunction, 1500);
+        } else {
+            clearTimeout(timeout);
+            timeout = setTimeout(timeoutFunction, 1500);
+        }
+    });
+
     $('.chat-message form').submit(async function (e) {
         e.preventDefault();
 
@@ -92,6 +114,14 @@
 
         $('.chat-history ul').append(markup);
     }
+
+    hubConnection.on('StartMessageTypingIndication', userName => {
+        $('.wb-title').append(`<span class="yellow-text text-accent-2 chat-typing-indication">${userName} is typing...</span>`);
+    });
+
+    hubConnection.on('StopMessageTypingIndication', () => {
+        $('.wb-title').find('span.chat-typing-indication').remove();
+    });
 
     hubConnection.on('ReceiveMessage', (message, userName) => {
         displayMessage(userName, message);

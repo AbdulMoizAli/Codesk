@@ -17,6 +17,10 @@ namespace CodeskWeb.HubModels
 
         Task ReceiveMessage(string message, string userName);
 
+        Task StartMessageTypingIndication(string userName);
+
+        Task StopMessageTypingIndication();
+
         Task ReceiveEditorContent(string editorContent);
 
         Task StartTypingIndication(string userId);
