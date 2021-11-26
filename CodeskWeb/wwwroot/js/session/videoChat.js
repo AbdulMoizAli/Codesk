@@ -7,6 +7,9 @@
         video: true,
         audio: true
     }).then(stream => {
+        toggleVideoStream(stream);
+        toggleAudioStream(stream);
+
         const { li, div, video } = getVideoElements();
         video.muted = true;
 
@@ -24,6 +27,8 @@
         });
 
         hubConnection.on('ReceivePeerId', (peerId, userId) => connectToNewPeer(peerId, stream, userId));
+
+        controlMediaStream(stream);
     });
 
     hubConnection.on('CloseVideoCall', userId => {
@@ -72,5 +77,37 @@
         div.append(video);
         li.append(div);
         videoList.append(li);
+    }
+
+    function toggleVideoStream(stream) {
+        stream.getVideoTracks()[0].enabled = !(stream.getVideoTracks()[0].enabled);
+    }
+
+    function toggleAudioStream(stream) {
+        stream.getAudioTracks()[0].enabled = !(stream.getAudioTracks()[0].enabled);
+    }
+
+    function controlMediaStream(stream) {
+        $('#camera').click(function () {
+            toggleVideoStream(stream);
+
+            const $icon = $(this).find('i');
+
+            if ($icon.text() === 'videocam_off')
+                $icon.text('videocam');
+            else if ($icon.text() === 'videocam')
+                $icon.text('videocam_off');
+        });
+
+        $('#microphone').click(function () {
+            toggleAudioStream(stream);
+
+            const $icon = $(this).find('i');
+
+            if ($icon.text() === 'mic_off')
+                $icon.text('mic');
+            else if ($icon.text() === 'mic')
+                $icon.text('mic_off');
+        });
     }
 }
