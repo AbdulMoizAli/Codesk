@@ -91,6 +91,8 @@
         $('#camera').click(function () {
             toggleVideoStream(stream);
 
+            $(this).find('div#center-div').toggleClass('hide');
+
             const $icon = $(this).find('i');
 
             if ($icon.text() === 'videocam_off')
@@ -101,6 +103,8 @@
 
         $('#microphone').click(function () {
             toggleAudioStream(stream);
+
+            $(this).find('div#center-div').toggleClass('hide');
 
             const $icon = $(this).find('i');
 
