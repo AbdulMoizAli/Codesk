@@ -116,7 +116,7 @@
     }
 
     hubConnection.on('StartMessageTypingIndication', userName => {
-        $('.wb-title').append(`<span class="yellow-text text-accent-2 chat-typing-indication">${userName} is typing...</span>`);
+        $('.wb-title').html(`<span class="yellow-text text-accent-2 chat-typing-indication">${userName} is typing...</span>`);
     });
 
     hubConnection.on('StopMessageTypingIndication', () => {
