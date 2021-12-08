@@ -1,8 +1,10 @@
-﻿<ul class="right hide-on-med-and-down">
-    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "JoinSession" ? "active" : "")">
+﻿@{ var action = ViewContext.RouteData.Values["Action"].ToString(); }
+
+<ul class="right hide-on-med-and-down">
+    <li class="@(action == "JoinSession" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
     </li>
-    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "SignIn" ? "active" : "")"><a asp-area="Users" asp-controller="Account" asp-action="SignIn"><i class="material-icons left">subdirectory_arrow_right</i> Sign in</a></li>
+    <li class="@(action == "SignIn" ? "active" : "")"><a asp-area="Users" asp-controller="Account" asp-action="SignIn"><i class="material-icons left">subdirectory_arrow_right</i> Sign in</a></li>
     <li><a asp-area="Users" asp-controller="Account" asp-action="SignUp" class="btn waves-effect waves-light blue-grey darken-1"><i class="material-icons left">person_add</i> Sign up</a></li>
 </ul>
 
@@ -19,9 +21,9 @@
             <div class="determinate grey lighten-4" style="width: 100%;"></div>
         </div>
     </li>
-    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "JoinSession" ? "active" : "")">
+    <li class="@(action == "JoinSession" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
     </li>
-    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "SignIn" ? "active" : "")"><a asp-area="Users" asp-controller="Account" asp-action="SignIn"><i class="material-icons left">subdirectory_arrow_right</i> Sign in</a></li>
-    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "SignUp" ? "active" : "")"><a asp-area="Users" asp-controller="Account" asp-action="SignUp"><i class="material-icons left">person_add</i> Sign up</a></li>
+    <li class="@(action == "SignIn" ? "active" : "")"><a asp-area="Users" asp-controller="Account" asp-action="SignIn"><i class="material-icons left">subdirectory_arrow_right</i> Sign in</a></li>
+    <li class="@(action == "SignUp" ? "active" : "")"><a asp-area="Users" asp-controller="Account" asp-action="SignUp"><i class="material-icons left">person_add</i> Sign up</a></li>
 </ul>
