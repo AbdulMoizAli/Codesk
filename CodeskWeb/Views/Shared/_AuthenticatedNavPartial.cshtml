@@ -1,20 +1,22 @@
-﻿@{ 
+﻿@{
     var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
 
     var isConfirmed = await EmailManager.IsEmailConfirmed(email);
+
+    var action = ViewContext.RouteData.Values["Action"].ToString();
 }
 
 <ul class="right hide-on-med-and-down">
-    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "Dashboard" ? "active" : "")">
+    <li class="@(action == "Dashboard" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="Dashboard"><i class="material-icons left">dashboard</i>Dashboard</a>
     </li>
     @if (isConfirmed)
     {
-        <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "NewSession" ? "active" : "")">
+        <li class="@(action == "NewSession" ? "active" : "")">
             <a asp-area="WorkSpace" asp-controller="Session" asp-action="NewSession"><i class="material-icons left">add_box</i>New Session</a>
         </li>
     }
-    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "JoinSession" ? "active" : "")">
+    <li class="@(action == "JoinSession" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
     </li>
     <li><a class="dropdown-trigger user-name" data-target="user-actions-lg"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">arrow_drop_down</i></a></li>
@@ -33,16 +35,16 @@
             <div class="determinate grey lighten-4" style="width: 100%;"></div>
         </div>
     </li>
-    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "Dashboard" ? "active" : "")">
+    <li class="@(action == "Dashboard" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="Dashboard"><i class="material-icons left">dashboard</i>Dashboard</a>
     </li>
     @if (isConfirmed)
     {
-        <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "NewSession" ? "active" : "")">
+        <li class="@(action == "NewSession" ? "active" : "")">
             <a asp-area="WorkSpace" asp-controller="Session" asp-action="NewSession"><i class="material-icons left">add_box</i>New Session</a>
         </li>
     }
-    <li class="@(ViewContext.RouteData.Values["Action"].ToString() == "JoinSession" ? "active" : "")">
+    <li class="@(action == "JoinSession" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
     </li>
     <li><a class="dropdown-trigger user-name" data-target="user-actions-sm"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">arrow_drop_down</i></a></li>
