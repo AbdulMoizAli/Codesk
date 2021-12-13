@@ -1,6 +1,8 @@
 ﻿import initializeVideoChat from '../../js/session/videoChat.js';
 
 $(document).ready(async () => {
+    $.LoadingOverlay('show');
+
     await hubConnection.start();
 
     window.addEventListener('beforeunload', e => {

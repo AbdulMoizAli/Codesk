@@ -38,6 +38,8 @@ $(document).ready(() => {
         const codeEditor = monacoEditor.create(editorDiv, getEditorOptions(editorContent));
         codeEditor.focus();
 
+        $.LoadingOverlay('hide');
+
         await configureEditorSettings(monacoEditor, codeEditor);
 
         configureLanguageAutoComplete(monacoLanguages, 'python', getPythonProposals);

@@ -66,6 +66,13 @@
       "files": [
         "peerjs.min.js"
       ]
+    },
+    {
+      "library": "jquery-loading-overlay@2.1.7",
+      "destination": "wwwroot/lib/jquery-loading-overlay/",
+      "files": [
+        "loadingoverlay.min.js"
+      ]
     }
   ]
 }
