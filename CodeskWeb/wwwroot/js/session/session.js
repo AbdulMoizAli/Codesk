@@ -100,5 +100,7 @@ $(document).ready(async () => {
         await hubConnection.invoke('JoinSession', userName, _sessionKey);
     }
 
+    $.LoadingOverlay('hide');
+
     initializeVideoChat();
 });

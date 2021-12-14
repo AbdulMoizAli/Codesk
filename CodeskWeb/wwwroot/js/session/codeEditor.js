@@ -28,6 +28,8 @@ $(document).ready(() => {
     }
 
     async function createEditor() {
+        $.LoadingOverlay('show');
+
         const editorDiv = document.querySelector('#code-editor');
 
         const monacoEditor = monaco.editor;
@@ -38,13 +40,13 @@ $(document).ready(() => {
         const codeEditor = monacoEditor.create(editorDiv, getEditorOptions(editorContent));
         codeEditor.focus();
 
-        $.LoadingOverlay('hide');
-
         await configureEditorSettings(monacoEditor, codeEditor);
 
         configureLanguageAutoComplete(monacoLanguages, 'python', getPythonProposals);
 
         bindEditorContentChangeEvent(codeEditor);
+
+        $.LoadingOverlay('hide');
     }
 
     async function configureEditorLanguages(monacoEditor, codeEditor) {
