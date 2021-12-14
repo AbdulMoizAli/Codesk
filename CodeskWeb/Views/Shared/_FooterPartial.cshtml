@@ -1,7 +1,7 @@
 ﻿@{
     var action = ViewContext.RouteData.Values["Action"].ToString();
 
-    bool isCodingSession = action == "NewSession" || action == "JoinSession" ? true : false;
+    bool isCodingSession = action == "NewSession" || (action == "JoinSession" && Context.Request.Method == "POST") ? true : false;
 }
 
 @if (!isCodingSession)
