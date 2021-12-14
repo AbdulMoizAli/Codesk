@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Page Not Found";
+}
+
+<div class="row valign-wrapper animate__animated animate__fadeIn">
+    <div class="col l4 s12 m6 offset-l4">
+        <center>
+            <img src="/images/404-error.svg" height="200" width="200" />
+        </center>
+
+        <div class="card grey lighten-5">
+            <div class="card-content white-text">
+                <span class="card-title black-text">Page Not Found</span>
+                <p class="black-text">The requested page/resource cannot be found</p>
+            </div>
+            <div class="card-action">
+                <a class="btn waves-effect waves-light grey darken-2" asp-controller="Home" asp-action="Index"><i class="material-icons left">arrow_back</i> Back To Home</a>
+            </div>
+        </div>
+    </div>
+</div>
