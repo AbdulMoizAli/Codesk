@@ -5,9 +5,15 @@ $(document).ready(async () => {
 
     await hubConnection.start();
 
-    window.addEventListener('beforeunload', e => {
-        e.preventDefault();
-        e.returnValue = '';
+    addEventListener('beforeunload', askUserBeforeUnload);
+
+    $('#leave-btn').click(() => {
+        removeEventListener('beforeunload', askUserBeforeUnload);
+
+        if ($('#user-authenticated').val() === 'yes')
+            location.replace('/WorkSpace/Session/Dashboard');
+        else if ($('#user-authenticated').val() === 'no')
+            location.replace('/');
     });
 
     $('#copy-session-key').click(() => {
@@ -43,6 +49,11 @@ $(document).ready(async () => {
         }
 
         $list.html(markup);
+    }
+
+    function askUserBeforeUnload(e) {
+        e.preventDefault();
+        e.returnValue = '';
     }
 
     function addUser(user) {
