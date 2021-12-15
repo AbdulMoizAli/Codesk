@@ -26,6 +26,8 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
 
             var data = await SessionManager.GetEditorSettings(email).ConfigureAwait(false);
 
+            ViewBag.IsSession = true;
+
             return View(new SessionViewModel { Settings = data.Item1, Themes = data.Item2, UserSettings = data.Item3 });
         }
 
@@ -78,6 +80,8 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
                 UserSettings = data.Item3,
                 JoinSession = model
             };
+
+            ViewBag.IsSession = true;
 
             return View("_JoinSession", viewModel);
         }
