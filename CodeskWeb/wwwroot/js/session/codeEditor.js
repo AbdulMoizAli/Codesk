@@ -1,6 +1,8 @@
 ﻿import getPythonProposals from '../../js/session/pythonAutoComplete.js';
 
 $(document).ready(() => {
+    $.LoadingOverlay('show');
+
     addThemeStylesheet();
 
     require.config({
@@ -28,8 +30,6 @@ $(document).ready(() => {
     }
 
     async function createEditor() {
-        $.LoadingOverlay('show');
-
         const editorDiv = document.querySelector('#code-editor');
 
         const monacoEditor = monaco.editor;
