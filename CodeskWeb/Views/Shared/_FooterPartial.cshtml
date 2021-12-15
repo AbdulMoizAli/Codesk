@@ -1,10 +1,4 @@
-﻿@{
-    var action = ViewContext.RouteData.Values["Action"].ToString();
-
-    bool isCodingSession = action == "NewSession" || (action == "JoinSession" && Context.Request.Method == "POST") ? true : false;
-}
-
-@if (!isCodingSession)
+﻿@if (ViewBag.IsSession is null)
 {
     <footer class="page-footer white">
         <div class="footer-copyright grey lighten-5">
