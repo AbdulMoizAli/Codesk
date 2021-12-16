@@ -5,6 +5,15 @@ $(document).ready(async () => {
 
     await hubConnection.start();
 
+    $('#session-time').attr('data-badge-caption', `${new Date().toLocaleDateString('en-US', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        weekday: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+    })}`);
+
     addEventListener('beforeunload', askUserBeforeUnload);
 
     $('#leave-btn').click(() => {
