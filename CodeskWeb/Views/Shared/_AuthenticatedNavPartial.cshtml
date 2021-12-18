@@ -51,17 +51,17 @@
 </ul>
 
 <ul id="user-actions-sm" class="dropdown-content">
-    <li><a>Profile</a></li>
-    <li><a>Settings</a></li>
+    <li><a><i class="material-icons left">account_circle</i> Profile</a></li>
+    <li><a><i class="material-icons left">settings_applications</i> Settings</a></li>
     <li class="divider" tabindex="-1"></li>
-    <li><a onclick="$('#logout').submit()">Sign out</a></li>
+    <li><a onclick="$('#logout').submit()"><i class="material-icons left">power_settings_new</i> Sign out</a></li>
 </ul>
 
 <ul id="user-actions-lg" class="dropdown-content">
-    <li><a>Profile</a></li>
-    <li><a>Settings</a></li>
+    <li><a><i class="material-icons left">account_circle</i> Profile</a></li>
+    <li><a><i class="material-icons left">settings_applications</i> Settings</a></li>
     <li class="divider" tabindex="-1"></li>
-    <li><a onclick="$('#logout').submit()">Sign out</a></li>
+    <li><a onclick="$('#logout').submit()"><i class="material-icons left">power_settings_new</i> Sign out</a></li>
 </ul>
 
 <form hidden id="logout" asp-area="Users" asp-controller="Account" asp-action="Logout" method="post"></form>
