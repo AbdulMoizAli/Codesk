@@ -1,5 +1,5 @@
 ﻿#actions-panel {
-    background: #212121;
+    background: #212121 !important;
 }
 
 #actions-panel * {
@@ -7,7 +7,7 @@
 }
 
 #video-panel {
-    background: #212121;
+    background: #212121 !important;
 }
 
 #video-panel * {
