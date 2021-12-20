@@ -108,7 +108,7 @@
                     <span id="sender-name">${senderName}</span>
                     <span class="message-data-time">${getCurrentTime()}</span>
                 </div>
-                <div class="message ${second} ${third}">${messageText}</div>
+                <div class="message ${second} ${third} black-text">${messageText}</div>
             </li>
         `;
 
