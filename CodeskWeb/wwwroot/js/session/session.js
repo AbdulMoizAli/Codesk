@@ -20,7 +20,7 @@ $(document).ready(async () => {
         removeEventListener('beforeunload', askUserBeforeUnload);
 
         if ($('#user-authenticated').val() === 'yes')
-            location.replace('/WorkSpace/Session/Dashboard');
+            location.replace('/Home/Dashboard');
         else if ($('#user-authenticated').val() === 'no')
             location.replace('/');
     });
