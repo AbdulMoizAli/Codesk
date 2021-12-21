@@ -72,7 +72,7 @@ namespace CodeskWeb.Areas.Users.Controllers
             if (!string.IsNullOrWhiteSpace(url))
                 return LocalRedirect(url);
 
-            return RedirectToAction("Dashboard", "Session", new { Area = "WorkSpace" });
+            return RedirectToAction("Dashboard", "Home", new { Area = "" });
         }
 
         [HttpPost]
@@ -110,7 +110,7 @@ namespace CodeskWeb.Areas.Users.Controllers
                 return View("SignIn");
             }
 
-            string url = string.IsNullOrWhiteSpace(returnUrl) ? Url.Action("Dashboard", "Session", new { Area = "WorkSpace" })
+            string url = string.IsNullOrWhiteSpace(returnUrl) ? Url.Action("Dashboard", "Home", new { Area = "" })
                 : returnUrl;
 
             var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;

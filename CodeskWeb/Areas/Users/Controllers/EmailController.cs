@@ -24,7 +24,7 @@ namespace CodeskWeb.Areas.Users.Controllers
         {
             await EmailManager.VerifyEmailAddress(token).ConfigureAwait(false);
 
-            return RedirectToAction("Dashboard", "Session", new { Area = "WorkSpace" });
+            return RedirectToAction("Dashboard", "Home", new { Area = "" });
         }
 
         public async Task<IActionResult> SendAccountConfirmationEmail()

@@ -10,11 +10,6 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
 {
     public class SessionController : Controller
     {
-        public IActionResult Dashboard()
-        {
-            return View();
-        }
-
         public async Task<IActionResult> NewSession()
         {
             var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;

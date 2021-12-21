@@ -8,7 +8,7 @@
 
 <ul class="right hide-on-med-and-down">
     <li class="@(action == "Dashboard" ? "active" : "")">
-        <a asp-area="WorkSpace" asp-controller="Session" asp-action="Dashboard"><i class="material-icons left">dashboard</i>Dashboard</a>
+        <a asp-area="" asp-controller="Home" asp-action="Dashboard"><i class="material-icons left">dashboard</i>Dashboard</a>
     </li>
     @if (isConfirmed)
     {
@@ -36,7 +36,7 @@
         </div>
     </li>
     <li class="@(action == "Dashboard" ? "active" : "")">
-        <a asp-area="WorkSpace" asp-controller="Session" asp-action="Dashboard"><i class="material-icons left">dashboard</i>Dashboard</a>
+        <a asp-area="" asp-controller="Home" asp-action="Dashboard"><i class="material-icons left">dashboard</i>Dashboard</a>
     </li>
     @if (isConfirmed)
     {
