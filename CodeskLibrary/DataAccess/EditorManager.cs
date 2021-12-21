@@ -37,5 +37,13 @@ namespace CodeskLibrary.DataAccess
             await db.ExecuteAsync("spSaveUserEditorSetting", new { emailAddress, settingId, settingValue }, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false);
         }
+
+        public static async Task ResetEditorSettings(string emailAddress)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            await db.ExecuteAsync("spResetEditorSettings", new { emailAddress }, commandType: CommandType.StoredProcedure)
+                .ConfigureAwait(false);
+        }
     }
 }
