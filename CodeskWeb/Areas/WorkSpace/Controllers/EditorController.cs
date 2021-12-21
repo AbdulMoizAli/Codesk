@@ -16,5 +16,15 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
 
             return Ok();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetEditorSettings()
+        {
+            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+
+            await EditorManager.ResetEditorSettings(email).ConfigureAwait(false);
+
+            return Ok();
+        }
     }
 }
