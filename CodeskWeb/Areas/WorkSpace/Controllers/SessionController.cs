@@ -17,23 +17,13 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             var result = await EmailManager.IsEmailConfirmed(email).ConfigureAwait(false);
 
             if (!result)
-                return RedirectToAction("Dashboard", "Session", new { Area = "WorkSpace" });
+                return RedirectToAction("Dashboard", "Home", new { Area = "" });
 
-            var data = await SessionManager.GetEditorSettings(email).ConfigureAwait(false);
+            var data = await EditorManager.GetEditorSettings(email).ConfigureAwait(false);
 
             ViewBag.IsSession = true;
 
             return View(new SessionViewModel { Settings = data.Item1, Themes = data.Item2, UserSettings = data.Item3 });
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveUserEditorSetting(int settingId, string settingValue)
-        {
-            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
-
-            await SessionManager.SaveUserEditorSetting(email, settingId, settingValue).ConfigureAwait(false);
-
-            return Ok();
         }
 
         [AllowAnonymous]
@@ -66,7 +56,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             if (User.Identity.IsAuthenticated)
                 email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
 
-            var data = await SessionManager.GetEditorSettings(email).ConfigureAwait(false);
+            var data = await EditorManager.GetEditorSettings(email).ConfigureAwait(false);
 
             var viewModel = new SessionViewModel
             {
