@@ -42,6 +42,8 @@ $(document).ready(() => {
 
         await configureEditorSettings(monacoEditor, codeEditor);
 
+        configureEditorSettingsReset();
+
         configureLanguageAutoComplete(monacoLanguages, 'python', getPythonProposals);
 
         bindEditorContentChangeEvent(codeEditor);
@@ -64,7 +66,7 @@ $(document).ready(() => {
         if ($('#user-authenticated').val() === 'no')
             return;
 
-        const url = `/WorkSpace/Session/SaveUserEditorSetting?settingId=${settingId}&settingValue=${settingValue}`;
+        const url = `/WorkSpace/Editor/SaveUserEditorSetting?settingId=${settingId}&settingValue=${settingValue}`;
         const response = await fetch(url, { method: 'POST' });
 
         if (response.status !== 200)
@@ -135,6 +137,49 @@ $(document).ready(() => {
             codeEditor.updateOptions({ wordWrap: value });
 
             await saveUserEditorSetting($(this).attr('data-setting-id'), value);
+        });
+    }
+
+    function configureEditorSettingsReset() {
+        const $userAuthenticated = $('#user-authenticated');
+
+        const $themeSelect = $('#theme-select');
+        const $cursorSelect = $('#cursor-select');
+        const $blinkingSelect = $('#blinking-select');
+        const $fontWeightSelect = $('#font-weight-select');
+        const $fontSizeInput = $('#font-size-input');
+        const $tabSizeInput = $('#tab-size-input');
+        const $lineNumberSwitch = $('#line-numbers-switch');
+        const $wordWrapSwitch = $('#word-wrap-switch');
+
+        $('#settings-reset-btn').click(async () => {
+            let flag = false;
+
+            if ($userAuthenticated.val() === 'yes') {
+                $userAuthenticated.val('no');
+                flag = true;
+            }
+
+            $themeSelect.val('vs').change();
+            $cursorSelect.val('line').change();
+            $blinkingSelect.val('blink').change();
+            $fontWeightSelect.val('400').change();
+            $fontSizeInput.val(null).change();
+            $tabSizeInput.val(null).change();
+            $lineNumberSwitch.prop('checked', true).change();
+            $wordWrapSwitch.prop('checked', false).change();
+
+            $('select').formSelect();
+
+            if (flag) {
+                $userAuthenticated.val('yes')
+
+                const url = '/WorkSpace/Editor/ResetEditorSettings';
+                const response = await fetch(url, { method: 'POST' });
+
+                if (response.status !== 200)
+                    showAlert('Error', 'something went wrong', true, 'OK');
+            }
         });
     }
 
