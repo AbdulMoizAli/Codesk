@@ -5,24 +5,19 @@ $(document).ready(async () => {
 
     await hubConnection.start();
 
-    $('#session-time').attr('data-badge-caption', `${new Date().toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-        weekday: 'long',
-        hour: '2-digit',
-        minute: '2-digit',
-    })}`);
+    $('#session-time').attr('data-badge-caption', getCurrentDateTime());
 
     addEventListener('beforeunload', askUserBeforeUnload);
 
-    $('#leave-btn').click(() => {
-        removeEventListener('beforeunload', askUserBeforeUnload);
+    $('#end-btn').click(async () => {
+        $.LoadingOverlay('show');
+        await hubConnection.invoke('EndSessionForAll', getCurrentDateTime(), sessionKey);
+        leaveSession();
+    });
 
-        if ($('#user-authenticated').val() === 'yes')
-            location.replace('/Home/Dashboard');
-        else if ($('#user-authenticated').val() === 'no')
-            location.replace('/');
+    $('#leave-btn').click(() => {
+        $.LoadingOverlay('show');
+        leaveSession();
     });
 
     $('#copy-session-key').click(() => {
@@ -65,6 +60,26 @@ $(document).ready(async () => {
         e.returnValue = '';
     }
 
+    function leaveSession() {
+        removeEventListener('beforeunload', askUserBeforeUnload);
+
+        if ($('#user-authenticated').val() === 'yes')
+            location.replace('/Home/Dashboard');
+        else if ($('#user-authenticated').val() === 'no')
+            location.replace('/');
+    }
+
+    function getCurrentDateTime() {
+        return new Date().toLocaleDateString('en-US', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            weekday: 'long',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    }
+
     function addUser(user) {
         sessionUsers.push(user);
         $('.participant-list ul').append(`<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.userId}">${user.userName.toUpperCase()}</a></li>`);
@@ -79,18 +94,30 @@ $(document).ready(async () => {
         $('#no-of-participants').text(sessionUsers.length);
     }
 
-    hubConnection.on('ReceiveNewSessionInfo', (user, _sessionKey) => {
+    hubConnection.on('ReceiveNewSessionInfo', async (user, _sessionKey) => {
         sessionKey = _sessionKey;
         addUser(user);
         updateParticipantCount();
 
         $('#session-key-chip').text(_sessionKey);
+
+        const url = `/WorkSpace/Session/SaveSession?startDateTime=${getCurrentDateTime()}&sessionKey=${_sessionKey}`;
+        const response = await fetch(url, { method: 'POST' });
+
+        if (response.status !== 200)
+            showAlert('Error', 'something went wrong while creating the session', true, 'OK');
     });
 
-    hubConnection.on('ReceiveJoinSessionInfo', users => {
+    hubConnection.on('ReceiveJoinSessionInfo', async users => {
         sessionUsers = users;
         showUsers(users);
         updateParticipantCount();
+
+        const url = `/WorkSpace/Session/SaveParticipant?userName=${$('#session-username').val()}&sessionKey=${$('#session-key').val()}`;
+        const response = await fetch(url, { method: 'POST' });
+
+        if (response.status !== 200)
+            showAlert('Error', 'something went wrong while joining the session', true, 'OK');
     });
 
     hubConnection.on('AddUser', user => {
@@ -105,6 +132,12 @@ $(document).ready(async () => {
 
     hubConnection.on('NotifyUser', notification => {
         M.toast({ html: notification });
+    });
+
+    hubConnection.on('EndSession', async () => {
+        $.LoadingOverlay('show');
+        await hubConnection.stop();
+        leaveSession();
     });
 
     if ($('#session-type').val() === 'new') {
