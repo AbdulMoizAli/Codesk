@@ -1,8 +1,10 @@
-﻿using CodeskWeb.HubModels;
+﻿using CodeskLibrary.DataAccess;
+using CodeskWeb.HubModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +20,7 @@ namespace CodeskWeb.Hubs
 
             var user = new ConnectedUser { UserId = Context.ConnectionId, UserName = userName };
 
-            SessionInformation.SessionInfo.Add(sessionKey, (new StringBuilder(), new List<ConnectedUser> { user }));
+            SessionInformation.SessionInfo.Add(sessionKey, (new StringBuilder(), Context.ConnectionId, new List<ConnectedUser> { user }));
 
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionKey)
                 .ConfigureAwait(false);
@@ -102,6 +104,24 @@ namespace CodeskWeb.Hubs
         {
             await Clients.OthersInGroup(sessionKey).ReceivePeerId(peerId, Context.ConnectionId)
                 .ConfigureAwait(false);
+        }
+
+        [Authorize]
+        public async Task EndSessionForAll(string endDateTime, string sessionKey)
+        {
+            if (!string.Equals(Context.ConnectionId, SessionInformation.SessionInfo[sessionKey].hostId))
+                return;
+
+            await Clients.OthersInGroup(sessionKey).EndSession()
+                .ConfigureAwait(false);
+
+            var email = Context.User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+
+            await SessionManager.EndSession(email, endDateTime, sessionKey).ConfigureAwait(false);
+
+            SessionInformation.SessionInfo[sessionKey].connectedUsers.ForEach(u => Groups.RemoveFromGroupAsync(u.UserId, sessionKey));
+
+            SessionInformation.SessionInfo.Remove(sessionKey);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
