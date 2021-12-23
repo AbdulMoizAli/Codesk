@@ -30,5 +30,7 @@ namespace CodeskWeb.HubModels
         Task ReceivePeerId(string peerId, string userId);
 
         Task CloseVideoCall(string userId);
+
+        Task EndSession();
     }
 }
