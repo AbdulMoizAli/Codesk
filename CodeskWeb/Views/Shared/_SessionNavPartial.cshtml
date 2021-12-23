@@ -3,6 +3,13 @@
         <a><span id="session-time" style="font-weight: 500" class="new badge white black-text" data-badge-caption=""></span></a>
     </li>
     <li>
-        <a id="leave-btn" class="btn-small waves-effect waves-light red darken-2"><i class="material-icons right">clear_all</i>Leave</a>
+        @if (ViewBag.NewSession is not null)
+        {
+            <a id="end-btn" class="btn-small waves-effect waves-light red darken-2"><i class="material-icons right">clear_all</i>End Session</a>
+        }
+        else if (ViewBag.JoinSession is not null)
+        {
+            <a id="leave-btn" class="btn-small waves-effect waves-light red darken-2"><i class="material-icons right">clear_all</i>Leave</a>
+        }
     </li>
 </ul>
