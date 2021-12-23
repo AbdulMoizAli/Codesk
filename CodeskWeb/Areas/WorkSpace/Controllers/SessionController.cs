@@ -22,8 +22,28 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             var data = await EditorManager.GetEditorSettings(email).ConfigureAwait(false);
 
             ViewBag.IsSession = true;
+            ViewBag.NewSession = true;
 
             return View(new SessionViewModel { Settings = data.Item1, Themes = data.Item2, UserSettings = data.Item3 });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSession(string startDateTime, string sessionKey)
+        {
+            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+
+            await SessionManager.SaveSession(email, startDateTime, sessionKey).ConfigureAwait(false);
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> SaveParticipant(string userName, string sessionKey)
+        {
+            await SessionManager.SaveParticipant(userName, sessionKey).ConfigureAwait(false);
+
+            return Ok();
         }
 
         [AllowAnonymous]
@@ -67,6 +87,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             };
 
             ViewBag.IsSession = true;
+            ViewBag.JoinSession = true;
 
             return View("_JoinSession", viewModel);
         }
