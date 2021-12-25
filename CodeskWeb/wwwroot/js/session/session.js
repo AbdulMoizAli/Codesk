@@ -155,5 +155,5 @@ $(document).ready(async () => {
 
     $.LoadingOverlay('hide');
 
-    initializevideochat();
+    initializeVideoChat();
 });
