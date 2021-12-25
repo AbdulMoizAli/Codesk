@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\assets\session\languages\logos\" />
+    <Folder Include="wwwroot\assets\session\files\" />
   </ItemGroup>
 
   <ItemGroup>
