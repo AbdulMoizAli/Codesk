@@ -75,6 +75,16 @@ $(document).ready(() => {
 
                 $('#file-title').val(sessionCurrentFile.fileTitle);
 
+                const url = `/WorkSpace/SessionFile/GetFileContent?filePath=${sessionCurrentFile.filePath}`;
+                const response = await fetch(url, { method: 'POST' });
+
+                if (response.status !== 200)
+                    showAlert('Error', 'something went wrong while fetching the file content', true, 'OK');
+
+                const data = await response.text();
+
+                codeEditor.setValue(data);
+
                 $.LoadingOverlay('hide');
             }
         });
@@ -213,6 +223,7 @@ $(document).ready(() => {
 
     let typing = false;
     let timeout = undefined;
+    let fileSaveTimeout = undefined;
 
     async function timeoutFunction() {
         typing = false;
@@ -240,6 +251,25 @@ $(document).ready(() => {
                 clearTimeout(timeout);
                 timeout = setTimeout(timeoutFunction, 1500);
             }
+
+            if (!sessionCurrentFile) return;
+
+            if (fileSaveTimeout) clearTimeout(fileSaveTimeout);
+
+            fileSaveTimeout = setTimeout(async () => {
+                const url = `/WorkSpace/SessionFile/UpdateFileContent?filePath=${sessionCurrentFile.filePath}`;
+                const response = await fetch(url,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(editorContent)
+                    });
+
+                if (response.status !== 200)
+                    showAlert('Error', 'something went wrong while saving the file', true, 'OK');
+            }, 3000);
         });
 
         hubConnection.on('ReceiveEditorContent', editorContent => codeEditor.setValue(editorContent));
