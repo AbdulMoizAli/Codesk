@@ -66,7 +66,7 @@ namespace CodeskWeb.Hubs
 
             var filePath = Path.Combine(_env.WebRootPath, "assets", "session", "files", fileName);
 
-            File.Create(filePath);
+            await File.Create(filePath).DisposeAsync();
 
             return await SessionFileManager.SaveSessionFile(email, sessionKey, fileName, sessionFileType.FileTypeId);
         }
