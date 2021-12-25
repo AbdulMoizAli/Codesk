@@ -1,9 +1,12 @@
 ﻿using CodeskLibrary.DataAccess;
+using CodeskLibrary.Models;
 using CodeskWeb.HubModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +15,13 @@ namespace CodeskWeb.Hubs
 {
     public class SessionHub : Hub<ISessionClient>
     {
+        private readonly IWebHostEnvironment _env;
+
+        public SessionHub(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
+
         [Authorize]
         public async Task CreateSession()
         {
@@ -30,6 +40,53 @@ namespace CodeskWeb.Hubs
 
             await Clients.Caller.NotifyUser(NotificationMessage.GetWelcomeMessage(userName))
                 .ConfigureAwait(false);
+        }
+
+        [Authorize]
+        public async Task<SessionFile> CreateSessionFile(string fileType, string sessionKey)
+        {
+            if (!string.Equals(Context.ConnectionId, SessionInformation.SessionInfo[sessionKey].hostId))
+                return null;
+
+            var sessionFileType = await SessionFileManager.GetFileTypeExtension(fileType).ConfigureAwait(false);
+
+            if (sessionFileType is null)
+                return null;
+
+            var email = Context.User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+
+            var sessionFile = await SessionFileManager.GetSessionFile(email, sessionKey, sessionFileType.FileTypeId);
+
+            if (sessionFile is not null)
+            {
+                return sessionFile;
+            }
+
+            var fileName = $"{Guid.NewGuid()}_{Path.GetRandomFileName()}.{sessionFileType.FileTypeExtension}";
+
+            var filePath = Path.Combine(_env.WebRootPath, "assets", "session", "files", fileName);
+
+            File.Create(filePath);
+
+            return await SessionFileManager.SaveSessionFile(email, sessionKey, fileName, sessionFileType.FileTypeId);
+        }
+
+        [Authorize]
+        public async Task EndSessionForAll(string endDateTime, string sessionKey)
+        {
+            if (!string.Equals(Context.ConnectionId, SessionInformation.SessionInfo[sessionKey].hostId))
+                return;
+
+            await Clients.OthersInGroup(sessionKey).EndSession()
+                .ConfigureAwait(false);
+
+            var email = Context.User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+
+            await SessionManager.EndSession(email, endDateTime, sessionKey).ConfigureAwait(false);
+
+            SessionInformation.SessionInfo[sessionKey].connectedUsers.ForEach(u => Groups.RemoveFromGroupAsync(u.UserId, sessionKey));
+
+            SessionInformation.SessionInfo.Remove(sessionKey);
         }
 
         public async Task JoinSession(string userName, string sessionKey)
@@ -104,24 +161,6 @@ namespace CodeskWeb.Hubs
         {
             await Clients.OthersInGroup(sessionKey).ReceivePeerId(peerId, Context.ConnectionId)
                 .ConfigureAwait(false);
-        }
-
-        [Authorize]
-        public async Task EndSessionForAll(string endDateTime, string sessionKey)
-        {
-            if (!string.Equals(Context.ConnectionId, SessionInformation.SessionInfo[sessionKey].hostId))
-                return;
-
-            await Clients.OthersInGroup(sessionKey).EndSession()
-                .ConfigureAwait(false);
-
-            var email = Context.User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
-
-            await SessionManager.EndSession(email, endDateTime, sessionKey).ConfigureAwait(false);
-
-            SessionInformation.SessionInfo[sessionKey].connectedUsers.ForEach(u => Groups.RemoveFromGroupAsync(u.UserId, sessionKey));
-
-            SessionInformation.SessionInfo.Remove(sessionKey);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
