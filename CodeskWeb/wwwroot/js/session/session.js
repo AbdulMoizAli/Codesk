@@ -72,9 +72,9 @@ $(document).ready(async () => {
     function getCurrentDateTime() {
         return new Date().toLocaleDateString('en-US', {
             day: '2-digit',
-            month: 'long',
+            month: 'short',
             year: 'numeric',
-            weekday: 'long',
+            weekday: 'short',
             hour: '2-digit',
             minute: '2-digit',
         });
@@ -155,5 +155,5 @@ $(document).ready(async () => {
 
     $.LoadingOverlay('hide');
 
-    initializeVideoChat();
+    initializevideochat();
 });
