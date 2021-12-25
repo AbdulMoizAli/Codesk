@@ -3,6 +3,7 @@ using FluentEmail.Core;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -35,7 +36,7 @@ namespace CodeskWeb.Areas.Users.Controllers
 
             var confirmationLink = Url.Action("VerifyEmail", "Email", new { Area = "Users", token }, Request.Scheme);
 
-            var templateFilePath = $"{_env.WebRootPath}\\EmailTemplates\\EmailConfirmation.html";
+            var templateFilePath = Path.Combine(_env.WebRootPath, "EmailTemplates", "EmailConfirmation.html");
 
             await _email
                 .To(email, User.Identity.Name)
