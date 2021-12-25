@@ -1,5 +1,7 @@
 ﻿import getPythonProposals from '../../js/session/pythonAutoComplete.js';
 
+let sessionCurrentFile = undefined;
+
 $(document).ready(() => {
     $.LoadingOverlay('show');
 
@@ -58,7 +60,23 @@ $(document).ready(() => {
         $('#language-input').autocomplete({
             data,
             limit: 6,
-            onAutocomplete: value => monacoEditor.setModelLanguage(codeEditor.getModel(), value)
+            onAutocomplete: async value => {
+                if (value === codeEditor.getModel().getLanguageIdentifier().language)
+                    return;
+
+                monacoEditor.setModelLanguage(codeEditor.getModel(), value)
+
+                if ($('#session-type').val() !== 'new' || !(['csharp', 'cpp', 'python'].includes(value)))
+                    return;
+
+                $.LoadingOverlay('show');
+
+                sessionCurrentFile = await hubConnection.invoke('CreateSessionFile', value, sessionKey);
+
+                $('#file-title').val(sessionCurrentFile.fileTitle);
+
+                $.LoadingOverlay('hide');
+            }
         });
     }
 
@@ -237,4 +255,14 @@ $(document).ready(() => {
             $('.participant-list ul').find(`li a[data-userid="${userId}"]`).find('span.badge').remove();
         });
     }
+
+    $('#file-title').change(async function () {
+        sessionCurrentFile.fileTitle = $(this).val();
+
+        const url = `/WorkSpace/SessionFile/UpdateFileTitle?fileId=${sessionCurrentFile.fileId}&fileTitle=${sessionCurrentFile.fileTitle}`;
+        const response = await fetch(url, { method: 'POST' });
+
+        if (response.status !== 200)
+            showAlert('Error', 'something went wrong while renaming the file', true, 'OK');
+    });
 });
