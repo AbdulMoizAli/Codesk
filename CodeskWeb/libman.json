@@ -73,6 +73,14 @@
       "files": [
         "loadingoverlay.min.js"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@microsoft/signalr-protocol-msgpack@6.0.1",
+      "destination": "wwwroot/lib/microsoft/signalr-protocol-msgpack/",
+      "files": [
+        "dist/browser/signalr-protocol-msgpack.min.js"
+      ]
     }
   ]
 }

@@ -73,9 +73,9 @@ $(document).ready(() => {
 
                 sessionCurrentFile = await hubConnection.invoke('CreateSessionFile', value, sessionKey);
 
-                $('#file-title').val(sessionCurrentFile.fileTitle);
+                $('#file-title').val(sessionCurrentFile.FileTitle);
 
-                const url = `/WorkSpace/SessionFile/GetFileContent?filePath=${sessionCurrentFile.filePath}`;
+                const url = `/WorkSpace/SessionFile/GetFileContent?filePath=${sessionCurrentFile.FilePath}`;
                 const response = await fetch(url, { method: 'POST' });
 
                 if (response.status !== 200)
@@ -257,7 +257,7 @@ $(document).ready(() => {
             if (fileSaveTimeout) clearTimeout(fileSaveTimeout);
 
             fileSaveTimeout = setTimeout(async () => {
-                const url = `/WorkSpace/SessionFile/UpdateFileContent?filePath=${sessionCurrentFile.filePath}`;
+                const url = `/WorkSpace/SessionFile/UpdateFileContent?filePath=${sessionCurrentFile.FilePath}`;
                 const response = await fetch(url,
                     {
                         method: 'POST',
@@ -287,9 +287,9 @@ $(document).ready(() => {
     }
 
     $('#file-title').change(async function () {
-        sessionCurrentFile.fileTitle = $(this).val();
+        sessionCurrentFile.FileTitle = $(this).val();
 
-        const url = `/WorkSpace/SessionFile/UpdateFileTitle?fileId=${sessionCurrentFile.fileId}&fileTitle=${sessionCurrentFile.fileTitle}`;
+        const url = `/WorkSpace/SessionFile/UpdateFileTitle?fileId=${sessionCurrentFile.FileId}&fileTitle=${sessionCurrentFile.FileTitle}`;
         const response = await fetch(url, { method: 'POST' });
 
         if (response.status !== 200)

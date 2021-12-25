@@ -33,7 +33,7 @@ $(document).ready(async () => {
             return;
         }
 
-        const filteredUsers = sessionUsers.filter(user => user.userName.toLowerCase().includes(query));
+        const filteredUsers = sessionUsers.filter(user => user.UserName.toLowerCase().includes(query));
 
         showUsers(filteredUsers);
     });
@@ -49,7 +49,7 @@ $(document).ready(async () => {
         let markup = '';
 
         for (const user of users) {
-            markup += `<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.userId}">${user.userName.toUpperCase()}</a></li>`;
+            markup += `<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.UserId}">${user.UserName.toUpperCase()}</a></li>`;
         }
 
         $list.html(markup);
@@ -82,12 +82,12 @@ $(document).ready(async () => {
 
     function addUser(user) {
         sessionUsers.push(user);
-        $('.participant-list ul').append(`<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.userId}">${user.userName.toUpperCase()}</a></li>`);
+        $('.participant-list ul').append(`<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.UserId}">${user.UserName.toUpperCase()}</a></li>`);
     }
 
     function removeUser(user) {
-        sessionUsers = sessionUsers.filter(x => x.userId !== user.userId);
-        $('.participant-list ul').find(`li a[data-userid="${user.userId}"]`).parent().remove();
+        sessionUsers = sessionUsers.filter(x => x.UserId !== user.UserId);
+        $('.participant-list ul').find(`li a[data-userid="${user.UserId}"]`).parent().remove();
     }
 
     function updateParticipantCount() {

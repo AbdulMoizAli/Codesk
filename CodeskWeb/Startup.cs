@@ -17,6 +17,8 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
 using CodeskWeb.Hubs;
+using Microsoft.AspNetCore.Http.Connections;
+using System;
 
 namespace CodeskWeb
 {
@@ -98,7 +100,11 @@ namespace CodeskWeb
 
             services.AddHttpClient<ICaptchaValidator, GoogleReCaptchaValidator>();
 
-            services.AddSignalR();
+            services.AddSignalR(options =>
+            {
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+            }).AddMessagePackProtocol();
 
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
         }
@@ -142,14 +148,17 @@ namespace CodeskWeb
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                name: "areas",
-                pattern: "{area}/{controller}/{action}/{id?}");
+                    name: "areas",
+                    pattern: "{area}/{controller}/{action}/{id?}");
 
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-                endpoints.MapHub<SessionHub>("/sessionHub");
+                endpoints.MapHub<SessionHub>("/sessionHub", options =>
+                {
+                    options.Transports = HttpTransportType.WebSockets;
+                });
             });
         }
     }
