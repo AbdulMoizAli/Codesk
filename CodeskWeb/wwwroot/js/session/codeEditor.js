@@ -15,10 +15,10 @@ $(document).ready(() => {
 
     require(requirePaths, createEditor);
 
-    function getEditorOptions(editorContent) {
+    function getEditorOptions() {
         return {
             language: 'plaintext',
-            value: editorContent ? editorContent : 'select a language of your choice from settings and start coding... 🙂',
+            value: $('#session-type').val() === 'new' ? 'select a language of your choice from settings and start coding... 🙂' : $('#editor-content').text(),
             scrollBeyondLastLine: false,
             theme: $('#theme-select').val(),
             cursorStyle: $('#cursor-select').val(),
@@ -37,9 +37,7 @@ $(document).ready(() => {
         const monacoEditor = monaco.editor;
         const monacoLanguages = monaco.languages;
 
-        const editorContent = $('#editor-content').text();
-
-        const codeEditor = monacoEditor.create(editorDiv, getEditorOptions(editorContent));
+        const codeEditor = monacoEditor.create(editorDiv, getEditorOptions());
         codeEditor.focus();
 
         await configureEditorSettings(monacoEditor, codeEditor);
@@ -230,55 +228,76 @@ $(document).ready(() => {
         await hubConnection.invoke('StoppedTyping', sessionKey);
     }
 
-    function bindEditorContentChangeEvent(codeEditor) {
-        const ignoreKeys = [
-            15, 16, 17, 18, 9, 2, 8, 4, 5, 6, 11, 12, 59, 60, 61, 62, 63, 64,
-            65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 14, 13, 19
-        ];
+    async function configTypingIndication() {
+        if (typing == false) {
+            typing = true
+            await hubConnection.invoke('StartedTyping', sessionKey);
+            timeout = setTimeout(timeoutFunction, 1000);
+        } else {
+            clearTimeout(timeout);
+            timeout = setTimeout(timeoutFunction, 1000);
+        }
+    }
 
-        codeEditor.onKeyUp(async e => {
-            if (ignoreKeys.includes(e.keyCode))
-                return;
+    function configSessionFileUpdate(codeEditor) {
+        if (!sessionCurrentFile) return;
 
-            const editorContent = codeEditor.getValue();
-            await hubConnection.invoke('SendEditorContent', editorContent, sessionKey);
+        if (fileSaveTimeout) clearTimeout(fileSaveTimeout);
 
-            if (typing == false) {
-                typing = true
-                await hubConnection.invoke('StartedTyping', sessionKey);
-                timeout = setTimeout(timeoutFunction, 1500);
-            } else {
-                clearTimeout(timeout);
-                timeout = setTimeout(timeoutFunction, 1500);
-            }
+        fileSaveTimeout = setTimeout(async () => {
+            const url = `/WorkSpace/SessionFile/UpdateFileContent?filePath=${sessionCurrentFile.FilePath}&sessionKey=${sessionKey}`;
+            const response = await fetch(url,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(codeEditor.getValue())
+                });
 
-            if (!sessionCurrentFile) return;
+            if (response.status !== 200)
+                showAlert('Error', 'something went wrong while saving the file', true, 'OK');
+        }, 3000);
+    }
 
-            if (fileSaveTimeout) clearTimeout(fileSaveTimeout);
+    async function broadcastEditorContent(data, codeEditor) {
+        const change = data.changes[0];
 
-            fileSaveTimeout = setTimeout(async () => {
-                const url = `/WorkSpace/SessionFile/UpdateFileContent?filePath=${sessionCurrentFile.FilePath}`;
-                const response = await fetch(url,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(editorContent)
-                    });
-
-                if (response.status !== 200)
-                    showAlert('Error', 'something went wrong while saving the file', true, 'OK');
-            }, 3000);
+        const editorContent = JSON.stringify({
+            range: change.range,
+            text: change.text
         });
 
-        hubConnection.on('ReceiveEditorContent', editorContent => codeEditor.setValue(editorContent));
+        await hubConnection.invoke('SendEditorContent', editorContent, sessionKey);
+
+        configTypingIndication();
+
+        configSessionFileUpdate(codeEditor);
+    }
+
+    function bindEditorContentChangeEvent(codeEditor) {
+        let disposable = codeEditor.onDidChangeModelContent(data => broadcastEditorContent(data, codeEditor));
+
+        hubConnection.on('ReceiveEditorContent', editorContent => {
+            const data = JSON.parse(editorContent);
+
+            disposable.dispose();
+
+            codeEditor.executeEdits(undefined, [{
+                forceMoveMarkers: true,
+                range: data.range,
+                text: data.text
+            }]);
+
+            disposable = codeEditor.onDidChangeModelContent(data => broadcastEditorContent(data, codeEditor));
+
+            configSessionFileUpdate(codeEditor);
+        });
 
         hubConnection.on('StartTypingIndication', userId => {
             $('.participant-list ul').find(`li a[data-userid="${userId}"]`)
                 .prepend('<span class="new badge green lighten-1 pulse" data-badge-caption="Typing..."></span>')
                 .parent().exchangePositionWith('.participant-list ul li:eq(1)');
-      
         });
 
         hubConnection.on('StopTypingIndication', userId => {
