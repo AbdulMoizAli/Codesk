@@ -140,9 +140,6 @@ namespace CodeskWeb.Hubs
         {
             await Clients.OthersInGroup(sessionKey).ReceiveEditorContent(editorContent)
                 .ConfigureAwait(false);
-
-            SessionInformation.SessionInfo[sessionKey].code.Clear();
-            SessionInformation.SessionInfo[sessionKey].code.Append(editorContent);
         }
 
         public async Task StartedTyping(string sessionKey)
