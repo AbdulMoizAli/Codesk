@@ -57,10 +57,10 @@
         if (typing == false) {
             typing = true
             await hubConnection.invoke('StartedMessageTyping', sessionKey, $('.participant-list ul li:eq(0) a').text());
-            timeout = setTimeout(timeoutFunction, 1500);
+            timeout = setTimeout(timeoutFunction, 1000);
         } else {
             clearTimeout(timeout);
-            timeout = setTimeout(timeoutFunction, 1500);
+            timeout = setTimeout(timeoutFunction, 1000);
         }
     });
 
