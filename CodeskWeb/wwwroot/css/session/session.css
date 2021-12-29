@@ -218,25 +218,35 @@ body, html {
     height: 14px;
 }
 
-#file-title {
+#file-title-placeholder {
+    display: none;
+    white-space: pre;
+}
+
+#file-title, #file-title-placeholder {
     height: 35px;
     font-size: 20px;
     border: none;
     font-weight: 500;
-    text-align: right;
+    min-width: 30px;
 }
 
 #file-title:focus {
     outline: none !important;
-    border: 1px solid white;
+    border: 2px solid white !important;
+}
+
+#file-title:hover {
+    outline: none !important;
+    border: 1px solid lightgrey;
 }
 
 #file-title::selection {
     color: white;
-    background: #616161;
+    background: #424242;
 }
 
 #file-title::-moz-selection {
     color: white;
-    background: #616161;
+    background: #424242;
 }
