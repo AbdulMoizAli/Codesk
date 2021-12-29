@@ -19,7 +19,7 @@
     <li class="@(action == "JoinSession" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
     </li>
-    <li><a onclick="$('#logout').submit()" class="user-name"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">power_settings_new</i></a></li>
+    <li><a onclick="$('#logout').submit()" class="user-name"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper()</a></li>
 </ul>
 
 <ul class="sidenav" id="mobile-nav">
@@ -47,7 +47,7 @@
     <li class="@(action == "JoinSession" ? "active" : "")">
         <a asp-area="WorkSpace" asp-controller="Session" asp-action="JoinSession"><i class="material-icons left">repeat</i>Join Session</a>
     </li>
-    <li><a onclick="$('#logout').submit()" class="user-name"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper() <i class="material-icons right">power_settings_new</i></a></li>
+    <li><a onclick="$('#logout').submit()" class="user-name"><i class="material-icons left">verified_user</i> @User.Identity.Name.ToUpper()</a></li>
 </ul>
 
 <form hidden id="logout" asp-area="Users" asp-controller="Account" asp-action="Logout" method="post"></form>
