@@ -2,6 +2,8 @@
 
 let sessionCurrentFile = undefined;
 
+$('#file-title').hide();
+
 $(document).ready(() => {
     $.LoadingOverlay('show');
 
@@ -64,14 +66,21 @@ $(document).ready(() => {
 
                 monacoEditor.setModelLanguage(codeEditor.getModel(), value)
 
-                if ($('#session-type').val() !== 'new' || !(['csharp', 'cpp', 'python'].includes(value)))
+                if ($('#session-type').val() !== 'new' || !(['csharp', 'cpp', 'python'].includes(value))) {
+                    $('#file-title').hide();
                     return;
+                }
 
                 $.LoadingOverlay('show');
 
                 sessionCurrentFile = await hubConnection.invoke('CreateSessionFile', value, sessionKey);
 
-                $('#file-title').val(sessionCurrentFile.FileTitle);
+                $('#file-title')
+                    .val(sessionCurrentFile.FileTitle)
+                    .width($('#file-title-placeholder')
+                        .text(sessionCurrentFile.FileTitle)
+                        .width())
+                    .show();
 
                 const url = `/WorkSpace/SessionFile/GetFileContent?filePath=${sessionCurrentFile.FilePath}`;
                 const response = await fetch(url, { method: 'POST' });
@@ -305,13 +314,23 @@ $(document).ready(() => {
         });
     }
 
-    $('#file-title').change(async function () {
-        sessionCurrentFile.FileTitle = $(this).val();
+    $('#file-title')
+        .on('input', function () {
+            $(this).width($('#file-title-placeholder').text($(this).val()).width());
+        })
+        .change(async function () {
+            if (!sessionCurrentFile)
+                return;
 
-        const url = `/WorkSpace/SessionFile/UpdateFileTitle?fileId=${sessionCurrentFile.FileId}&fileTitle=${sessionCurrentFile.FileTitle}`;
-        const response = await fetch(url, { method: 'POST' });
+            if (!$(this).val())
+                $(this).val('Untitled File');
 
-        if (response.status !== 200)
-            showAlert('Error', 'something went wrong while renaming the file', true, 'OK');
-    });
+            sessionCurrentFile.FileTitle = $(this).val();
+
+            const url = `/WorkSpace/SessionFile/UpdateFileTitle?fileId=${sessionCurrentFile.FileId}&fileTitle=${sessionCurrentFile.FileTitle}`;
+            const response = await fetch(url, { method: 'POST' });
+
+            if (response.status !== 200)
+                showAlert('Error', 'something went wrong while renaming the file', true, 'OK');
+        });
 });
