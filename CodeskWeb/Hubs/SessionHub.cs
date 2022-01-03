@@ -28,7 +28,7 @@ namespace CodeskWeb.Hubs
             var sessionKey = Guid.NewGuid().ToString();
             var userName = Context.User.Identity.Name;
 
-            var user = new ConnectedUser { UserId = Context.ConnectionId, UserName = userName };
+            var user = new ConnectedUser { UserId = Context.ConnectionId, UserName = userName, HasWriteAccess = true };
 
             SessionInformation.SessionInfo.Add(sessionKey, (new StringBuilder(), Context.ConnectionId, new List<ConnectedUser> { user }));
 
@@ -89,6 +89,18 @@ namespace CodeskWeb.Hubs
             SessionInformation.SessionInfo.Remove(sessionKey);
         }
 
+        [Authorize]
+        public async Task ToggleWriteAccess(string sessionKey, string userId)
+        {
+            if (!string.Equals(Context.ConnectionId, SessionInformation.SessionInfo[sessionKey].hostId))
+                return;
+
+            var user = SessionInformation.SessionInfo[sessionKey].connectedUsers.Find(u => u.UserId == userId);
+            user.HasWriteAccess = !user.HasWriteAccess;
+
+            await Clients.Client(userId).ToggleEditorReadOnly(!user.HasWriteAccess).ConfigureAwait(false);
+        }
+
         public async Task JoinSession(string userName, string sessionKey)
         {
             var user = new ConnectedUser { UserId = Context.ConnectionId, UserName = userName };
@@ -138,6 +150,9 @@ namespace CodeskWeb.Hubs
 
         public async Task SendEditorContent(string editorContent, string sessionKey)
         {
+            if (!SessionInformation.SessionInfo[sessionKey].connectedUsers.Find(u => u.UserId == Context.ConnectionId).HasWriteAccess)
+                return;
+
             await Clients.OthersInGroup(sessionKey).ReceiveEditorContent(editorContent)
                 .ConfigureAwait(false);
         }
