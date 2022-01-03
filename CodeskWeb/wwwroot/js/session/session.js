@@ -7,6 +7,8 @@ $(document).ready(async () => {
 
     $('#session-time').attr('data-badge-caption', getCurrentDateTime());
 
+    configureAccessRight();
+
     addEventListener('beforeunload', askUserBeforeUnload);
 
     $('#end-btn').click(async () => {
@@ -28,14 +30,14 @@ $(document).ready(async () => {
     $('#participant-search').keyup(function () {
         const query = $(this).val().trim().toLowerCase();
 
-        if (!query) {
-            showUsers(sessionUsers);
-            return;
-        }
+        $('.participant').filter(function () {
+            $(this).toggle($(this).first().text().toLowerCase().indexOf(query) > -1);
+        });
 
-        const filteredUsers = sessionUsers.filter(user => user.UserName.toLowerCase().includes(query));
-
-        showUsers(filteredUsers);
+        if (!$('.participant').is(':visible'))
+            $('.participant-list ul').append('<li class="participant center"><a class="blue-grey-text">NO PARTICIPANT</a></li>');
+        else
+            $('.participant-list ul li:contains("NO PARTICIPANT")').remove();
     });
 
     function showUsers(users) {
@@ -60,6 +62,20 @@ $(document).ready(async () => {
         e.returnValue = '';
     }
 
+    function configureAccessRight() {
+        $('.participant-list').delegate('a[data-usertype="participant"]', 'click', async function () {
+            const $icon = $(this).find('i');
+
+            if ($icon.text() === 'speaker_notes')
+                $icon.text('speaker_notes_off')
+            else if ($icon.text() === 'speaker_notes_off')
+                $icon.text('speaker_notes');
+
+            const userId = $(this).data('userid');
+            await hubConnection.invoke('ToggleWriteAccess', sessionKey, userId);
+        });
+    }
+
     function leaveSession() {
         removeEventListener('beforeunload', askUserBeforeUnload);
 
@@ -82,7 +98,18 @@ $(document).ready(async () => {
 
     function addUser(user) {
         sessionUsers.push(user);
-        $('.participant-list ul').append(`<li class="participant"><a class="blue-text text-darken-4" data-userid="${user.UserId}">${user.UserName.toUpperCase()}</a></li>`);
+
+        let icon = '';
+        let iconClass = '';
+        let userType = ''
+
+        if ($('#session-type').val() === 'new' && sessionUsers.length > 1) {
+            icon = '<i class="material-icons">speaker_notes_off</i>';
+            iconClass = 'waves-effect';
+            userType = 'participant';
+        }
+
+        $('.participant-list ul').append(`<li class="participant"><a class="blue-text text-darken-4 ${iconClass}" data-userid="${user.UserId}" data-usertype="${userType}">${icon} ${user.UserName.toUpperCase()}</a></li>`);
     }
 
     function removeUser(user) {
