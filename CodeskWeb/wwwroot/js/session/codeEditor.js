@@ -29,7 +29,8 @@ $(document).ready(() => {
             fontSize: $('#font-size-input').val(),
             tabSize: $('#tab-size-input').val(),
             lineNumbers: $('#line-numbers-switch').is(':checked') ? 'on' : 'off',
-            wordWrap: $('#word-wrap-switch').is(':checked') ? 'on' : 'off'
+            wordWrap: $('#word-wrap-switch').is(':checked') ? 'on' : 'off',
+            readOnly: $('#session-type').val() === 'join' ? true : false
         };
     }
 
@@ -49,6 +50,8 @@ $(document).ready(() => {
         configureLanguageAutoComplete(monacoLanguages, 'python', getPythonProposals);
 
         bindEditorContentChangeEvent(codeEditor);
+
+        configureAccessWrite(codeEditor);
 
         $.LoadingOverlay('hide');
     }
@@ -292,6 +295,11 @@ $(document).ready(() => {
 
             disposable.dispose();
 
+            const isReadOnly = codeEditor.getOption(80);
+
+            if (isReadOnly)
+                codeEditor.updateOptions({ readOnly: false });
+
             codeEditor.executeEdits(undefined, [{
                 forceMoveMarkers: true,
                 range: data.range,
@@ -299,6 +307,9 @@ $(document).ready(() => {
             }]);
 
             disposable = codeEditor.onDidChangeModelContent(data => broadcastEditorContent(data, codeEditor));
+
+            if (isReadOnly)
+                codeEditor.updateOptions({ readOnly: true });
 
             configSessionFileUpdate(codeEditor);
         });
@@ -311,6 +322,16 @@ $(document).ready(() => {
 
         hubConnection.on('StopTypingIndication', userId => {
             $('.participant-list ul').find(`li a[data-userid="${userId}"]`).find('span.badge').remove();
+        });
+    }
+
+    function configureAccessWrite(codeEditor) {
+        hubConnection.on('ToggleEditorReadOnly', isReadOnly => codeEditor.updateOptions({ readOnly: isReadOnly }));
+
+        const messageContribution = codeEditor.getContribution('editor.contrib.messageController');
+        codeEditor.onDidAttemptReadOnlyEdit(() => {
+            messageContribution.showMessage('Please request write access from the session host.', codeEditor.getPosition());
+            //messageContribution.dispose();
         });
     }
 
