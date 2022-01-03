@@ -1,6 +1,5 @@
 ﻿$(document).ready(() => {
     $('.tooltipped').tooltip();
-    $('.dropdown-trigger').dropdown({ coverTrigger: false });
     $('.sidenav').sidenav();
     $('.modal').modal({
         dismissible: false,
@@ -9,6 +8,7 @@
         }
     });
     $('select').formSelect();
+    $('.dropdown-trigger').dropdown({ coverTrigger: false });
     $('#video-panel').sidenav({ edge: 'right' });
 });
 
