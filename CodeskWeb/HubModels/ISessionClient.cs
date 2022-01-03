@@ -32,5 +32,7 @@ namespace CodeskWeb.HubModels
         Task CloseVideoCall(string userId);
 
         Task EndSession();
+
+        Task ToggleEditorReadOnly(bool isReadOnly);
     }
 }
