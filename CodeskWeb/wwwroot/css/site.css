@@ -88,3 +88,27 @@ nav .brand-logo {
         line-height: 50px;
     }
 }
+
+.dashboard-container {
+    padding: 20px;
+}
+
+.rounded-5 {
+    border-radius: 5px;
+}
+
+.top-left-rounded-5 {
+    border-top-left-radius: 5px;
+}
+
+.top-right-rounded-5 {
+    border-top-right-radius: 5px;
+}
+
+.no-border {
+    border: 0;
+}
+
+no-padding {
+    padding: 0;
+}
