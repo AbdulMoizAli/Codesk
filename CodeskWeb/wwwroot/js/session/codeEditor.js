@@ -337,14 +337,27 @@ $(document).ready(() => {
 
     $('#file-title')
         .on('input', function () {
+            let rectifiedName = '';
+
+            for (const char of $(this).val()) {
+                if (!((/[a-zA-Z]/).test(char) || !isNaN(char) || [' ', '(', ')', '_', '-', ',', '.'].includes(char)))
+                    continue;
+
+                rectifiedName += char;
+            }
+
+            $(this).val(rectifiedName);
+
             $(this).width($('#file-title-placeholder').text($(this).val()).width());
         })
         .change(async function () {
             if (!sessionCurrentFile)
                 return;
 
-            if (!$(this).val())
+            if (!$(this).val()) {
+                $(this).width($('#file-title-placeholder').text("Untitled File").width());
                 $(this).val('Untitled File');
+            }
 
             sessionCurrentFile.FileTitle = $(this).val();
 
