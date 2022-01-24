@@ -1,7 +1,9 @@
 ﻿using CodeskLibrary.Connections;
 using CodeskLibrary.Models;
 using Dapper;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CodeskLibrary.DataAccess
@@ -38,6 +40,28 @@ namespace CodeskLibrary.DataAccess
 
             await db.ExecuteAsync("spUpdateFileTitle", new { fileId, fileTitle }, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false);
+        }
+
+        public static async Task<SessionFile> DownloadSessionFile(string emailAddress, int fileId)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            return (await db.QueryAsync<SessionFile, FileType, SessionFile>("spDownloadSessionFile", (sessionFile, fileType) =>
+            {
+                sessionFile.SessionFileType = fileType;
+                return sessionFile;
+            }, splitOn: "FileTypeId", param: new { emailAddress, fileId }, commandType: CommandType.StoredProcedure).ConfigureAwait(false)).FirstOrDefault();
+        }
+
+        public static async Task<List<SessionFile>> DownloadSessionFiles(string emailAddress, int sessionId)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            return (await db.QueryAsync<SessionFile, FileType, SessionFile>("spDownloadSessionFiles", (sessionFile, fileType) =>
+            {
+                sessionFile.SessionFileType = fileType;
+                return sessionFile;
+            }, splitOn: "FileTypeId", param: new { emailAddress, sessionId }, commandType: CommandType.StoredProcedure).ConfigureAwait(false)).ToList();
         }
     }
 }

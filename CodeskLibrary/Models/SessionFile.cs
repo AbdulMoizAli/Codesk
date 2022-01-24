@@ -11,5 +11,7 @@
         public int FileTypeId { get; set; }
 
         public string FileTitle { get; set; }
+
+        public FileType SessionFileType { get; set; }
     }
 }
