@@ -1,5 +1,28 @@
 ﻿@model IEnumerable<SessionCard>
 
+@if (Model.Count() < 1)
+{
+    <div class="row valign-wrapper animate__animated animate__fadeIn">
+        <div class="col l4 s12 m6 offset-l4">
+            <center>
+                <img src="/images/undraw_no_data_re_kwbl.svg" height="200" width="200" />
+            </center>
+
+            <div class="card grey lighten-5">
+                <div class="card-content white-text">
+                    <span class="card-title black-text">No Session</span>
+                    <p class="black-text">You haven't created a session yet.</p>
+                </div>
+                <div class="card-action">
+                    <a class="btn waves-effect waves-light grey darken-2" asp-area="WorkSpace" asp-controller="Session" asp-action="NewSession"><i class="material-icons left">add</i> Create Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    return;
+}
+
 <div class="dashboard-container">
     <div class="row">
         @foreach (var item in Model)
@@ -72,6 +95,6 @@
                     </div>
                 </div>
             </div>
-         }
+        }
     </div>
 </div>
