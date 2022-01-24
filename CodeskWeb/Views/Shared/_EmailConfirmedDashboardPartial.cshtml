@@ -1,3 +1,77 @@
-﻿<center>
-    <h1>Dashboard</h1>
-</center>
+﻿@model IEnumerable<SessionCard>
+
+<div class="dashboard-container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col l3">
+                <div class="card rounded-5 animate__animated animate__fadeIn">
+                    <div class="card-image top-left-rounded-5 top-right-rounded-5">
+                        <img src="~/images/@item.CoverImage">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title grey-text text-darken-4">@item.Title</span>
+
+                        <table style="margin-top: 30px;">
+                            <tr class="no-border">
+                                <td class="grey-text no-padding">Started at</td>
+                                <td class="no-padding">
+                                    <div class="chip indigo-text">@item.StartedAt</div>
+                                </td>
+                                <td class="grey-text no-padding">Participant(s)</td>
+                                <td class="no-padding">
+                                    <div class="chip indigo-text">@item.ParticipantCount</div>
+                                </td>
+                            </tr>
+                            <tr class="no-border">
+                                <td class="grey-text no-padding">Ended at</td>
+                                <td class="no-padding">
+                                    <div class="chip indigo-text">@item.EndedAt</div>
+                                </td>
+                                <td class="grey-text no-padding">File(s)</td>
+                                <td class="no-padding">
+                                    <div class="chip indigo-text">@item.FileCount</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="card-reveal">
+                        <div class="view-sp">
+                            <span class="card-title grey-text text-darken-4">Session Participants(s)<i class="material-icons right">close</i></span>
+
+                            <ul class="collection" style="margin-top: 35px;">
+                                @foreach (var name in item.Participants)
+                                {
+                                    <li class="collection-item indigo-text text-lighten-1">@name</li>
+                                }
+                            </ul>
+                        </div>
+
+                        <div class="view-sf">
+                            <span class="card-title grey-text text-darken-4">Session File(s)<i class="material-icons right">close</i></span>
+
+                            <table style="margin-top: 35px; border-collapse: separate; border-spacing: 0 20px;">
+                                @for (int i = 0; i < item.FileTitles.Length; i++)
+                                {
+                                    <tr class="no-border">
+                                        <td class="no-padding">
+                                            <div class="chip indigo-text">@item.FileTitles[i]</div>
+                                        </td>
+                                        <td class="no-padding">
+                                            <a asp-area="WorkSpace" asp-controller="SessionFile" asp-action="DownloadSessionFile" asp-route-fileId="@item.FileIds[i]" class="btn-floating btn-small pulse grey darken-1 right"><i class="material-icons">file_download</i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-action">
+                        <a data-type="view-sp" style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped activator" data-position="bottom" data-tooltip="View session participant(s)"><i class="material-icons">people</i></a>
+                        <a data-type="view-sf" style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped activator" data-position="bottom" data-tooltip="View session file(s)"><i class="material-icons">insert_drive_file</i></a>
+                        <a asp-area="WorkSpace" asp-controller="SessionFile" asp-action="DownloadSessionFiles" asp-route-sessionId="@item.SessionId" class="indigo-text text-lighten-1 tooltipped" data-position="bottom" data-tooltip="Download session file(s)"><i class="material-icons">archive</i></a>
+                    </div>
+                </div>
+            </div>
+         }
+    </div>
+</div>

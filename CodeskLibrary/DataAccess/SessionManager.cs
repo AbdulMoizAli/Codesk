@@ -2,6 +2,9 @@
 using System.Data;
 using CodeskLibrary.Connections;
 using System.Threading.Tasks;
+using CodeskLibrary.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeskLibrary.DataAccess
 {
@@ -29,6 +32,14 @@ namespace CodeskLibrary.DataAccess
 
             await db.ExecuteAsync("spEndSession", new { emailAddress, endDateTime, sessionKey }, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false);
+        }
+
+        public static async Task<List<Session>> GetSessions(string emailAddress)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            return (await db.QueryAsync<Session>("spGetSessions", new { emailAddress }, commandType: CommandType.StoredProcedure)
+                .ConfigureAwait(false)).ToList();
         }
     }
 }

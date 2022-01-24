@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<SessionCard>
+
+@{
     ViewData["Title"] = "Dashboard";
 
     var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
@@ -8,8 +10,15 @@
     var partialName = isConfirmed ? "_EmailConfirmedDashboardPartial" : "_EmailUnConfirmedDashboardPartial";
 }
 
-<partial name="@partialName" />
+<partial name="@partialName" model="Model" />
 
 @section Scripts {
-    <script src="~/js/account/emailConfirmation.js" asp-append-version="true"></script>
+    @if (isConfirmed)
+    {
+        <script src="~/js/home/dashboard.js" asp-append-version="true"></script>
+    }
+    else
+    {
+        <script src="~/js/account/emailConfirmation.js" asp-append-version="true"></script>
+    }
 }
