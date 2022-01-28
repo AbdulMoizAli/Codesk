@@ -24,12 +24,15 @@ namespace CodeskWeb
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -100,11 +103,22 @@ namespace CodeskWeb
 
             services.AddHttpClient<ICaptchaValidator, GoogleReCaptchaValidator>();
 
-            services.AddSignalR(options =>
+            if (Environment.IsDevelopment())
             {
-                options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
-                options.KeepAliveInterval = TimeSpan.FromSeconds(30);
-            }).AddAzureSignalR(Configuration["SignalRConnectionString"]).AddMessagePackProtocol();
+                services.AddSignalR(options =>
+                {
+                    options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
+                    options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+                }).AddMessagePackProtocol();
+            }
+            else
+            {
+                services.AddSignalR(options =>
+                {
+                    options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
+                    options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+                }).AddAzureSignalR(Configuration["SignalRConnectionString"]).AddMessagePackProtocol();
+            }
 
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
         }
