@@ -1,25 +1,29 @@
 ﻿@model IEnumerable<SessionCard>
 
-@if (Model.Count() < 1)
-{
-    <div class="row valign-wrapper animate__animated animate__fadeIn">
-        <div class="col l4 s12 m6 offset-l4">
-            <center>
-                <img src="/images/undraw_no_data_re_kwbl.svg" height="200" width="200" />
-            </center>
+@{
+    string hidden = Model.Count() < 1 ? "" : "hide";
+}
 
-            <div class="card grey lighten-5">
-                <div class="card-content white-text">
-                    <span class="card-title black-text">No Session</span>
-                    <p class="black-text">You haven't created a session yet.</p>
-                </div>
-                <div class="card-action">
-                    <a class="btn waves-effect waves-light grey darken-2" asp-area="WorkSpace" asp-controller="Session" asp-action="NewSession"><i class="material-icons left">add</i> Create Now</a>
-                </div>
+<div class="row valign-wrapper animate__animated animate__fadeIn no-session @hidden">
+    <div class="col l4 s12 m6 offset-l4">
+        <center>
+            <img src="/images/undraw_no_data_re_kwbl.svg" height="200" width="200" />
+        </center>
+
+        <div class="card grey lighten-5">
+            <div class="card-content white-text">
+                <span class="card-title black-text">No Session</span>
+                <p class="black-text">You haven't created a session yet.</p>
+            </div>
+            <div class="card-action">
+                <a class="btn waves-effect waves-light grey darken-2" asp-area="WorkSpace" asp-controller="Session" asp-action="NewSession"><i class="material-icons left">add</i> Create Now</a>
             </div>
         </div>
     </div>
+</div>
 
+@if (Model.Count() < 1)
+{
     return;
 }
 
@@ -60,7 +64,7 @@
                     </div>
                     <div class="card-reveal">
                         <div class="view-sp">
-                            <span class="card-title grey-text text-darken-4">Session Participants(s)<i class="material-icons right">close</i></span>
+                            <span class="card-title grey-text text-darken-4">Participants(s)<i class="material-icons right">close</i></span>
 
                             <ul class="collection" style="margin-top: 35px;">
                                 @foreach (var name in item.Participants)
@@ -71,7 +75,7 @@
                         </div>
 
                         <div class="view-sf">
-                            <span class="card-title grey-text text-darken-4">Session File(s)<i class="material-icons right">close</i></span>
+                            <span class="card-title grey-text text-darken-4">File(s)<i class="material-icons right">close</i></span>
 
                             <table style="margin-top: 35px; border-collapse: separate; border-spacing: 0 20px;">
                                 @for (int i = 0; i < item.FileTitles.Length; i++)
@@ -89,9 +93,10 @@
                         </div>
                     </div>
                     <div class="card-action">
-                        <a data-type="view-sp" style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped activator" data-position="bottom" data-tooltip="View session participant(s)"><i class="material-icons">people</i></a>
-                        <a data-type="view-sf" style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped activator" data-position="bottom" data-tooltip="View session file(s)"><i class="material-icons">insert_drive_file</i></a>
-                        <a asp-area="WorkSpace" asp-controller="SessionFile" asp-action="DownloadSessionFiles" asp-route-sessionId="@item.SessionId" class="indigo-text text-lighten-1 tooltipped" data-position="bottom" data-tooltip="Download session file(s)"><i class="material-icons">archive</i></a>
+                        <a data-type="view-sp" style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped activator" data-position="bottom" data-tooltip="Participant(s)"><i class="material-icons">people</i></a>
+                        <a data-type="view-sf" style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped activator" data-position="bottom" data-tooltip="File(s)"><i class="material-icons">insert_drive_file</i></a>
+                        <a asp-area="WorkSpace" asp-controller="SessionFile" asp-action="DownloadSessionFiles" asp-route-sessionId="@item.SessionId" class="indigo-text text-lighten-1 tooltipped" data-position="bottom" data-tooltip="Download"><i class="material-icons">archive</i></a>
+                        <a style="cursor: pointer;" data-sessionid="@item.SessionId" class="red-text text-lighten-1 tooltipped right archive-session" data-position="bottom" data-tooltip="Delete"><i class="material-icons">delete</i></a>
                     </div>
                 </div>
             </div>

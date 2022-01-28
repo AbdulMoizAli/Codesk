@@ -46,6 +46,14 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteSession(int sessionId)
+        {
+            await SessionManager.DeleteSession(sessionId).ConfigureAwait(false);
+
+            return Ok();
+        }
+
         [AllowAnonymous]
         public IActionResult JoinSession()
         {

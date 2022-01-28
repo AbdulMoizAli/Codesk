@@ -41,5 +41,13 @@ namespace CodeskLibrary.DataAccess
             return (await db.QueryAsync<Session>("spGetSessions", new { emailAddress }, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false)).ToList();
         }
+
+        public static async Task DeleteSession(int sessionId)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            await db.ExecuteAsync("spDeleteSession", new { sessionId }, commandType: CommandType.StoredProcedure)
+                .ConfigureAwait(false);
+        }
     }
 }
