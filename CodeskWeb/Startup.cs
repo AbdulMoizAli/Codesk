@@ -104,7 +104,7 @@ namespace CodeskWeb
             {
                 options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
                 options.KeepAliveInterval = TimeSpan.FromSeconds(30);
-            }).AddMessagePackProtocol();
+            }).AddAzureSignalR(Configuration["SignalRConnectionString"]).AddMessagePackProtocol();
 
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
         }
