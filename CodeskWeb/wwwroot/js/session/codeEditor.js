@@ -1,4 +1,6 @@
 ﻿import getPythonProposals from '../../js/session/pythonAutoComplete.js';
+import getCsharpProposals from '../../js/session/csharpAutoComplete.js';
+import getCppProposals from '../../js/session/cppAutoComplete.js';
 
 let sessionCurrentFile = undefined;
 
@@ -20,7 +22,7 @@ $(document).ready(() => {
     function getEditorOptions() {
         return {
             language: 'plaintext',
-            value: $('#session-type').val() === 'new' ? 'select a language of your choice from settings and start coding... 🙂' : $('#editor-content').text(),
+            value: $('#session-type').val() === 'new' ? 'select a language of your choice from settings and start coding... 💻' : $('#editor-content').text(),
             scrollBeyondLastLine: false,
             theme: $('#theme-select').val(),
             cursorStyle: $('#cursor-select').val(),
@@ -48,6 +50,8 @@ $(document).ready(() => {
         configureEditorSettingsReset();
 
         configureLanguageAutoComplete(monacoLanguages, 'python', getPythonProposals);
+        configureLanguageAutoComplete(monacoLanguages, 'csharp', getCsharpProposals);
+        configureLanguageAutoComplete(monacoLanguages, 'cpp', getCppProposals);
 
         bindEditorContentChangeEvent(codeEditor);
 
@@ -67,7 +71,7 @@ $(document).ready(() => {
                 if (value === codeEditor.getModel().getLanguageIdentifier().language)
                     return;
 
-                monacoEditor.setModelLanguage(codeEditor.getModel(), value)
+                monacoEditor.setModelLanguage(codeEditor.getModel(), value);
 
                 if ($('#session-type').val() !== 'new' || !(['csharp', 'cpp', 'python'].includes(value))) {
                     $('#file-title').hide();
@@ -258,14 +262,11 @@ $(document).ready(() => {
 
         fileSaveTimeout = setTimeout(async () => {
             const url = `/WorkSpace/SessionFile/UpdateFileContent?filePath=${sessionCurrentFile.FilePath}&sessionKey=${sessionKey}`;
-            const response = await fetch(url,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(codeEditor.getValue())
-                });
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(codeEditor.getValue())
+            });
 
             if (response.status !== 200)
                 showAlert('Error', 'something went wrong while saving the file', true, 'OK');
