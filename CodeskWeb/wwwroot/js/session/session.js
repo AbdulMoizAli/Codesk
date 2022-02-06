@@ -24,7 +24,7 @@ $(document).ready(async () => {
 
     $('#copy-session-key').click(() => {
         navigator.clipboard.writeText($('#session-key-chip').text());
-        M.toast({ html: '<i class="material-icons left">check</i> Copied to clipboard' });
+        M.toast({ html: '<i class="material-icons left">check</i> Copied to clipboard', classes: 'rounded' });
     });
 
     $('#participant-search').keyup(function () {
@@ -158,7 +158,7 @@ $(document).ready(async () => {
     });
 
     hubConnection.on('NotifyUser', notification => {
-        M.toast({ html: notification });
+        M.toast({ html: notification, classes: 'rounded' });
     });
 
     hubConnection.on('EndSession', async () => {
