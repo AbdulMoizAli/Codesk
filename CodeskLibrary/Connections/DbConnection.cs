@@ -1,23 +1,15 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
 using System.Data.SqlClient;
 
 namespace CodeskLibrary.Connections
 {
     public static class DbConnection
     {
+        public static IConfiguration Configuration { get; set; }
+
         public static SqlConnection GetConnection()
         {
-            return new(GetConnectionString());
-        }
-
-        private static string GetConnectionString()
-        {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json").Build();
-
-            return config.GetConnectionString("Codeskdb");
+            return new(Configuration.GetConnectionString("Codeskdb"));
         }
     }
 }
