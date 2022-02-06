@@ -19,6 +19,7 @@ using System.Text.Json;
 using CodeskWeb.Hubs;
 using Microsoft.AspNetCore.Http.Connections;
 using System;
+using CodeskLibrary.Connections;
 
 namespace CodeskWeb
 {
@@ -117,10 +118,12 @@ namespace CodeskWeb
                 {
                     options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
                     options.KeepAliveInterval = TimeSpan.FromSeconds(30);
-                }).AddAzureSignalR(Configuration["SignalRConnectionString"]).AddMessagePackProtocol();
+                }).AddAzureSignalR(Configuration.GetConnectionString("CodeskSignalR")).AddMessagePackProtocol();
             }
 
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
+
+            DbConnection.Configuration = Configuration;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
