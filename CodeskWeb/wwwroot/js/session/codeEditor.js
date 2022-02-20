@@ -3,6 +3,8 @@ import getCsharpProposals from '../../js/session/csharpAutoComplete.js';
 import getCppProposals from '../../js/session/cppAutoComplete.js';
 
 let sessionCurrentFile = undefined;
+let codingMode = 'public';
+let hasWriteAccess = $('#session-type').val() === 'new' ? true : false;
 
 $('#file-title').hide();
 
@@ -56,6 +58,8 @@ $(document).ready(() => {
         bindEditorContentChangeEvent(codeEditor);
 
         configureAccessWrite(codeEditor);
+
+        configureCodingMode(codeEditor);
 
         $.LoadingOverlay('hide');
     }
@@ -274,6 +278,11 @@ $(document).ready(() => {
     }
 
     async function broadcastEditorContent(data, codeEditor) {
+        if (codingMode === 'private') {
+            configSessionFileUpdate(codeEditor);
+            return;
+        }
+
         const change = data.changes[0];
 
         const editorContent = JSON.stringify({
@@ -327,12 +336,52 @@ $(document).ready(() => {
     }
 
     function configureAccessWrite(codeEditor) {
-        hubConnection.on('ToggleEditorReadOnly', isReadOnly => codeEditor.updateOptions({ readOnly: isReadOnly }));
+        hubConnection.on('ToggleEditorReadOnly', isReadOnly => {
+            codeEditor.updateOptions({ readOnly: isReadOnly })
+            hasWriteAccess = !isReadOnly;
+        });
 
         const messageContribution = codeEditor.getContribution('editor.contrib.messageController');
         codeEditor.onDidAttemptReadOnlyEdit(() => {
             messageContribution.showMessage('Please request write access from the session host.', codeEditor.getPosition());
             //messageContribution.dispose();
+        });
+    }
+
+    function configureCodingMode(codeEditor) {
+        $('#coding-mode').click(async function () {
+            const badge = $(this).children('span.badge');
+            const currentMode = badge.attr('data-badge-caption');
+
+            let mode = currentMode === 'Public' ? true : false;
+
+            const response = await fetch(`/WorkSpace/Editor/SetCodingMode?mode=${mode}&sessionKey=${sessionKey}&userId=${sessionUsers[0].UserId}`);
+
+            if (response.status !== 200) {
+                showAlert('Error', 'something went wrong while processing the request', true, 'OK');
+                return;
+            }
+
+            if (mode) {
+                if (!hasWriteAccess)
+                    codeEditor.updateOptions({ readOnly: false });
+
+                codingMode = 'private';
+                badge.attr('data-badge-caption', 'Private');
+                $(this).children('i').text('lock');
+
+                M.toast({ html: '<i class="material-icons left">lock</i> Private mode enabled', classes: 'rounded' });
+            }
+            else {
+                if (!hasWriteAccess)
+                    codeEditor.updateOptions({ readOnly: true });
+
+                codingMode = 'public';
+                badge.attr('data-badge-caption', 'Public');
+                $(this).children('i').text('no_encryption');
+
+                M.toast({ html: '<i class="material-icons left">no_encryption</i> Private mode disabled', classes: 'rounded' });
+            }
         });
     }
 

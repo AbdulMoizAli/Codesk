@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -153,19 +154,28 @@ namespace CodeskWeb.Hubs
             if (!SessionInformation.SessionInfo[sessionKey].connectedUsers.Find(u => u.UserId == Context.ConnectionId).HasWriteAccess)
                 return;
 
-            await Clients.OthersInGroup(sessionKey).ReceiveEditorContent(editorContent)
+            var excludedUsers = SessionInformation.SessionInfo[sessionKey].connectedUsers.Where(u => u.IsPrivateMode).Select(u => u.UserId).ToList();
+            excludedUsers.Add(Context.ConnectionId);
+
+            await Clients.GroupExcept(sessionKey, excludedUsers).ReceiveEditorContent(editorContent)
                 .ConfigureAwait(false);
         }
 
         public async Task StartedTyping(string sessionKey)
         {
-            await Clients.OthersInGroup(sessionKey).StartTypingIndication(Context.ConnectionId)
+            var excludedUsers = SessionInformation.SessionInfo[sessionKey].connectedUsers.Where(u => u.IsPrivateMode).Select(u => u.UserId).ToList();
+            excludedUsers.Add(Context.ConnectionId);
+
+            await Clients.GroupExcept(sessionKey, excludedUsers).StartTypingIndication(Context.ConnectionId)
                 .ConfigureAwait(false);
         }
 
         public async Task StoppedTyping(string sessionKey)
         {
-            await Clients.OthersInGroup(sessionKey).StopTypingIndication(Context.ConnectionId)
+            var excludedUsers = SessionInformation.SessionInfo[sessionKey].connectedUsers.Where(u => u.IsPrivateMode).Select(u => u.UserId).ToList();
+            excludedUsers.Add(Context.ConnectionId);
+
+            await Clients.GroupExcept(sessionKey, excludedUsers).StopTypingIndication(Context.ConnectionId)
                 .ConfigureAwait(false);
         }
 
