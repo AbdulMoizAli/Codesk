@@ -3,7 +3,6 @@ using CodeskWeb.Areas.WorkSpace.Models;
 using CodeskWeb.HubModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CodeskWeb.Areas.WorkSpace.Controllers
@@ -12,7 +11,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
     {
         public async Task<IActionResult> NewSession()
         {
-            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+            var email = User.GetEmailAddress();
 
             var result = await EmailManager.IsEmailConfirmed(email).ConfigureAwait(false);
 
@@ -30,7 +29,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveSession(string startDateTime, string sessionKey)
         {
-            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+            var email = User.GetEmailAddress();
 
             await SessionManager.SaveSession(email, startDateTime, sessionKey).ConfigureAwait(false);
 
@@ -82,7 +81,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             string email = null;
 
             if (User.Identity.IsAuthenticated)
-                email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+                email = User.GetEmailAddress();
 
             var data = await EditorManager.GetEditorSettings(email).ConfigureAwait(false);
 

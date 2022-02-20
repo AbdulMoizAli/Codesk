@@ -1,10 +1,10 @@
 ﻿using CodeskLibrary.DataAccess;
+using CodeskWeb.HubModels;
 using FluentEmail.Core;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CodeskWeb.Areas.Users.Controllers
@@ -30,7 +30,7 @@ namespace CodeskWeb.Areas.Users.Controllers
 
         public async Task<IActionResult> SendAccountConfirmationEmail()
         {
-            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+            var email = User.GetEmailAddress();
 
             Guid token = await EmailManager.GetConfirmationToken(email).ConfigureAwait(false);
 

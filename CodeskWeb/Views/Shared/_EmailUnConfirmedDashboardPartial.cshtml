@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<SessionCard>
 
-<a hidden id="user-email" data-userEmail="@User.FindFirst(x => x.Type == ClaimTypes.Email).Value"></a>
+<a hidden id="user-email" data-userEmail="@User.GetEmailAddress()"></a>
 
 <div class="row valign-wrapper">
     <div class="col l4 offset-l4 animate__animated animate__fadeIn">

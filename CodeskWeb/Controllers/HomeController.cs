@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using CodeskLibrary.DataAccess;
+using CodeskWeb.HubModels;
 using CodeskWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CodeskWeb.Controllers
@@ -26,7 +26,7 @@ namespace CodeskWeb.Controllers
 
         public async Task<IActionResult> Dashboard()
         {
-            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+            var email = User.GetEmailAddress();
 
             var sessions = await SessionManager.GetSessions(email).ConfigureAwait(false);
 

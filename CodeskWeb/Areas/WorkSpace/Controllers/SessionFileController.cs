@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.IO;
 using CodeFile = System.IO.File;
 using CodeskWeb.HubModels;
-using System.Security.Claims;
 using System.Linq;
 using System.IO.Compression;
 
@@ -57,7 +56,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
 
         public async Task<IActionResult> DownloadSessionFile(int fileId)
         {
-            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+            var email = User.GetEmailAddress();
 
             var sessionFile = await SessionFileManager.DownloadSessionFile(email, fileId).ConfigureAwait(false);
 
@@ -76,7 +75,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
 
         public async Task<IActionResult> DownloadSessionFiles(int sessionId)
         {
-            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+            var email = User.GetEmailAddress();
 
             var sessionFiles = await SessionFileManager.DownloadSessionFiles(email, sessionId).ConfigureAwait(false);
 

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CodeskWeb.HubModels;
 
 namespace CodeskWeb.Areas.Users.Controllers
 {
@@ -113,7 +114,7 @@ namespace CodeskWeb.Areas.Users.Controllers
             string url = string.IsNullOrWhiteSpace(returnUrl) ? Url.Action("Dashboard", "Home", new { Area = "" })
                 : returnUrl;
 
-            var email = User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+            var email = User.GetEmailAddress();
 
             var result = await AccountManager.IsUniqueEmailAddress(email).ConfigureAwait(false);
 

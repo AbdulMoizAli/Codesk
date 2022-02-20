@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,7 +44,7 @@ namespace CodeskWeb.Hubs
         [Authorize]
         public async Task<SessionFile> CreateSessionFile(string fileType, string sessionKey)
         {
-            if (!string.Equals(Context.ConnectionId, SessionInformation.SessionInfo[sessionKey].hostId))
+            if (!SessionHelper.IsValidConnectionId(Context.ConnectionId, sessionKey))
                 return null;
 
             var sessionFileType = await SessionFileManager.GetFileTypeExtension(fileType).ConfigureAwait(false);
@@ -54,7 +52,7 @@ namespace CodeskWeb.Hubs
             if (sessionFileType is null)
                 return null;
 
-            var email = Context.User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+            var email = Context.User.GetEmailAddress();
 
             var sessionFile = await SessionFileManager.GetSessionFile(email, sessionKey, sessionFileType.FileTypeId);
 
@@ -75,13 +73,13 @@ namespace CodeskWeb.Hubs
         [Authorize]
         public async Task EndSessionForAll(string endDateTime, string sessionKey)
         {
-            if (!string.Equals(Context.ConnectionId, SessionInformation.SessionInfo[sessionKey].hostId))
+            if (!SessionHelper.IsValidConnectionId(Context.ConnectionId, sessionKey))
                 return;
 
             await Clients.OthersInGroup(sessionKey).EndSession()
                 .ConfigureAwait(false);
 
-            var email = Context.User.FindFirst(x => x.Type == ClaimTypes.Email).Value;
+            var email = Context.User.GetEmailAddress();
 
             await SessionManager.EndSession(email, endDateTime, sessionKey).ConfigureAwait(false);
 
@@ -93,7 +91,7 @@ namespace CodeskWeb.Hubs
         [Authorize]
         public async Task ToggleWriteAccess(string sessionKey, string userId)
         {
-            if (!string.Equals(Context.ConnectionId, SessionInformation.SessionInfo[sessionKey].hostId))
+            if (!SessionHelper.IsValidConnectionId(Context.ConnectionId, sessionKey))
                 return;
 
             var user = SessionInformation.SessionInfo[sessionKey].connectedUsers.Find(u => u.UserId == userId);
@@ -154,28 +152,28 @@ namespace CodeskWeb.Hubs
             if (!SessionInformation.SessionInfo[sessionKey].connectedUsers.Find(u => u.UserId == Context.ConnectionId).HasWriteAccess)
                 return;
 
-            var excludedUsers = SessionInformation.SessionInfo[sessionKey].connectedUsers.Where(u => u.IsPrivateMode).Select(u => u.UserId).ToList();
-            excludedUsers.Add(Context.ConnectionId);
+            var excludedParticipants = SessionHelper.GetPrivateModeParticipants(sessionKey);
+            excludedParticipants.Add(Context.ConnectionId);
 
-            await Clients.GroupExcept(sessionKey, excludedUsers).ReceiveEditorContent(editorContent)
+            await Clients.GroupExcept(sessionKey, excludedParticipants).ReceiveEditorContent(editorContent)
                 .ConfigureAwait(false);
         }
 
         public async Task StartedTyping(string sessionKey)
         {
-            var excludedUsers = SessionInformation.SessionInfo[sessionKey].connectedUsers.Where(u => u.IsPrivateMode).Select(u => u.UserId).ToList();
-            excludedUsers.Add(Context.ConnectionId);
+            var excludedParticipants = SessionHelper.GetPrivateModeParticipants(sessionKey);
+            excludedParticipants.Add(Context.ConnectionId);
 
-            await Clients.GroupExcept(sessionKey, excludedUsers).StartTypingIndication(Context.ConnectionId)
+            await Clients.GroupExcept(sessionKey, excludedParticipants).StartTypingIndication(Context.ConnectionId)
                 .ConfigureAwait(false);
         }
 
         public async Task StoppedTyping(string sessionKey)
         {
-            var excludedUsers = SessionInformation.SessionInfo[sessionKey].connectedUsers.Where(u => u.IsPrivateMode).Select(u => u.UserId).ToList();
-            excludedUsers.Add(Context.ConnectionId);
+            var excludedParticipants = SessionHelper.GetPrivateModeParticipants(sessionKey);
+            excludedParticipants.Add(Context.ConnectionId);
 
-            await Clients.GroupExcept(sessionKey, excludedUsers).StopTypingIndication(Context.ConnectionId)
+            await Clients.GroupExcept(sessionKey, excludedParticipants).StopTypingIndication(Context.ConnectionId)
                 .ConfigureAwait(false);
         }
 
