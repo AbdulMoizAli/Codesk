@@ -84,24 +84,25 @@ $(document).ready(() => {
 
                 $.LoadingOverlay('show');
 
-                sessionCurrentFile = await hubConnection.invoke('CreateSessionFile', value, sessionKey);
-
-                $('#file-title')
-                    .val(sessionCurrentFile.FileTitle)
-                    .width($('#file-title-placeholder')
-                        .text(sessionCurrentFile.FileTitle)
-                        .width())
-                    .show();
-
-                const url = `/WorkSpace/SessionFile/GetFileContent?filePath=${sessionCurrentFile.FilePath}`;
+                const url = `/WorkSpace/SessionFile/CreateSessionFile?fileType=${value}&sessionKey=${sessionKey}&connectionId=${hubConnection.connection.connectionId}`;
                 const response = await fetch(url, { method: 'POST' });
 
                 if (response.status !== 200)
-                    showAlert('Error', 'something went wrong while fetching the file content', true, 'OK');
+                    showAlert('Error', 'Something went wrong while creating the file', true, 'OK');
+                else {
+                    const data = await response.json();
 
-                const data = await response.text();
+                    sessionCurrentFile = data.sessionCurrentFile;
 
-                codeEditor.setValue(data);
+                    $('#file-title')
+                    .val(sessionCurrentFile.fileTitle)
+                    .width($('#file-title-placeholder')
+                        .text(sessionCurrentFile.fileTitle)
+                        .width())
+                        .show();
+
+                    codeEditor.setValue(data.fileContent);
+                }
 
                 $.LoadingOverlay('hide');
             }
@@ -265,7 +266,7 @@ $(document).ready(() => {
         if (fileSaveTimeout) clearTimeout(fileSaveTimeout);
 
         fileSaveTimeout = setTimeout(async () => {
-            const url = `/WorkSpace/SessionFile/UpdateFileContent?filePath=${sessionCurrentFile.FilePath}&sessionKey=${sessionKey}`;
+            const url = `/WorkSpace/SessionFile/UpdateFileContent?filePath=${sessionCurrentFile.filePath}&sessionKey=${sessionKey}`;
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -409,9 +410,9 @@ $(document).ready(() => {
                 $(this).val('Untitled File');
             }
 
-            sessionCurrentFile.FileTitle = $(this).val();
+            sessionCurrentFile.fileTitle = $(this).val();
 
-            const url = `/WorkSpace/SessionFile/UpdateFileTitle?fileId=${sessionCurrentFile.FileId}&fileTitle=${sessionCurrentFile.FileTitle}`;
+            const url = `/WorkSpace/SessionFile/UpdateFileTitle?fileId=${sessionCurrentFile.fileId}&fileTitle=${sessionCurrentFile.fileTitle}`;
             const response = await fetch(url, { method: 'POST' });
 
             if (response.status !== 200)

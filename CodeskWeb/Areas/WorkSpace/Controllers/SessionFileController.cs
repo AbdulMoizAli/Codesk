@@ -7,16 +7,57 @@ using CodeFile = System.IO.File;
 using CodeskWeb.HubModels;
 using System.Linq;
 using System.IO.Compression;
+using AutoMapper;
+using CodeskWeb.Areas.WorkSpace.Models;
+using System;
 
 namespace CodeskWeb.Areas.WorkSpace.Controllers
 {
     public class SessionFileController : Controller
     {
         private readonly IWebHostEnvironment _env;
+        private readonly IMapper _mapper;
 
-        public SessionFileController(IWebHostEnvironment env)
+        public SessionFileController(IWebHostEnvironment env, IMapper mapper)
         {
             _env = env;
+            _mapper = mapper;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateSessionFile(string fileType, string sessionKey, string connectionId)
+        {
+            if (!SessionHelper.IsValidConnectionId(connectionId, sessionKey))
+                return Unauthorized();
+
+            var sessionFileType = await SessionFileManager.GetFileTypeExtension(fileType).ConfigureAwait(false);
+
+            if (sessionFileType is null)
+                return BadRequest();
+
+            var email = User.GetEmailAddress();
+
+            var sessionFile = await SessionFileManager.GetSessionFile(email, sessionKey, sessionFileType.FileTypeId);
+
+            if (sessionFile is not null)
+            {
+                var path = Path.Combine(_env.WebRootPath, "assets", "session", "files", sessionFile.FilePath);
+
+                if (!CodeFile.Exists(path))
+                    return StatusCode(500);
+
+                var fileContent = await CodeFile.ReadAllTextAsync(path).ConfigureAwait(false);
+
+                return Ok(new { SessionCurrentFile = _mapper.Map<SessionFileViewModel>(sessionFile), FileContent = fileContent });
+            }
+
+            var fileName = $"{Guid.NewGuid()}_{Path.GetRandomFileName()}.{sessionFileType.FileTypeExtension}";
+
+            var filePath = Path.Combine(_env.WebRootPath, "assets", "session", "files", fileName);
+
+            await CodeFile.Create(filePath).DisposeAsync();
+
+            return Ok(new { SessionCurrentFile = _mapper.Map<SessionFileViewModel>(await SessionFileManager.SaveSessionFile(email, sessionKey, fileName, sessionFileType.FileTypeId)), FileContent = string.Empty });
         }
 
         [HttpPost]
