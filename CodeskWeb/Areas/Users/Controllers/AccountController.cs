@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CodeskWeb.HubModels;
+using System.IO;
 
 namespace CodeskWeb.Areas.Users.Controllers
 {
@@ -185,7 +186,7 @@ namespace CodeskWeb.Areas.Users.Controllers
             {
                 var passwordResetLink = Url.Action("ResetPassword", "Account", new { Area = "Users", token }, Request.Scheme);
 
-                var templateFilePath = $"{_env.WebRootPath}\\EmailTemplates\\PasswordReset.html";
+                var templateFilePath = Path.Combine(_env.WebRootPath, "emailTemplates", "passwordReset.html");
 
                 await _email
                     .To(model.EmailAddress)
