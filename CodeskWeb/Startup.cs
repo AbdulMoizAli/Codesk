@@ -20,6 +20,7 @@ using CodeskWeb.Hubs;
 using Microsoft.AspNetCore.Http.Connections;
 using System;
 using CodeskLibrary.Connections;
+using CodeskWeb.Services;
 
 namespace CodeskWeb
 {
@@ -120,6 +121,8 @@ namespace CodeskWeb
                     options.KeepAliveInterval = TimeSpan.FromSeconds(30);
                 }).AddAzureSignalR(Configuration.GetConnectionString("CodeskSignalR")).AddMessagePackProtocol();
             }
+
+            services.AddHttpClient<ICodeExecutionService, CodeExecutionService>(options => options.BaseAddress = new Uri("https://api.jdoodle.com/v1"));
 
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
 

@@ -44,8 +44,6 @@ namespace CodeskWeb.Hubs
 
             await SessionManager.EndSession(email, endDateTime, sessionKey).ConfigureAwait(false);
 
-            SessionInformation.SessionInfo[sessionKey].connectedUsers.ForEach(u => Groups.RemoveFromGroupAsync(u.UserId, sessionKey));
-
             SessionInformation.SessionInfo.Remove(sessionKey);
         }
 
@@ -59,6 +57,15 @@ namespace CodeskWeb.Hubs
             user.HasWriteAccess = !user.HasWriteAccess;
 
             await Clients.Client(userId).ToggleEditorReadOnly(!user.HasWriteAccess).ConfigureAwait(false);
+        }
+
+        [Authorize]
+        public async Task SetCodingLanguage(string sessionKey, string language)
+        {
+            if (!SessionHelper.IsValidConnectionId(Context.ConnectionId, sessionKey))
+                return;
+
+            await Clients.OthersInGroup(sessionKey).SetEditorLanguage(language).ConfigureAwait(false);
         }
 
         public async Task JoinSession(string userName, string sessionKey)

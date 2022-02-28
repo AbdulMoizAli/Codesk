@@ -19,7 +19,7 @@ $(document).ready(() => {
 
     const requirePaths = ['vs/editor/editor.main'];
 
-    require(requirePaths, createEditor);
+    require(requirePaths, initialize);
 
     function getEditorOptions() {
         return {
@@ -38,7 +38,7 @@ $(document).ready(() => {
         };
     }
 
-    async function createEditor() {
+    async function initialize() {
         const editorDiv = document.querySelector('#code-editor');
 
         const monacoEditor = monaco.editor;
@@ -61,6 +61,8 @@ $(document).ready(() => {
 
         configureCodingMode(codeEditor);
 
+        configureCodeExecution(codeEditor);
+
         $.LoadingOverlay('hide');
     }
 
@@ -75,6 +77,8 @@ $(document).ready(() => {
                 if (value === codeEditor.getModel().getLanguageIdentifier().language)
                     return;
 
+                $('#language-logo').attr('src', `/assets/session/languages/logos/${value}.svg`);
+
                 monacoEditor.setModelLanguage(codeEditor.getModel(), value);
 
                 if ($('#session-type').val() !== 'new' || !(['csharp', 'cpp', 'python'].includes(value))) {
@@ -83,6 +87,8 @@ $(document).ready(() => {
                 }
 
                 $.LoadingOverlay('show');
+
+                await hubConnection.invoke('SetCodingLanguage', sessionKey, value);
 
                 const url = `/WorkSpace/SessionFile/CreateSessionFile?fileType=${value}&sessionKey=${sessionKey}&connectionId=${hubConnection.connection.connectionId}`;
                 const response = await fetch(url, { method: 'POST' });
@@ -106,6 +112,12 @@ $(document).ready(() => {
 
                 $.LoadingOverlay('hide');
             }
+        });
+
+        hubConnection.on('SetEditorLanguage', language => {
+            $('#language-input').val(language);
+            $('#language-logo').attr('src', `/assets/session/languages/logos/${language}.svg`);
+            monacoEditor.setModelLanguage(codeEditor.getModel(), language);
         });
     }
 
@@ -374,6 +386,7 @@ $(document).ready(() => {
                 M.toast({ html: '<i class="material-icons left">lock</i> Private mode enabled', classes: 'rounded' });
             }
             else {
+                // TODO: fetch latest content of the session's current file to show in the editor.
                 if (!hasWriteAccess)
                     codeEditor.updateOptions({ readOnly: true });
 
@@ -383,6 +396,41 @@ $(document).ready(() => {
 
                 M.toast({ html: '<i class="material-icons left">no_encryption</i> Private mode disabled', classes: 'rounded' });
             }
+        });
+    }
+
+    function configureCodeExecution(codeEditor) {
+        $('#code-execute-btn').click(async function () {
+            $(this)
+                .addClass('btn-large')
+                .attr('disabled', true)
+                .find('i.material-icons')
+                .addClass('hide')
+                .next()
+                .removeClass('hide');
+
+            const language = codeEditor.getModel().getLanguageIdentifier().language;
+
+            const response = await fetch(`/WorkSpace/CodeExecution/Execute?language=${language}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(codeEditor.getValue())
+            });
+
+            if (response.status !== 200)
+                showAlert('Error', 'something went wrong while proccessing the request', true, 'OK');
+            else {
+                const data = await response.json();
+                console.log(data);
+            }
+
+            $(this)
+                .removeClass('btn-large')
+                .attr('disabled', false)
+                .find('i.material-icons')
+                .removeClass('hide')
+                .next()
+                .addClass('hide');
         });
     }
 

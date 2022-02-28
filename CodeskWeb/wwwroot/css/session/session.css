@@ -250,3 +250,7 @@ body, html {
     color: white;
     background: #424242;
 }
+
+#code-execute-btn {
+    margin-right: 300px;
+}

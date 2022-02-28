@@ -34,5 +34,7 @@ namespace CodeskWeb.HubModels
         Task EndSession();
 
         Task ToggleEditorReadOnly(bool isReadOnly);
+
+        Task SetEditorLanguage(string language);
     }
 }

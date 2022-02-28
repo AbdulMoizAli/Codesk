@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\assets\session\languages\logos\" />
     <Folder Include="wwwroot\assets\session\files\" />
     <Folder Include="wwwroot\assets\session\temp\" />
   </ItemGroup>
