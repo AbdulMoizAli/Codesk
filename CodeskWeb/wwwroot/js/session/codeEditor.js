@@ -107,7 +107,13 @@ $(document).ready(() => {
                         .width())
                         .show();
 
-                    codeEditor.setValue(data.fileContent);
+                    if (data.fileContent.trim())
+                        codeEditor.setValue(data.fileContent);
+                    else {
+                        const response = await fetch(`/assets/session/languages/templates/${value}.txt`);
+                        const data = await response.text();
+                        codeEditor.setValue(data);
+                    }
                 }
 
                 $.LoadingOverlay('hide');
