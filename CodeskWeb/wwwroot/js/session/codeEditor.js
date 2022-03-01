@@ -431,7 +431,7 @@ $(document).ready(() => {
             else {
                 const data = await response.json();
 
-                $('#program-output').text(data.output);
+                $('#program-output').text(data.output).css('color', data.statusCode === 200 ? 'lightgreen' : 'orange');
                 $('#cpu-time').text(data.cpuTime ? data.cpuTime : '0');
                 $('#memory').text(data.memory ? (parseFloat(data.memory) / 1024).toFixed(2) : '0');
 

@@ -37,6 +37,9 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             if (output is null)
                 return StatusCode(500);
 
+            if (output.Output.Contains($"{_configuration["CodeExecution:ServiceProvider"]}.{_configuration[$"CodeExecution:{language}:Extension"]}"))
+                output.StatusCode = 500;
+
             return Ok(output);
         }
     }
