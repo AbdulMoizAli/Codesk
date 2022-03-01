@@ -400,6 +400,9 @@ $(document).ready(() => {
     }
 
     function configureCodeExecution(codeEditor) {
+        let isOutputBox = false;
+        let outputBox = null;
+
         $('#code-execute-btn').click(async function () {
             $(this)
                 .addClass('btn-large')
@@ -421,7 +424,32 @@ $(document).ready(() => {
                 showAlert('Error', 'something went wrong while proccessing the request', true, 'OK');
             else {
                 const data = await response.json();
-                console.log(data);
+
+                $('#program-output').text(data.output);
+                $('#cpu-time').text(data.cpuTime ? data.cpuTime : '0');
+                $('#memory').text(data.memory ? (parseFloat(data.memory) / 1024).toFixed(2) : '0');
+
+                if (!isOutputBox) {
+                    outputBox = new WinBox('Output', {
+                        index: 999,
+                        root: document.body,
+                        background: "#5c6bc0",
+                        x: 'center',
+                        y: 'center',
+                        width: 800,
+                        height: 400,
+                        mount: document.querySelector('#output-box-markup').firstElementChild,
+                        onclose: () => {
+                            isOutputBox = false
+                            outputBox = null;
+                        }
+                    });
+
+                    isOutputBox = true;
+                }
+                else {
+                    outputBox.minimize(false);
+                }
             }
 
             $(this)
