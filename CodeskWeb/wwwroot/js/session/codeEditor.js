@@ -438,6 +438,7 @@ $(document).ready(() => {
                 if (!isOutputBox) {
                     outputBox = new WinBox('Output', {
                         index: 999,
+                        class: ['output-window'],
                         root: document.body,
                         background: "#5c6bc0",
                         x: 'center',
@@ -456,6 +457,8 @@ $(document).ready(() => {
                 else {
                     outputBox.minimize(false);
                 }
+
+                $('.output-window .wb-title').html(`Output <span style="font-weight: 500; margin-right: 550px; margin-top: 7px;" class="new badge white black-text" data-badge-caption="${language}"></span>`);
             }
 
             $(this)

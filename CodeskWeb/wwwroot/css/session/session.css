@@ -255,10 +255,6 @@ body, html {
     margin-right: 300px;
 }
 
-.wb-body {
+.output-window .wb-body {
     background: #333;
-}
-
-div.no-max.no-full.no-resize div.wb-body {
-    background-color: white !important;
 }
