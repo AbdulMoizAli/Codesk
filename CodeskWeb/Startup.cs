@@ -122,7 +122,7 @@ namespace CodeskWeb
                 }).AddAzureSignalR(Configuration.GetConnectionString("CodeskSignalR")).AddMessagePackProtocol();
             }
 
-            services.AddHttpClient<ICodeExecutionService, CodeExecutionService>(options => options.BaseAddress = new Uri("https://api.jdoodle.com/v1"));
+            services.AddHttpClient<ICodeExecutionService, CodeExecutionService>(options => options.BaseAddress = new Uri(Configuration["CodeExecution:BaseAddress"]));
 
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
 
