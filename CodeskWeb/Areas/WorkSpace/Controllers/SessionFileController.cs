@@ -35,6 +35,9 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             if (sessionFileType is null)
                 return BadRequest();
 
+            var (_, code, hostId, connectedUsers) = SessionInformation.SessionInfo[sessionKey];
+            SessionInformation.SessionInfo[sessionKey] = (fileType, code, hostId, connectedUsers);
+
             var email = User.GetEmailAddress();
 
             var sessionFile = await SessionFileManager.GetSessionFile(email, sessionKey, sessionFileType.FileTypeId);
@@ -85,14 +88,10 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
         }
 
         [HttpPost]
-        public async Task<string> GetFileContent(string filePath)
+        public IActionResult GetSessionCurrentFileInfo(string sessionKey)
         {
-            var path = Path.Combine(_env.WebRootPath, "assets", "session", "files", filePath);
-
-            if (!CodeFile.Exists(path))
-                return null;
-
-            return await CodeFile.ReadAllTextAsync(path).ConfigureAwait(false);
+            var data = new { Language = SessionInformation.SessionInfo[sessionKey].language, EditorContent = SessionInformation.SessionInfo[sessionKey].code.ToString() };
+            return Ok(data);
         }
 
         public async Task<IActionResult> DownloadSessionFile(int fileId)

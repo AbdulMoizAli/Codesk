@@ -21,7 +21,12 @@
         </a>
         @if (ViewBag.IsSession is not null)
         {
-            <img id="language-logo" src="~/assets/session/languages/logos/plaintext.svg" width="40" height="40" style="margin-left: 305px; margin-top: 4px; background: white; border-radius: 10px; padding: 2px;" />
+            <img id="language-logo" class="hide" src="#" width="40" height="40" style="margin-left: 305px; margin-top: 4px; background: white; border-radius: 10px; padding: 2px;" />
+
+            @if (ViewBag.NewSession is not null)
+            {
+                <a class="btn-floating btn-small waves-effect waves-dark white black-text tooltipped" style="margin-left: 50px; margin-bottom: 32px;" data-position="right" data-tooltip="Synchronize code with participants"><i class="material-icons black-text">sync</i></a>
+            }
         }
         <a data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         <partial name="@partialName" />

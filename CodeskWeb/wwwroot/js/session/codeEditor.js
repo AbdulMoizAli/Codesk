@@ -23,8 +23,8 @@ $(document).ready(() => {
 
     function getEditorOptions() {
         return {
-            language: 'plaintext',
-            value: $('#session-type').val() === 'new' ? 'select a language of your choice from settings and start coding... 💻' : $('#editor-content').text(),
+            language: $('#session-type').val() === 'new' ? 'plaintext' : $('#editor-language').val(),
+            value: ($('#session-type').val() === 'new' || $('#editor-language').val() === 'plaintext') ? 'select a language of your choice from settings and start coding... 💻' : $('#editor-content').text(),
             scrollBeyondLastLine: false,
             theme: $('#theme-select').val(),
             cursorStyle: $('#cursor-select').val(),
@@ -47,6 +47,12 @@ $(document).ready(() => {
         const codeEditor = monacoEditor.create(editorDiv, getEditorOptions());
         codeEditor.focus();
 
+        $('#language-logo').attr('src', `/assets/session/languages/logos/${$('#session-type').val() === 'new' ? 'plaintext' : $('#editor-language').val()}.svg`)
+            .removeClass('hide');
+
+        if ($('#session-type').val() !== 'new' && $('#editor-language').val() !== 'plaintext')
+            $('#code-execute-btn').parent().removeClass('hide');
+
         await configureEditorSettings(monacoEditor, codeEditor);
 
         configureEditorSettingsReset();
@@ -59,7 +65,7 @@ $(document).ready(() => {
 
         configureAccessWrite(codeEditor);
 
-        configureCodingMode(codeEditor);
+        configureCodingMode(codeEditor, monacoEditor);
 
         configureCodeExecution(codeEditor);
 
@@ -78,6 +84,11 @@ $(document).ready(() => {
                     return;
 
                 $('#language-logo').attr('src', `/assets/session/languages/logos/${value}.svg`);
+
+                if (value === 'plaintext')
+                    $('#code-execute-btn').parent().addClass('hide');
+                else
+                    $('#code-execute-btn').parent().removeClass('hide');
 
                 monacoEditor.setModelLanguage(codeEditor.getModel(), value);
 
@@ -124,6 +135,7 @@ $(document).ready(() => {
             $('#language-input').val(language);
             $('#language-logo').attr('src', `/assets/session/languages/logos/${language}.svg`);
             monacoEditor.setModelLanguage(codeEditor.getModel(), language);
+            $('#code-execute-btn').parent().removeClass('hide');
         });
     }
 
@@ -367,7 +379,7 @@ $(document).ready(() => {
         });
     }
 
-    function configureCodingMode(codeEditor) {
+    function configureCodingMode(codeEditor, monacoEditor) {
         $('#coding-mode').click(async function () {
             const badge = $(this).children('span.badge');
             const currentMode = badge.attr('data-badge-caption');
@@ -392,15 +404,24 @@ $(document).ready(() => {
                 M.toast({ html: '<i class="material-icons left">lock</i> Private mode enabled', classes: 'rounded' });
             }
             else {
-                // TODO: fetch latest content of the session's current file to show in the editor.
                 if (!hasWriteAccess)
                     codeEditor.updateOptions({ readOnly: true });
 
-                codingMode = 'public';
+                if ($('#session-type').val() !== 'new') {
+                    const response = await fetch(`/WorkSpace/SessionFile/GetSessionCurrentFileInfo?sessionKey=${sessionKey}`, { method: 'POST' });
+                    const data = await response.json();
+
+                    codeEditor.setValue(data.editorContent);
+                    $('#language-logo').attr('src', `/assets/session/languages/logos/${data.language}.svg`);
+                    monacoEditor.setModelLanguage(codeEditor.getModel(), data.language);
+                }
+
                 badge.attr('data-badge-caption', 'Public');
                 $(this).children('i').text('no_encryption');
 
                 M.toast({ html: '<i class="material-icons left">no_encryption</i> Private mode disabled', classes: 'rounded' });
+
+                codingMode = 'public';
             }
         });
     }

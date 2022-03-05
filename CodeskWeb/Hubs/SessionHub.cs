@@ -2,6 +2,7 @@
 using CodeskWeb.HubModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,13 @@ namespace CodeskWeb.Hubs
 {
     public class SessionHub : Hub<ISessionClient>
     {
+        private readonly IConfiguration _configuration;
+
+        public SessionHub(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         [Authorize]
         public async Task CreateSession()
         {
@@ -19,7 +27,7 @@ namespace CodeskWeb.Hubs
 
             var user = new ConnectedUser { UserId = Context.ConnectionId, UserName = userName, HasWriteAccess = true };
 
-            SessionInformation.SessionInfo.Add(sessionKey, (new StringBuilder(), Context.ConnectionId, new List<ConnectedUser> { user }));
+            SessionInformation.SessionInfo.Add(sessionKey, (_configuration["CodeExecution:Default"], new StringBuilder(), Context.ConnectionId, new List<ConnectedUser> { user }));
 
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionKey)
                 .ConfigureAwait(false);
@@ -65,7 +73,11 @@ namespace CodeskWeb.Hubs
             if (!SessionHelper.IsValidConnectionId(Context.ConnectionId, sessionKey))
                 return;
 
-            await Clients.OthersInGroup(sessionKey).SetEditorLanguage(language).ConfigureAwait(false);
+            var excludedParticipants = SessionHelper.GetPrivateModeParticipants(sessionKey);
+            excludedParticipants.Add(Context.ConnectionId);
+
+            await Clients.GroupExcept(sessionKey, excludedParticipants).SetEditorLanguage(language)
+                .ConfigureAwait(false);
         }
 
         public async Task JoinSession(string userName, string sessionKey)

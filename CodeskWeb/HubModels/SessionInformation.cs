@@ -5,6 +5,6 @@ namespace CodeskWeb.HubModels
 {
     public static class SessionInformation
     {
-        public static Dictionary<string, (StringBuilder code, string hostId, List<ConnectedUser> connectedUsers)> SessionInfo { get; set; } = new();
+        public static Dictionary<string, (string language, StringBuilder code, string hostId, List<ConnectedUser> connectedUsers)> SessionInfo { get; set; } = new();
     }
 }

@@ -17,6 +17,8 @@
 
 <input hidden id="user-authenticated" value="@flag" />
 
+<input hidden id="editor-language" value="@SessionInformation.SessionInfo[Model.JoinSession.SessionKey].language" />
+
 <div hidden id="editor-content">@SessionInformation.SessionInfo[Model.JoinSession.SessionKey].code.ToString()</div>
 
 <partial name="_SessionMarkupPartial" model="Model" />
