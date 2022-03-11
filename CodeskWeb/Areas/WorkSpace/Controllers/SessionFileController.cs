@@ -27,7 +27,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSessionFile(string fileType, string sessionKey, string connectionId)
         {
-            if (!SessionHelper.IsValidConnectionId(connectionId, sessionKey))
+            if (!SessionHelper.IsValidHostId(connectionId, sessionKey))
                 return Unauthorized();
 
             var sessionFileType = await SessionFileManager.GetFileTypeExtension(fileType).ConfigureAwait(false);
