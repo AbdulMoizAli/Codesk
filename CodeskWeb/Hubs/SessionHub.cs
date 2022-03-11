@@ -42,7 +42,7 @@ namespace CodeskWeb.Hubs
         [Authorize]
         public async Task EndSessionForAll(string endDateTime, string sessionKey)
         {
-            if (!SessionHelper.IsValidConnectionId(Context.ConnectionId, sessionKey))
+            if (!SessionHelper.IsValidHostId(Context.ConnectionId, sessionKey))
                 return;
 
             await Clients.OthersInGroup(sessionKey).EndSession()
@@ -58,7 +58,7 @@ namespace CodeskWeb.Hubs
         [Authorize]
         public async Task ToggleWriteAccess(string sessionKey, string userId)
         {
-            if (!SessionHelper.IsValidConnectionId(Context.ConnectionId, sessionKey))
+            if (!SessionHelper.IsValidHostId(Context.ConnectionId, sessionKey))
                 return;
 
             var user = SessionInformation.SessionInfo[sessionKey].connectedUsers.Find(u => u.UserId == userId);
@@ -70,7 +70,7 @@ namespace CodeskWeb.Hubs
         [Authorize]
         public async Task SetCodingLanguage(string sessionKey, string language)
         {
-            if (!SessionHelper.IsValidConnectionId(Context.ConnectionId, sessionKey))
+            if (!SessionHelper.IsValidHostId(Context.ConnectionId, sessionKey))
                 return;
 
             var excludedParticipants = SessionHelper.GetPrivateModeParticipants(sessionKey);

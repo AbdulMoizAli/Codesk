@@ -6,7 +6,7 @@ namespace CodeskWeb.HubModels
 {
     public static class SessionHelper
     {
-        public static bool IsValidConnectionId(string connectionId, string sessionKey)
+        public static bool IsValidHostId(string connectionId, string sessionKey)
         {
             return string.Equals(connectionId, SessionInformation.SessionInfo[sessionKey].hostId);
         }
