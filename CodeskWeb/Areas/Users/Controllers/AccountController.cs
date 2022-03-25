@@ -39,11 +39,17 @@ namespace CodeskWeb.Areas.Users.Controllers
 
         public IActionResult SignIn()
         {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Dashboard", "Home", new { Area = "" });
+
             return View();
         }
 
         public IActionResult SignUp()
         {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Dashboard", "Home", new { Area = "" });
+
             return View();
         }
 
@@ -55,7 +61,7 @@ namespace CodeskWeb.Areas.Users.Controllers
             return Json(result);
         }
 
-        private async Task<ActionResult> AuthorizeUser(User user, string url)
+        private async Task<ActionResult> AuthorizeUser(User user, bool rememberMe, string url)
         {
             var claims = new List<Claim>
             {
@@ -68,7 +74,8 @@ namespace CodeskWeb.Areas.Users.Controllers
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity))
+                new ClaimsPrincipal(claimsIdentity),
+                new AuthenticationProperties { IsPersistent = rememberMe })
                 .ConfigureAwait(false);
 
             if (!string.IsNullOrWhiteSpace(url))
@@ -93,7 +100,7 @@ namespace CodeskWeb.Areas.Users.Controllers
                 return View(model);
             }
 
-            return await AuthorizeUser(userModel, returnUrl).ConfigureAwait(false);
+            return await AuthorizeUser(userModel, model.RememberMe, returnUrl).ConfigureAwait(false);
         }
 
         public async Task SignInExternal(string returnUrl, string providerName)
@@ -153,7 +160,7 @@ namespace CodeskWeb.Areas.Users.Controllers
                 return View(model);
             }
 
-            return await AuthorizeUser(userModel, null).ConfigureAwait(false);
+            return await AuthorizeUser(userModel, false, null).ConfigureAwait(false);
         }
 
         [HttpPost]
@@ -169,6 +176,9 @@ namespace CodeskWeb.Areas.Users.Controllers
 
         public IActionResult ForgotPassword()
         {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Dashboard", "Home", new { Area = "" });
+
             return View();
         }
 
@@ -201,6 +211,9 @@ namespace CodeskWeb.Areas.Users.Controllers
 
         public IActionResult ResetPassword(string token)
         {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Dashboard", "Home", new { Area = "" });
+
             var model = new ResetPasswordViewModel { Token = token };
 
             return View(model);

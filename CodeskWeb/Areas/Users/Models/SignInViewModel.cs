@@ -11,5 +11,7 @@ namespace CodeskWeb.Areas.Users.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter your password")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        public bool RememberMe { get; set; }
     }
 }

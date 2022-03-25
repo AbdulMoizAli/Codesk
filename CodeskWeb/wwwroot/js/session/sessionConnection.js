@@ -2,7 +2,7 @@
 let sessionKey = '';
 
 const hubConnection = new signalR.HubConnectionBuilder()
-    .withUrl('/sessionHub', { transport: signalR.HttpTransportType.WebSockets })
+    .withUrl('/sessionHub', { skipNegotiation: true, transport: signalR.HttpTransportType.WebSockets })
     .withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
     .build();
 

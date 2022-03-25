@@ -5,12 +5,13 @@
 
     $('#signin-failed').trigger('click');
 
-    $('#show-password').change(function () {
-        const $password = $('#Password');
+    const rememberMe = localStorage.getItem('rememberMe');
 
-        if ($(this).is(':checked'))
-            $password.attr('type', 'text');
-        else
-            $password.attr('type', 'password');
-    })
+    if (rememberMe)
+        $('#RememberMe').attr('checked', rememberMe === 'true');
+
+    $('#RememberMe').change(function () {
+        const value = $(this).is(':checked');
+        localStorage.setItem('rememberMe', value);
+    });
 });
