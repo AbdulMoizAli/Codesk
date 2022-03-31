@@ -35,6 +35,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\assets\session\files\" />
     <Folder Include="wwwroot\assets\session\temp\" />
+    <Folder Include="wwwroot\landingPageAssets\" />
   </ItemGroup>
 
   <ItemGroup>

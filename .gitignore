@@ -40,6 +40,7 @@ bld/
 **/wwwroot/assets/session/files
 **/wwwroot/assets/session/temp
 **/wwwroot/assets/session/archive.zip
+**/wwwroot/landingPageAssets
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
