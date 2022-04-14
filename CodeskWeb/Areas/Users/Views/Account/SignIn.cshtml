@@ -8,48 +8,6 @@
     var returnUrl = Context.Request.Query["ReturnUrl"];
 }
 
-@*@section Styles {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-    
-    <style>
-        .facebook {
-            background-color: #3b5998;
-            width: 100%
-        }
-
-        .facebook:hover {
-            background-color: #4c70ba;
-        }
-
-        .google {
-            background-color: #dd4b39;
-            width: 100%
-        }
-
-        .google:hover {
-            background-color: #e47365;
-        }
-
-        .github {
-            background-color: #444444;
-            width: 100%
-        }
-
-        .github:hover {
-            background-color: #5e5e5e;
-        }
-
-        .microsoft {
-            background-color: #2672ec;
-            width: 100%
-        }
-
-        .microsoft:hover {
-            background-color: #5590f0;
-        }
-    </style>
-}*@
-
 @if (isSignInFailed)
 {   string errorMessage = ViewData.ModelState["SignInFailed"].Errors.FirstOrDefault().ErrorMessage;
 
@@ -91,32 +49,10 @@
 
             <div class="row" style="margin-top: 3%;">
                 <div class="col l6 m12 s12 offset-l3">
-                    @*<a asp-area="Users" asp-controller="Account" asp-action="ForgotPassword">Forgot password?</a>*@
+                    <a asp-area="Users" asp-controller="Account" asp-action="ForgotPassword">Forgot password?</a>
                     <button type="submit" class="btn waves-effect waves-light right green darken-1"><i class="material-icons left">send</i><span class="left">log in</span></button>
                 </div>
             </div>
-
-            @*<div class="row" style="margin-top: 10%;">
-                <div class="col l4 offset-l2 offset-s1 s10">
-                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Facebook" class="btn waves-effect waves-light facebook"><i class="fab fa-facebook left"></i> <span class="left">sign in with facebook</span></a>
-                </div>
-
-                <div class="col l4 offset-s1 s10">
-                    <div class="hide-on-med-and-up" style="margin-top: 1%;"></div>
-                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Google" class="btn waves-effect waves-light google"><i class="fab fa-google left"></i> <span class="left">sign in with google</span></a>
-                </div>
-            </div>
-
-            <div class="row" style="margin-top: 1%;">
-                <div class="col l4 offset-l2 offset-s1 s10">
-                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="GitHub" class="btn waves-effect waves-light github"><i class="fab fa-github left"></i> <span class="left">sign in with github</span></a>
-                </div>
-
-                <div class="col l4 offset-s1 s10">
-                    <div class="hide-on-med-and-up" style="margin-top: 1%;"></div>
-                    <a asp-area="Users" asp-controller="Account" asp-action="SignInExternal" asp-route-returnUrl="@returnUrl" asp-route-providerName="Microsoft" class="btn waves-effect waves-light microsoft"><i class="fab fa-microsoft left"></i> <span class="left">sign in with microsoft</span></a>
-                </div>
-            </div>*@
         </div>
     </form>
 </div>

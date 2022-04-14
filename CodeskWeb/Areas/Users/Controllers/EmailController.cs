@@ -1,24 +1,24 @@
 ﻿using CodeskLibrary.DataAccess;
 using CodeskWeb.HubModels;
-using FluentEmail.Core;
-using Microsoft.AspNetCore.Hosting;
+using CodeskWeb.ServiceModels;
+using CodeskWeb.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace CodeskWeb.Areas.Users.Controllers
 {
     public class EmailController : Controller
     {
-        private readonly IFluentEmail _email;
+        private readonly IConfiguration _configuration;
 
-        private readonly IWebHostEnvironment _env;
+        private readonly IEmailService _emailService;
 
-        public EmailController(IFluentEmail email, IWebHostEnvironment env)
+        public EmailController(IConfiguration configuration, IEmailService emailService)
         {
-            _email = email;
-            _env = env;
+            _configuration = configuration;
+            _emailService = emailService;
         }
 
         public async Task<IActionResult> VerifyEmail(string token)
@@ -36,16 +36,20 @@ namespace CodeskWeb.Areas.Users.Controllers
 
             var confirmationLink = Url.Action("VerifyEmail", "Email", new { Area = "Users", token }, Request.Scheme);
 
-            var templateFilePath = Path.Combine(_env.WebRootPath, "emailTemplates", "emailConfirmation.html");
+            var request = new EmailRequest
+            {
+                Email = email,
+                Link = confirmationLink,
+                Type = "confirmation",
+                Secret = _configuration["EmailService:AudienceSecret"]
+            };
 
-            await _email
-                .To(email, User.Identity.Name)
-                .Subject("Email Confirmation - Codesk")
-                .UsingTemplateFromFile(templateFilePath, new { Link = confirmationLink }, true)
-                .SendAsync()
-                .ConfigureAwait(false);
+            var response = await _emailService.SendEmail(request).ConfigureAwait(false);
 
-            return Ok();
+            if (response)
+                return Ok();
+
+            return StatusCode(500);
         }
     }
 }

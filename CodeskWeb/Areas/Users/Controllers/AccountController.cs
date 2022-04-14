@@ -2,19 +2,18 @@
 using CodeskLibrary.DataAccess;
 using CodeskLibrary.Models;
 using CodeskWeb.Areas.Users.Models;
-using FluentEmail.Core;
 using GoogleReCaptcha.V3.Interface;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CodeskWeb.HubModels;
-using System.IO;
+using Microsoft.Extensions.Configuration;
+using CodeskWeb.Services;
+using CodeskWeb.ServiceModels;
 
 namespace CodeskWeb.Areas.Users.Controllers
 {
@@ -23,18 +22,18 @@ namespace CodeskWeb.Areas.Users.Controllers
     {
         private readonly IMapper _mapper;
 
-        private readonly IFluentEmail _email;
-
-        private readonly IWebHostEnvironment _env;
-
         private readonly ICaptchaValidator _captchaValidator;
 
-        public AccountController(IMapper mapper, IFluentEmail email, IWebHostEnvironment env, ICaptchaValidator captchaValidator)
+        private readonly IConfiguration _configuration;
+
+        private readonly IEmailService _emailService;
+
+        public AccountController(IMapper mapper, ICaptchaValidator captchaValidator, IConfiguration configuration, IEmailService emailService)
         {
             _mapper = mapper;
-            _email = email;
-            _env = env;
             _captchaValidator = captchaValidator;
+            _configuration = configuration;
+            _emailService = emailService;
         }
 
         public IActionResult SignIn()
@@ -103,39 +102,6 @@ namespace CodeskWeb.Areas.Users.Controllers
             return await AuthorizeUser(userModel, model.RememberMe, returnUrl).ConfigureAwait(false);
         }
 
-        public async Task SignInExternal(string returnUrl, string providerName)
-        {
-            string url = Url.Action("SignInExternalCallback", "Account", new { Area = "Users", ReturnUrl = returnUrl });
-
-            await HttpContext.ChallengeAsync(providerName, new AuthenticationProperties { RedirectUri = url })
-                .ConfigureAwait(false);
-        }
-
-        public async Task<IActionResult> SignInExternalCallback(string returnUrl, string remoteError)
-        {
-            if (remoteError != null)
-            {
-                ModelState.AddModelError("SignInFailed", remoteError);
-                return View("SignIn");
-            }
-
-            string url = string.IsNullOrWhiteSpace(returnUrl) ? Url.Action("Dashboard", "Home", new { Area = "" })
-                : returnUrl;
-
-            var email = User.GetEmailAddress();
-
-            var result = await AccountManager.IsUniqueEmailAddress(email).ConfigureAwait(false);
-
-            if (!result)
-            {
-                return LocalRedirect(url);
-            }
-
-            await AccountManager.UserExternalSignUp(email).ConfigureAwait(false);
-
-            return LocalRedirect(url);
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignUp(SignUpViewModel model, string captcha)
@@ -196,14 +162,15 @@ namespace CodeskWeb.Areas.Users.Controllers
             {
                 var passwordResetLink = Url.Action("ResetPassword", "Account", new { Area = "Users", token }, Request.Scheme);
 
-                var templateFilePath = Path.Combine(_env.WebRootPath, "emailTemplates", "passwordReset.html");
+                var request = new EmailRequest
+                {
+                    Email = model.EmailAddress,
+                    Link = passwordResetLink,
+                    Type = "reset",
+                    Secret = _configuration["EmailService:AudienceSecret"]
+                };
 
-                await _email
-                    .To(model.EmailAddress)
-                    .Subject("Password Reset - Codesk")
-                    .UsingTemplateFromFile(templateFilePath, new { Link = passwordResetLink }, true)
-                    .SendAsync()
-                    .ConfigureAwait(false);
+                await _emailService.SendEmail(request).ConfigureAwait(false);
             }
 
             return View("ForgotPasswordResponse");
