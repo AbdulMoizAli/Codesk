@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http.Connections;
 using System;
 using CodeskLibrary.Connections;
 using CodeskWeb.Services;
+using System.IO;
 
 namespace CodeskWeb
 {
@@ -71,6 +72,15 @@ namespace CodeskWeb
             services.AddControllersWithViews(options => options.Filters.Add(new AuthorizeFilter()));
 
             DbConnection.Configuration = Configuration;
+
+            if (Environment.IsProduction())
+            {
+                var dir1 = Path.Join(Environment.WebRootPath, "assets", "session", "files");
+                var dir2 = Path.Join(Environment.WebRootPath, "assets", "session", "temp");
+
+                Directory.CreateDirectory(dir1);
+                Directory.CreateDirectory(dir2);
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
