@@ -8,7 +8,7 @@
         if (!isChatBox) {
             chatBox = new WinBox('Chat', {
                 index: 999,
-                class: ['no-max', 'no-full', 'no-resize'],
+                class: ['no-max', 'no-full', 'no-resize', 'chat-window'],
                 root: document.body,
                 background: "#5c6bc0",
                 border: 4,
@@ -116,11 +116,11 @@
     }
 
     hubConnection.on('StartMessageTypingIndication', userName => {
-        $('.wb-title').html(`Chat <span class="yellow-text text-accent-2 chat-typing-indication">${userName} is typing...</span>`);
+        $('.chat-window .wb-title').html(`Chat <span class="yellow-text text-accent-2 chat-typing-indication">${userName} is typing...</span>`);
     });
 
     hubConnection.on('StopMessageTypingIndication', () => {
-        $('.wb-title').find('span.chat-typing-indication').remove();
+        $('.chat-window  .wb-title').find('span.chat-typing-indication').remove();
     });
 
     hubConnection.on('ReceiveMessage', (message, userName) => {
