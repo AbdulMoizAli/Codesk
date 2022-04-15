@@ -32,8 +32,12 @@
 
         controlMediaStream(stream);
 
-        if (selfPeerId)
-            await hubConnection.invoke('SendPeerId', selfPeerId, sessionKey);
+        const interval = setInterval(async () => {
+            if (selfPeerId) {
+                await hubConnection.invoke('SendPeerId', selfPeerId, sessionKey);
+                clearInterval(interval);
+            }
+        }, 1000);
     });
 
     hubConnection.on('CloseVideoCall', userId => {
