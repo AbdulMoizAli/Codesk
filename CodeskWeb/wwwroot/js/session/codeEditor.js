@@ -69,6 +69,8 @@ $(document).ready(() => {
 
         configureCodeExecution(codeEditor);
 
+        configureReconnect();
+
         $.LoadingOverlay('hide');
     }
 
@@ -489,6 +491,42 @@ $(document).ready(() => {
                 .removeClass('hide')
                 .next()
                 .addClass('hide');
+        });
+    }
+
+    async function configureReconnect() {
+        hubConnection.onreconnecting(error => {
+            $.LoadingOverlay("show", {
+                image: "",
+                text: "Reconnecting..."
+            });
+        });
+
+        hubConnection.onreconnected(async connectionId => {
+            sessionUsers[0].UserId = connectionId;
+            const isHost = $('#session-type').val() === 'new';
+
+            const response = await fetch('/WorkSpace/Session/ReconnectSessionUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    isHost,
+                    sessionKey,
+                    user: {
+                        userId: connectionId,
+                        userName: sessionUsers[0].UserName,
+                        hasWriteAccess,
+                        isPrivateMode: codingMode === 'private'
+                    }
+                })
+            });
+
+            if (response.status !== 200)
+                showAlert('Reconnection Failed', 'connection has been lost from the server', true, 'OK');
+
+            $.LoadingOverlay('hide');
         });
     }
 

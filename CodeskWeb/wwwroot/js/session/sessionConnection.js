@@ -3,6 +3,7 @@ let sessionKey = '';
 
 const hubConnection = new signalR.HubConnectionBuilder()
     .withUrl('/sessionHub', { transport: signalR.HttpTransportType.WebSockets })
+    .withAutomaticReconnect()
     .withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
     .build();
 

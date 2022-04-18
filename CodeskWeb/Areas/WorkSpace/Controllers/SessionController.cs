@@ -1,14 +1,23 @@
 ﻿using CodeskLibrary.DataAccess;
 using CodeskWeb.Areas.WorkSpace.Models;
 using CodeskWeb.HubModels;
+using CodeskWeb.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
 namespace CodeskWeb.Areas.WorkSpace.Controllers
 {
     public class SessionController : Controller
     {
+        private readonly IHubContext<SessionHub, ISessionClient> _hubContext;
+
+        public SessionController(IHubContext<SessionHub, ISessionClient> hubContext)
+        {
+            _hubContext = hubContext;
+        }
+
         public async Task<IActionResult> NewSession()
         {
             var email = User.GetEmailAddress();
@@ -97,6 +106,23 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             ViewBag.JoinSession = true;
 
             return View("_JoinSession", viewModel);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ReconnectSessionUser([FromBody] ReconnectViewModel model)
+        {
+            await _hubContext.Groups.AddToGroupAsync(model.User.UserId, model.SessionKey);
+
+            SessionInformation.SessionInfo[model.SessionKey].connectedUsers.Insert(0, model.User);
+
+            if (model.IsHost)
+            {
+                var (language, code, _, connectedUsers) = SessionInformation.SessionInfo[model.SessionKey];
+                SessionInformation.SessionInfo[model.SessionKey] = (language, code, model.User.UserId, connectedUsers);
+            }
+
+            return Ok();
         }
     }
 }
