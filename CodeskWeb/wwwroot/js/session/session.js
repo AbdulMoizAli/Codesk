@@ -170,7 +170,7 @@ $(document).ready(async () => {
     hubConnection.on('UpdateUserId', (prevUserId, currentUserId) => {
         $('.participant-list ul')
             .find(`li a[data-userid="${prevUserId}"]`)
-            .data('userid', currentUserId);
+            .attr('data-userid', currentUserId);
 
         const index = sessionUsers.findIndex(user => user.UserId === prevUserId);
 
