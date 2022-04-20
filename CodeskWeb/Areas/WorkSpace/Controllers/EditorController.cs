@@ -1,5 +1,6 @@
 ﻿using CodeskLibrary.DataAccess;
 using CodeskWeb.HubModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -27,6 +28,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             return Ok();
         }
 
+        [AllowAnonymous]
         public IActionResult SetCodingMode(bool mode, string sessionKey, string userId)
         {
             var user = SessionInformation.SessionInfo[sessionKey].connectedUsers.Find(u => u.UserId == userId);
