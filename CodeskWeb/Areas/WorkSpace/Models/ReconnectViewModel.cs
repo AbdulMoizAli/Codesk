@@ -8,6 +8,8 @@ namespace CodeskWeb.Areas.WorkSpace.Models
 
         public string SessionKey { get; set; }
 
+        public string PreviousUserId { get; set; }
+
         public ConnectedUser User { get; set; }
     }
 }

@@ -112,7 +112,11 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
         [HttpPost]
         public async Task<IActionResult> ReconnectSessionUser([FromBody] ReconnectViewModel model)
         {
-            await _hubContext.Groups.AddToGroupAsync(model.User.UserId, model.SessionKey);
+            await _hubContext.Groups.AddToGroupAsync(model.User.UserId, model.SessionKey)
+                .ConfigureAwait(false);
+
+            await _hubContext.Clients.Group(model.SessionKey).UpdateUserId(model.PreviousUserId, model.User.UserId)
+                .ConfigureAwait(false);
 
             SessionInformation.SessionInfo[model.SessionKey].connectedUsers.Insert(0, model.User);
 

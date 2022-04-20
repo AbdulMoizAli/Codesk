@@ -167,6 +167,17 @@ $(document).ready(async () => {
         leaveSession();
     });
 
+    hubConnection.on('UpdateUserId', (prevUserId, currentUserId) => {
+        $('.participant-list ul')
+            .find(`li a[data-userid="${prevUserId}"]`)
+            .data('userid', currentUserId);
+
+        const index = sessionUsers.findIndex(user => user.UserId === prevUserId);
+
+        if (index !== -1)
+            sessionUsers[index].UserId = currentUserId;
+    });
+
     if ($('#session-type').val() === 'new') {
         await hubConnection.invoke('CreateSession');
     }

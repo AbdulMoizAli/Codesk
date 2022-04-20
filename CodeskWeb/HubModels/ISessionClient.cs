@@ -36,5 +36,7 @@ namespace CodeskWeb.HubModels
         Task ToggleEditorReadOnly(bool isReadOnly);
 
         Task SetEditorLanguage(string language);
+
+        Task UpdateUserId(string prevUserId, string currentUserId);
     }
 }

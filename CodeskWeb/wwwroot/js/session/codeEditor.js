@@ -503,6 +503,7 @@ $(document).ready(() => {
         });
 
         hubConnection.onreconnected(async connectionId => {
+            const prevConnectionId = sessionUsers[0].UserId;
             sessionUsers[0].UserId = connectionId;
             const isHost = $('#session-type').val() === 'new';
 
@@ -514,6 +515,7 @@ $(document).ready(() => {
                 body: JSON.stringify({
                     isHost,
                     sessionKey,
+                    previousUserId: prevConnectionId,
                     user: {
                         userId: connectionId,
                         userName: sessionUsers[0].UserName,
