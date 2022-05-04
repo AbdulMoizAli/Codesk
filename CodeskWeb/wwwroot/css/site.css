@@ -34,12 +34,12 @@ main {
     color: #546e7a !important;
 }
 
-.input-field input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=search]:focus, input[type=number]:focus {
+.input-field input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=search]:focus, input[type=number]:focus, textarea:focus {
     border-bottom: 1px solid #546e7a !important;
     box-shadow: 0 1px 0 0 #546e7a !important;
 }
 
-.input-field input[type=text]:focus + label, input[type=password]:focus + label, input[type=email]:focus + label, input[type=search]:focus + label, input[type=number]:focus + label {
+.input-field input[type=text]:focus + label, input[type=password]:focus + label, input[type=email]:focus + label, input[type=search]:focus + label, input[type=number]:focus + label, textarea:focus + label {
     color: #546e7a !important;
 }
 
@@ -111,4 +111,8 @@ nav .brand-logo {
 
 no-padding {
     padding: 0;
+}
+
+th {
+    font-weight: 500 !important;
 }

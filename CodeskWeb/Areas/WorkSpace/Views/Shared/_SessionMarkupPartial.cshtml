@@ -68,6 +68,7 @@
                         </div>
                     </a>
                 </li>
+                <li><a class="waves-effect modal-trigger" href="#tasks-modal"><i class="material-icons">assignment</i>Tasks</a></li>
                 <li><a id="coding-mode" class="waves-effect"><span class="new badge grey darken-2" data-badge-caption="Public"></span><i class="material-icons">no_encryption</i>Coding Mode</a></li>
             </ul>
         </div>
@@ -262,6 +263,55 @@
         <div id="program-output" style="margin-bottom: 50px; white-space: pre"></div>
         <div><span style="color: lightblue">cpu time : </span> <span id="cpu-time" style="color: lightgrey"></span> <span style="color: lightgrey">s</span></div>
         <div><span style="color: lightblue">memory : </span> <span id="memory" style="color: lightgrey"></span> <span style="color: lightgrey">MB</span></div>
+    </div>
+</div>
+<!--====================================================================================-->
+<!--============================ Tasks Modal =========================================-->
+<div id="tasks-modal" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <h4 class="grey-text">Manage Tasks</h4>
+        
+        <form id="task-form" data-optype="create">
+            <div class="row">
+                <div class="input-field col s4">
+                    <i class="material-icons prefix">short_text</i>
+                    <input required id="task-name" type="text" autocomplete="off" spellcheck="false">
+                    <label for="task-name">Task Name</label>
+                </div>
+                <div class="input-field col s7">
+                    <i class="material-icons prefix">description</i>
+                    <textarea required id="task-description" class="materialize-textarea" spellcheck="false"></textarea>
+                    <label for="task-description">Task Description</label>
+                </div>
+                <div class="input-field col s1">
+                    <button class="btn-floating waves-effect waves-light green lighten-1 right tooltipped" data-position="top" data-tooltip="Create"><i class="material-icons">add</i></button>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col s12">
+                <table class="responsive-table highlight" id="tasks-table" data-isempty="true">
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Task Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td class="center-align">There are currently no tasks available</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="modal-close waves-effect waves-light btn-small red lighten-1"><i class="material-icons left">close</i> Close</a>
     </div>
 </div>
 <!--====================================================================================-->

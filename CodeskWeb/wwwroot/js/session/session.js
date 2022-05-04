@@ -76,6 +76,148 @@ $(document).ready(async () => {
         });
     }
 
+    function manageTasks() {
+        $('#task-form').submit(async function (e) {
+            e.preventDefault();
+
+            const $taskName = $(this).find('#task-name');
+            const $taskDescription = $(this).find('#task-description');
+
+            const model = {
+                taskName: $taskName.val(),
+                taskDescription: $taskDescription.val()
+            };
+
+            let url = '';
+
+            if ($(this).attr('data-optype') === 'create')
+                url = `/WorkSpace/SessionTask/CreateTask?sessionKey=${sessionKey}`;
+            else if ($(this).attr('data-optype') === 'update') {
+                url = '/WorkSpace/SessionTask/UpdateTask';
+                model['taskId'] = $(this).attr('data-taskid');
+            }
+
+            $.LoadingOverlay('show');
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(model)
+            });
+
+            $.LoadingOverlay('hide');
+
+            if (response.status !== 200) {
+                showAlert('Error', 'something went wrong while creating the task', true, 'OK');
+                return;
+            }
+
+            if ($(this).attr('data-optype') === 'create') {
+                const data = await response.json();
+
+                const row = `
+                    <tr data-rowid="${data.taskId}">
+                        <td>${$taskName.val()}</td>
+                        <td>${$taskDescription.val()}</td>
+                        <td>
+                            <a style="cursor: pointer;" class="edit-task blue-text text-lighten-1 tooltipped" data-position="left" data-tooltip="Edit"><i class="material-icons">edit</i></a>
+                            <a style="cursor: pointer;" class="delete-task red-text text-lighten-1 tooltipped" data-position="right" data-tooltip="Delete"><i class="material-icons">delete</i></a>
+                        </td>
+                    </tr>
+                `;
+
+                const $tasksTable = $('#tasks-table');
+
+                if ($tasksTable.attr('data-isempty') === 'true') {
+                    $tasksTable.find('tbody').html(row);
+                    $tasksTable.attr('data-isempty', false);
+                }
+                else {
+                    $tasksTable.find('tbody').append(row);
+                }
+
+                $('.tooltipped').tooltip();
+            }
+            else if ($(this).attr('data-optype') === 'update') {
+                const $tr = $(`#tasks-table tbody tr[data-rowid="${$(this).attr('data-taskid')}"]`);
+
+                $tr.children().eq(0).text($taskName.val());
+                $tr.children().eq(1).text($taskDescription.val())
+
+                $(this)
+                    .attr('data-optype', 'create')
+                    .removeAttr('data-taskid')
+                    .find('button')
+                    .attr('data-tooltip', 'Create')
+                    .find('i').text('add');
+            }
+
+            $taskName.val('');
+            $taskDescription.val('');
+
+            M.textareaAutoResize($taskDescription);
+
+            $taskName.next().removeClass('active');
+            $taskDescription.next().removeClass('active');
+
+        });
+
+        $(document).on('click', '.delete-task', function () {
+            const $tr = $(this).closest('tr');
+
+            showActionAlert('Are you sure?', 'You won\'t be able to revert this!', false, 'Cancel', 'Delete', async () => {
+                $.LoadingOverlay('show');
+
+                const response = await fetch(`/WorkSpace/SessionTask/DeleteTask?taskId=${$tr.attr('data-rowid')}`, {
+                    method: 'POST'
+                });
+
+                $.LoadingOverlay('hide');
+
+                if (response.status !== 200) {
+                    showAlert('Error', 'something went wrong while deleting the task', true, 'OK');
+                    return;
+                }
+
+                $tr.remove();
+
+                if ($('#tasks-table tbody tr').length === 0) {
+                    const row = `
+                        <tr>
+                            <td></td>
+                            <td class="center-align">There are currently no tasks available</td>
+                            <td></td>
+                        </tr>
+                    `;
+
+                    $('#tasks-table tbody').html(row);
+                }
+            });
+        });
+
+        $(document).on('click', '.edit-task', function () {
+            const tr = $(this).closest('tr');
+
+            const $taskName = $('#task-name');
+            const $taskDescription = $('#task-description');
+
+            $taskName.val(tr.children().eq(0).text());
+            $taskDescription.val(tr.children().eq(1).text());
+
+            M.textareaAutoResize($taskDescription);
+
+            $taskName.next().addClass('active');
+            $taskDescription.next().addClass('active');
+
+            $('#task-form')
+                .attr('data-optype', 'update')
+                .attr('data-taskid', tr.attr('data-rowid'))
+                .find('button')
+                .attr('data-tooltip', 'Update')
+                .find('i').text('edit');
+        });
+    }
+
     function leaveSession() {
         removeEventListener('beforeunload', askUserBeforeUnload);
 
@@ -180,6 +322,7 @@ $(document).ready(async () => {
 
     if ($('#session-type').val() === 'new') {
         await hubConnection.invoke('CreateSession');
+        manageTasks();
     }
     else if ($('#session-type').val() === 'join') {
         const userName = $('#session-username').val();
