@@ -78,8 +78,11 @@ namespace CodeskWeb
                 var dir1 = Path.Join(Environment.WebRootPath, "assets", "session", "files");
                 var dir2 = Path.Join(Environment.WebRootPath, "assets", "session", "temp");
 
-                Directory.CreateDirectory(dir1);
-                Directory.CreateDirectory(dir2);
+                if (!Directory.Exists(dir1))
+                    Directory.CreateDirectory(dir1);
+
+                if (!Directory.Exists(dir2))
+                    Directory.CreateDirectory(dir2);
             }
         }
 
