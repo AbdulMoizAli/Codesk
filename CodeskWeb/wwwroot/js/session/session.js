@@ -159,7 +159,6 @@ $(document).ready(async () => {
 
             $taskName.next().removeClass('active');
             $taskDescription.next().removeClass('active');
-
         });
 
         $(document).on('click', '.delete-task', function () {
@@ -181,7 +180,9 @@ $(document).ready(async () => {
 
                 $tr.remove();
 
-                if ($('#tasks-table tbody tr').length === 0) {
+                const $tasksTable = $('#tasks-table');
+
+                if ($tasksTable.find('tbody tr').length === 0) {
                     const row = `
                         <tr>
                             <td></td>
@@ -190,7 +191,7 @@ $(document).ready(async () => {
                         </tr>
                     `;
 
-                    $('#tasks-table tbody').html(row);
+                    $tasksTable.attr('data-isempty', true).find('tbody').html(row);
                 }
             });
         });
