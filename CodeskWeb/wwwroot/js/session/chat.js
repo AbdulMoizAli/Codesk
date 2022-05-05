@@ -124,7 +124,7 @@
     });
 
     hubConnection.on('ReceiveMessage', (message, userName) => {
-        displayMessage(userName, message);
+        displayMessage(userName.toUpperCase(), message);
 
         scrollBottom();
 
