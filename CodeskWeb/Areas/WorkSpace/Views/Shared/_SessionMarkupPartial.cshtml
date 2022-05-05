@@ -269,48 +269,92 @@
 <!--============================ Tasks Modal =========================================-->
 <div id="tasks-modal" class="modal modal-fixed-footer">
     <div class="modal-content">
-        <h4 class="grey-text">Manage Tasks</h4>
+        <h4 class="grey-text">@(ViewBag.NewSession is not null ? "Manage Tasks" : "Assigned Tasks")</h4>
 
         <br />
-        
-        <form id="task-form" data-optype="create">
-            <div class="row">
-                <div class="input-field col s4">
-                    <i class="material-icons prefix">short_text</i>
-                    <input required id="task-name" type="text" autocomplete="off" spellcheck="false">
-                    <label for="task-name">Task Name</label>
-                </div>
-                <div class="input-field col s7">
-                    <i class="material-icons prefix">description</i>
-                    <textarea required id="task-description" class="materialize-textarea" spellcheck="false"></textarea>
-                    <label for="task-description">Task Description</label>
-                </div>
-                <div class="input-field col s1">
-                    <button class="btn-floating waves-effect waves-light green lighten-1 right tooltipped" data-position="top" data-tooltip="Create"><i class="material-icons">add</i></button>
-                </div>
-            </div>
-        </form>
 
-        <div class="row">
-            <div class="col s12">
-                <table class="responsive-table highlight" id="tasks-table" data-isempty="true">
-                    <thead>
-                        <tr>
-                            <th>Task Name</th>
-                            <th>Task Description</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td></td>
-                            <td class="center-align">There are currently no tasks available</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+        @if (ViewBag.NewSession is not null)
+        {
+            <form id="task-form" data-optype="create">
+                <div class="row">
+                    <div class="input-field col s4">
+                        <i class="material-icons prefix">short_text</i>
+                        <input required id="task-name" type="text" autocomplete="off" spellcheck="false">
+                        <label for="task-name">Task Name</label>
+                    </div>
+                    <div class="input-field col s7">
+                        <i class="material-icons prefix">description</i>
+                        <textarea required id="task-description" class="materialize-textarea" spellcheck="false"></textarea>
+                        <label for="task-description">Task Description</label>
+                    </div>
+                    <div class="input-field col s1">
+                        <button class="btn-floating waves-effect waves-light green lighten-1 right tooltipped" data-position="top" data-tooltip="Create"><i class="material-icons">add</i></button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="row">
+                <div class="col s12">
+                    <table class="responsive-table highlight" id="tasks-table" data-isempty="true">
+                        <thead>
+                            <tr>
+                                <th>Task Name</th>
+                                <th>Task Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td class="center-align">There are currently no tasks available</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            var tasks = await SessionTaskManager.GetTasks(Model.JoinSession.SessionKey);
+
+            <div class="row">
+                <div class="col s12">
+                    <table class="responsive-table highlight">
+                        <thead>
+                            <tr>
+                                <th>Task Name</th>
+                                <th>Task Description</th>
+                                <th>Submit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (tasks.Count() < 1)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td class="center-align">There are currently no tasks available</td>
+                                    <td></td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var task in tasks)
+                                {
+                                    <tr data-rowid="@task.TaskId">
+                                        <td>@task.TaskName</td>
+                                        <td>@task.TaskDescription</td>
+                                        <td>
+                                            <a style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped" data-position="left" data-tooltip="Add Submission"><i class="material-icons">insert_comment</i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
     </div>
     <div class="modal-footer">
         <a class="modal-close waves-effect waves-light btn-small red lighten-1"><i class="material-icons left">close</i> Close</a>
