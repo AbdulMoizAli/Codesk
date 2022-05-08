@@ -93,7 +93,7 @@ $(document).ready(async () => {
             if ($(this).attr('data-optype') === 'create')
                 url = `/WorkSpace/SessionTask/CreateTask?sessionKey=${sessionKey}`;
             else if ($(this).attr('data-optype') === 'update') {
-                url = '/WorkSpace/SessionTask/UpdateTask';
+                url = `/WorkSpace/SessionTask/UpdateTask?sessionKey=${sessionKey}`;
                 model['taskId'] = $(this).attr('data-taskid');
             }
 
@@ -121,7 +121,6 @@ $(document).ready(async () => {
                         <td>${$taskDescription.val()}</td>
                         <td>
                             <a style="cursor: pointer;" class="edit-task blue-text text-lighten-1 tooltipped" data-position="left" data-tooltip="Edit"><i class="material-icons">edit</i></a>
-                            <a style="cursor: pointer;" class="delete-task red-text text-lighten-1 tooltipped" data-position="right" data-tooltip="Delete"><i class="material-icons">delete</i></a>
                         </td>
                     </tr>
                 `;
@@ -219,6 +218,122 @@ $(document).ready(async () => {
         });
     }
 
+    function manageTasksForParticipants() {
+        hubConnection.on('ReceiveTaskInfo', (task, type) => {
+            if (type === 1) {
+                const row = `
+                    <tr data-rowid="${task.TaskId}" data-taskstatus="1">
+                        <td>${task.TaskName}</td>
+                        <td>${task.TaskDescription}</td>
+                        <td><span class="new badge grey" data-badge-caption="Assigned"></span></td>
+                        <td class="center"><a style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped add-submission" data-position="left" data-tooltip="Add Submission"><i class="material-icons">insert_comment</i></a></td>
+                    </tr>
+                `;
+
+                const $tasksTable = $('#tasks-table');
+
+                if ($tasksTable.attr('data-isempty') === 'true') {
+                    $tasksTable.find('tbody').html(row);
+                    $tasksTable.attr('data-isempty', false);
+                }
+                else {
+                    $tasksTable.find('tbody').append(row);
+                }
+
+                $('.tooltipped').tooltip();
+            }
+            else if (type === 2) {
+                const $tr = $(`#tasks-table tbody tr[data-rowid="${task.TaskId}"]`);
+
+                $tr.children().eq(0).text(task.TaskName);
+                $tr.children().eq(1).text(task.TaskDescription)
+            }
+        });
+
+        $(document).on('click', '.add-submission', async function () {
+            const $tr = $(this).closest('tr');
+
+            if ($tr.next().hasClass('submission-row')) return;
+
+            let submissionText = '';
+
+            if ($tr.attr('data-taskstatus') === '2') {
+                const taskId = $tr.attr('data-rowid');
+
+                $.LoadingOverlay('show');
+
+                const response = await fetch(`/WorkSpace/SessionTask/GetSubmissionText?taskId=${taskId}&participantId=${participantId}`);
+
+                $.LoadingOverlay('hide');
+
+                if (response.status !== 200) {
+                    showAlert('Error', 'something went wrong while fetching the task', true, 'OK');
+                    return;
+                }
+
+                const data = await response.json();
+
+                submissionText = data.submissionText;
+            }
+
+            const submissionMarkup = `
+                <tr class="submission-row white">
+                    <td colspan="4">
+                        <textarea spellcheck="false" placeholder="Paste Your Code Here ..." autocomplete="off" class="submission-ta">${submissionText}</textarea>
+                        <a class="save-submission btn-small waves-effect waves-light right green lighten-1" style="margin-top: 5px;"><i class="material-icons left">assignment_turned_in</i> Turn in</a>
+                        <a class="close-submission-row btn-small waves-effect waves-light right orange lighten-1" style="margin-top: 5px; margin-right: 10px;"><i class="material-icons left">cancel</i>Cancel</a>
+                    </td>
+                </tr>
+            `;
+
+            $tr.after(submissionMarkup);
+        });
+
+        $(document).on('click', '.save-submission', async function () {
+            const submissionText = $(this).prev().val().trim();
+
+            if (!submissionText) {
+                showAlert('Failed', 'You can\'t turn in an empty submission', false, 'OK');
+                return;
+            }
+
+            const $tr = $(this).closest('tr');
+
+            const taskId = $tr.prev().attr('data-rowid');
+
+            $.LoadingOverlay('show');
+
+            const response = await fetch('/WorkSpace/SessionTask/SaveSubmission', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    taskId,
+                    participantId,
+                    submissionText
+                })
+            });
+
+            $.LoadingOverlay('hide');
+
+            if (response.status !== 200) {
+                showAlert('Error', 'something went wrong while submitting the task', true, 'OK');
+                return;
+            }
+
+            $tr.prev().attr('data-taskstatus', 2);
+
+            $tr.prev().children().eq(3).find('a').attr('data-tooltip', 'Edit Submission').find('i').text('edit');
+
+            $tr.prev().children().eq(2).html('<span class="new badge green lighten-1" data-badge-caption="Turned in"></span>');
+
+            $tr.remove();
+        });
+
+        $(document).on('click', '.close-submission-row', function () {
+            $(this).closest('tr').remove();
+        });
+    }
+
     function leaveSession() {
         removeEventListener('beforeunload', askUserBeforeUnload);
 
@@ -286,8 +401,14 @@ $(document).ready(async () => {
         const url = `/WorkSpace/Session/SaveParticipant?userName=${$('#session-username').val()}&sessionKey=${$('#session-key').val()}`;
         const response = await fetch(url, { method: 'POST' });
 
-        if (response.status !== 200)
+        if (response.status !== 200) {
             showAlert('Error', 'something went wrong while joining the session', true, 'OK');
+            return;
+        }
+
+        const data = await response.json();
+
+        participantId = data.participantId;
     });
 
     hubConnection.on('AddUser', user => {
@@ -322,10 +443,13 @@ $(document).ready(async () => {
     });
 
     if ($('#session-type').val() === 'new') {
-        await hubConnection.invoke('CreateSession');
         manageTasks();
+
+        await hubConnection.invoke('CreateSession');
     }
     else if ($('#session-type').val() === 'join') {
+        manageTasksForParticipants();
+
         const userName = $('#session-username').val();
         const _sessionKey = $('#session-key').val();
 
@@ -333,6 +457,8 @@ $(document).ready(async () => {
         $('#session-key-chip').text(_sessionKey);
 
         await hubConnection.invoke('JoinSession', userName, _sessionKey);
+
+
     }
 
     $.LoadingOverlay('hide');

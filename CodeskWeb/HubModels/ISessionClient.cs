@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CodeskWeb.Areas.WorkSpace.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CodeskWeb.HubModels
@@ -38,5 +39,7 @@ namespace CodeskWeb.HubModels
         Task SetEditorLanguage(string language);
 
         Task UpdateUserId(string prevUserId, string currentUserId);
+
+        Task ReceiveTaskInfo(SessionTaskViewModel task, int type);
     }
 }

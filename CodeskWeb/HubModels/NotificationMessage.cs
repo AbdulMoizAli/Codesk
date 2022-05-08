@@ -21,5 +21,10 @@
         {
             return $"<i class=\"material-icons left\">chat_bubble</i><span>New message from <span class=\"yellow-text\"> {userName.ToUpper()}</span></span>";
         }
+
+        public static string GetNewTaskMessage()
+        {
+            return $"<i class=\"material-icons left\">assignment</i><span>You have a new task</span>";
+        }
     }
 }

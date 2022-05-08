@@ -258,3 +258,16 @@ body, html {
 .output-window .wb-body {
     background: #333;
 }
+
+.submission-ta {
+    border: 1px solid #bdbdbd;
+    resize: none;
+    height: 150px;
+    padding: 10px;
+    color: #607d8b;
+}
+
+.submission-ta:focus {
+    outline: none !important;
+    border: 2px solid #607d8b;
+}

@@ -1,5 +1,6 @@
 ﻿let sessionUsers = [];
 let sessionKey = '';
+let participantId = 0;
 
 const hubConnection = new signalR.HubConnectionBuilder()
     .withUrl('/sessionHub', { transport: signalR.HttpTransportType.WebSockets })

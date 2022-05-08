@@ -300,7 +300,7 @@
                             <tr>
                                 <th>Task Name</th>
                                 <th>Task Description</th>
-                                <th>Actions</th>
+                                <th>Action(s)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -320,12 +320,13 @@
 
             <div class="row">
                 <div class="col s12">
-                    <table class="responsive-table highlight">
+                    <table class="responsive-table highlight" id="tasks-table" data-isempty="@(tasks.Count() < 1 ? "true" : "false")">
                         <thead>
                             <tr>
                                 <th>Task Name</th>
                                 <th>Task Description</th>
-                                <th>Submit</th>
+                                <th>Status</th>
+                                <th class="center">Submit</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -335,17 +336,19 @@
                                     <td></td>
                                     <td class="center-align">There are currently no tasks available</td>
                                     <td></td>
+                                    <td></td>
                                 </tr>
                             }
                             else
                             {
                                 @foreach (var task in tasks)
                                 {
-                                    <tr data-rowid="@task.TaskId">
+                                    <tr data-rowid="@task.TaskId" data-taskstatus="1">
                                         <td>@task.TaskName</td>
                                         <td>@task.TaskDescription</td>
-                                        <td>
-                                            <a style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped" data-position="left" data-tooltip="Add Submission"><i class="material-icons">insert_comment</i></a>
+                                        <td><span class="new badge grey" data-badge-caption="Assigned"></span></td>
+                                        <td class="center">
+                                            <a style="cursor: pointer;" class="indigo-text text-lighten-1 tooltipped add-submission" data-position="left" data-tooltip="Add Submission"><i class="material-icons">insert_comment</i></a>
                                         </td>
                                     </tr>
                                 }
