@@ -49,9 +49,9 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveParticipant(string userName, string sessionKey)
         {
-            await SessionManager.SaveParticipant(userName, sessionKey).ConfigureAwait(false);
+            var participantId = await SessionManager.SaveParticipant(userName, sessionKey).ConfigureAwait(false);
 
-            return Ok();
+            return Ok(new { ParticipantId = participantId });
         }
 
         [HttpPost]

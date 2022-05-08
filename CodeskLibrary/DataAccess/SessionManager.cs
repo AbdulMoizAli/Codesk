@@ -18,11 +18,11 @@ namespace CodeskLibrary.DataAccess
                 .ConfigureAwait(false);
         }
 
-        public static async Task SaveParticipant(string userName, string sessionKey)
+        public static async Task<int> SaveParticipant(string userName, string sessionKey)
         {
             using IDbConnection db = DbConnection.GetConnection();
 
-            await db.ExecuteAsync("spSaveParticipant", new { userName, sessionKey }, commandType: CommandType.StoredProcedure)
+            return await db.ExecuteScalarAsync<int>("spSaveParticipant", new { userName, sessionKey }, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false);
         }
 
