@@ -58,7 +58,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
 
             var filePath = Path.Combine(_env.WebRootPath, "assets", "session", "files", fileName);
 
-            await CodeFile.Create(filePath).DisposeAsync();
+            await CodeFile.Create(filePath).DisposeAsync().ConfigureAwait(false);
 
             return Ok(new { SessionCurrentFile = _mapper.Map<SessionFileViewModel>(await SessionFileManager.SaveSessionFile(email, sessionKey, fileName, sessionFileType.FileTypeId)), FileContent = string.Empty });
         }
