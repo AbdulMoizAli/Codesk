@@ -245,6 +245,7 @@ $(document).ready(async () => {
                     <tr class="white submission-row">
                         <td colspan="3" class="center">
                             <h6 class="grey-text">There are no participants yet.</h6>
+                            <a class="refresh-submission-row btn-small waves-effect waves-light right green lighten-1" style="margin-right: 5px;"><i class="material-icons left">refresh</i>Refresh</a>
                             <a class="close-submission-row btn-small waves-effect waves-light right orange lighten-1" style="margin-right: 5px;"><i class="material-icons left">cancel</i>Cancel</a>
                         </td>
                     </tr>
@@ -254,7 +255,7 @@ $(document).ready(async () => {
                 let collectionItems = '';
 
                 data.forEach(d => {
-                    collectionItems += `<li class="collection-item">${d.participantName} <span class="right new badge ${d.hasTurnedIn ? 'green lighten-1' : 'grey'}" data-badge-caption="${d.hasTurnedIn ? 'Turned in' : 'Not turned in'}" style="margin-left: 300px;"></span> ${d.hasTurnedIn ? `<a data-filepath="${d.filePath}" style="cursor: pointer;" class="view-code secondary-content tooltipped" data-position="left" data-tooltip="View Code"><i class="material-icons">attach_file</i></a>` : ''}</li>`
+                    collectionItems += `<li class="collection-item">${d.participantName.toUpperCase()} <span class="right new badge ${d.hasTurnedIn ? 'green lighten-1' : 'grey'}" data-badge-caption="${d.hasTurnedIn ? 'Turned in' : 'Not turned in'}" style="margin-left: 300px;"></span> ${d.hasTurnedIn ? `<a data-filepath="${d.filePath}" style="cursor: pointer;" class="view-code secondary-content tooltipped" data-position="left" data-tooltip="View Code"><i class="material-icons">attach_file</i></a>` : ''}</li>`
                 });
 
                 submissionMarkup = `
@@ -263,6 +264,7 @@ $(document).ready(async () => {
                             <ul class="collection" style="margin-left: 5px; margin-right: 5px;">
                                 ${collectionItems}
                             </ul>
+                            <a class="refresh-submission-row btn-small waves-effect waves-light right green lighten-1" style="margin-right: 5px;"><i class="material-icons left">refresh</i>Refresh</a>
                             <a class="close-submission-row btn-small waves-effect waves-light right orange lighten-1" style="margin-right: 5px;"><i class="material-icons left">cancel</i>Cancel</a>
                         </td>
                     </tr>
@@ -276,6 +278,13 @@ $(document).ready(async () => {
 
         $(document).on('click', '.close-submission-row', function () {
             $(this).closest('tr').remove();
+        });
+
+        $(document).on('click', '.refresh-submission-row', function () {
+            const $tr = $(this).closest('tr');
+            const $btn = $tr.prev().find('.view-submissions');
+            $tr.remove();
+            $btn.trigger('click');
         });
 
         $(document).on('click', '.view-code', async function () {
@@ -543,8 +552,6 @@ $(document).ready(async () => {
         $('#session-key-chip').text(_sessionKey);
 
         await hubConnection.invoke('JoinSession', userName, _sessionKey);
-
-
     }
 
     $.LoadingOverlay('hide');
