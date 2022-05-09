@@ -119,8 +119,9 @@ $(document).ready(async () => {
                     <tr data-rowid="${data.taskId}">
                         <td>${$taskName.val()}</td>
                         <td>${$taskDescription.val()}</td>
-                        <td>
+                        <td class="center">
                             <a style="cursor: pointer;" class="edit-task blue-text text-lighten-1 tooltipped" data-position="left" data-tooltip="Edit"><i class="material-icons">edit</i></a>
+                            <a style="cursor: pointer;" class="view-submissions indigo-text text-lighten-1 tooltipped" data-position="right" data-tooltip="View Submissions"><i class="material-icons">view_list</i></a>
                         </td>
                     </tr>
                 `;
@@ -215,6 +216,91 @@ $(document).ready(async () => {
                 .find('button')
                 .attr('data-tooltip', 'Update')
                 .find('i').text('edit');
+        });
+
+        $(document).on('click', '.view-submissions', async function () {
+            const $tr = $(this).closest('tr');
+
+            if ($tr.next().hasClass('submission-row')) return;
+
+            const taskId = $tr.attr('data-rowid');
+
+            $.LoadingOverlay('show');
+
+            const response = await fetch(`/WorkSpace/SessionTask/GetTaskSubmissions?sessionKey=${sessionKey}&taskId=${taskId}`);
+
+            $.LoadingOverlay('hide');
+
+            if (response.status !== 200) {
+                showAlert('Error', 'something went wrong while fetching the submissions', true, 'OK');
+                return;
+            }
+
+            const data = await response.json();
+
+            let submissionMarkup = '';
+
+            if (!data.length) {
+                submissionMarkup = `
+                    <tr class="white submission-row">
+                        <td colspan="3" class="center">
+                            <h6 class="grey-text">There are no participants yet.</h6>
+                            <a class="close-submission-row btn-small waves-effect waves-light right orange lighten-1" style="margin-right: 5px;"><i class="material-icons left">cancel</i>Cancel</a>
+                        </td>
+                    </tr>
+                `;
+            }
+            else {
+                let collectionItems = '';
+
+                data.forEach(d => {
+                    collectionItems += `<li class="collection-item">${d.participantName} <span class="right new badge ${d.hasTurnedIn ? 'green lighten-1' : 'grey'}" data-badge-caption="${d.hasTurnedIn ? 'Turned in' : 'Not turned in'}" style="margin-left: 300px;"></span> ${d.hasTurnedIn ? `<a data-filepath="${d.filePath}" style="cursor: pointer;" class="view-code secondary-content tooltipped" data-position="left" data-tooltip="View Code"><i class="material-icons">attach_file</i></a>` : ''}</li>`
+                });
+
+                submissionMarkup = `
+                    <tr class="white submission-row">
+                        <td colspan="3">
+                            <ul class="collection" style="margin-left: 5px; margin-right: 5px;">
+                                ${collectionItems}
+                            </ul>
+                            <a class="close-submission-row btn-small waves-effect waves-light right orange lighten-1" style="margin-right: 5px;"><i class="material-icons left">cancel</i>Cancel</a>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            $tr.after(submissionMarkup);
+
+            $('.tooltipped').tooltip();
+        });
+
+        $(document).on('click', '.close-submission-row', function () {
+            $(this).closest('tr').remove();
+        });
+
+        $(document).on('click', '.view-code', async function () {
+            if ($(this).parent().next().hasClass('view-code-li')) return;
+
+            const filePath = $(this).attr('data-filepath');
+
+            $.LoadingOverlay('show');
+
+            const response = await fetch(`/WorkSpace/SessionTask/ReadSubmissionCode?filePath=${filePath}`);
+
+            $.LoadingOverlay('hide');
+
+            if (response.status !== 200) {
+                showAlert('Error', 'something went wrong while fetching the code', true, 'OK');
+                return;
+            }
+
+            const data = await response.json();
+
+            $(this).parent().after(`<li style="white-space: pre-line;" class="collection-item view-code-li grey lighten-5 blue-grey-text">${data.submissionCode} <a style="cursor: pointer;" class="close-view-code-li secondary-content red-text text-lighten-1"><i class="material-icons">close</i></a></li>`);
+        });
+
+        $(document).on('click', '.close-view-code-li', function () {
+            $(this).parent().remove();
         });
     }
 

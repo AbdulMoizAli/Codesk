@@ -74,5 +74,13 @@ namespace CodeskLibrary.DataAccess
             return await db.QuerySingleOrDefaultAsync<ParticipantTaskSubmission>("spGetParticipantTaskSubmission", new { taskId, participantId }, commandType: CommandType.StoredProcedure)
                 .ConfigureAwait(false);
         }
+
+        public static async Task<IEnumerable<TaskSubmission>> GetTaskSubmissions(string sessionKey, int taskId)
+        {
+            using IDbConnection db = DbConnection.GetConnection();
+
+            return await db.QueryAsync<TaskSubmission>("spGetTaskSubmissions", new { sessionKey, taskId }, commandType: CommandType.StoredProcedure)
+                .ConfigureAwait(false);
+        }
     }
 }

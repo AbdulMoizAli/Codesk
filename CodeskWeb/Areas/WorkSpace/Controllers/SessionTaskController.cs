@@ -149,5 +149,23 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
 
             return Ok(new { SubmissionText = submissionText });
         }
+
+        public async Task<IActionResult> GetTaskSubmissions(string sessionKey, int taskId)
+        {
+            var submissions = await SessionTaskManager.GetTaskSubmissions(sessionKey, taskId).ConfigureAwait(false);
+            return Ok(submissions);
+        }
+
+        public async Task<IActionResult> ReadSubmissionCode(string filePath)
+        {
+            var path = Path.Combine(_env.WebRootPath, "assets", "session", "files", filePath);
+
+            if (!SubmissionFile.Exists(path))
+                return StatusCode(500);
+
+            var submissionCode = await SubmissionFile.ReadAllTextAsync(path).ConfigureAwait(false);
+
+            return Ok(new { SubmissionCode = submissionCode });
+        }
     }
 }
