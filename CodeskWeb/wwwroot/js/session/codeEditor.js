@@ -96,6 +96,13 @@ $(document).ready(() => {
 
                 if ($('#session-type').val() !== 'new' || !(['csharp', 'cpp', 'python'].includes(value))) {
                     $('#file-title').hide();
+
+                    if (codingMode === 'private') {
+                        const response = await fetch(`/assets/session/languages/templates/${value}.txt`);
+                        const data = await response.text();
+                        codeEditor.setValue(data);
+                    }
+
                     return;
                 }
 
@@ -415,6 +422,7 @@ $(document).ready(() => {
 
                     codeEditor.setValue(data.editorContent);
                     $('#language-logo').attr('src', `/assets/session/languages/logos/${data.language}.svg`);
+                    $('#language-input').val(data.language);
                     monacoEditor.setModelLanguage(codeEditor.getModel(), data.language);
                 }
 

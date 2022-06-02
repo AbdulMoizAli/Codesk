@@ -10,6 +10,7 @@ using System.IO.Compression;
 using AutoMapper;
 using CodeskWeb.Areas.WorkSpace.Models;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CodeskWeb.Areas.WorkSpace.Controllers
 {
@@ -87,6 +88,7 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
             return Ok();
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult GetSessionCurrentFileInfo(string sessionKey)
         {
