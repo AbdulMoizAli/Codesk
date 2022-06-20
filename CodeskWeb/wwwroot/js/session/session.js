@@ -526,10 +526,32 @@ $(document).ready(async () => {
         leaveSession();
     });
 
-    hubConnection.on('UpdateUserId', (prevUserId, currentUserId) => {
-        $('.participant-list ul')
-            .find(`li a[data-userid="${prevUserId}"]`)
-            .attr('data-userid', currentUserId);
+    hubConnection.on('UpdateUserId', (prevUserId, currentUserId, userName, isHost, hasWriteAccess) => {
+        const $ul = $('.participant-list ul');
+        const $a = $ul.find(`li a[data-userid="${prevUserId}"]`)
+
+        if ($a.length > 0) {
+            $a.attr('data-userid', currentUserId);
+        }
+        else {
+            if ($('#session-type').val() === 'join') {
+                $ul.append(`<li class="participant"><a class="blue-text text-darken-4" data-userid="${currentUserId}">${userName.toUpperCase()}</a></li>`)
+            }
+            else {
+                if (isHost) {
+                    $ul.append(`<li class="participant"><a class="blue-text text-darken-4" data-userid="${currentUserId}" data-usertype="">${userName.toUpperCase()}</a></li>`)
+                }
+                else {
+                    let icon = '<i class="material-icons">speaker_notes_off</i>';
+
+                    if (hasWriteAccess) {
+                        icon = '<i class="material-icons">speaker_notes</i>';
+                    }
+
+                    $ul.append(`<li class="participant"><a class="blue-text text-darken-4 waves-effect" data-userid="${currentUserId}" data-usertype="participant">${icon} ${userName.toUpperCase()}</a></li>`);
+                }
+            }
+        }
 
         const index = sessionUsers.findIndex(user => user.UserId === prevUserId);
 

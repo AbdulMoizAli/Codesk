@@ -5,6 +5,7 @@ using CodeskWeb.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Threading.Tasks;
 
 namespace CodeskWeb.Areas.WorkSpace.Controllers
@@ -112,21 +113,28 @@ namespace CodeskWeb.Areas.WorkSpace.Controllers
         [HttpPost]
         public async Task<IActionResult> ReconnectSessionUser([FromBody] ReconnectViewModel model)
         {
-            await _hubContext.Groups.AddToGroupAsync(model.User.UserId, model.SessionKey)
-                .ConfigureAwait(false);
-
-            await _hubContext.Clients.Group(model.SessionKey).UpdateUserId(model.PreviousUserId, model.User.UserId)
-                .ConfigureAwait(false);
-
-            SessionInformation.SessionInfo[model.SessionKey].connectedUsers.Insert(0, model.User);
-
-            if (model.IsHost)
+            try
             {
-                var (language, code, _, connectedUsers) = SessionInformation.SessionInfo[model.SessionKey];
-                SessionInformation.SessionInfo[model.SessionKey] = (language, code, model.User.UserId, connectedUsers);
-            }
+                await _hubContext.Groups.AddToGroupAsync(model.User.UserId, model.SessionKey)
+                .ConfigureAwait(false);
 
-            return Ok();
+                await _hubContext.Clients.Group(model.SessionKey).UpdateUserId(model.PreviousUserId, model.User.UserId, model.User.UserName, model.IsHost, model.User.HasWriteAccess)
+                    .ConfigureAwait(false);
+
+                SessionInformation.SessionInfo[model.SessionKey].connectedUsers.Insert(0, model.User);
+
+                if (model.IsHost)
+                {
+                    var (language, code, _, connectedUsers) = SessionInformation.SessionInfo[model.SessionKey];
+                    SessionInformation.SessionInfo[model.SessionKey] = (language, code, model.User.UserId, connectedUsers);
+                }
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { error = e.Message });
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ namespace CodeskWeb.HubModels
 
         Task SetEditorLanguage(string language);
 
-        Task UpdateUserId(string prevUserId, string currentUserId);
+        Task UpdateUserId(string prevUserId, string currentUserId, string userName, bool isHost, bool hasWriteAccess);
 
         Task ReceiveTaskInfo(SessionTaskViewModel task, int type);
     }
